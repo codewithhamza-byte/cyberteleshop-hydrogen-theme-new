@@ -62,6 +62,8 @@ export function PageLayout({children, layout}: LayoutProps) {
 
 function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
   const isHome = useIsHomePath();
+  const logoSrc =
+    'https://www.cyberteleshop.com/cdn/shop/files/nexteaze_logo_2.svg?v=1747654489&width=165';
 
   const {
     isOpen: isCartOpen,
@@ -92,12 +94,14 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
       <DesktopHeader
         isHome={isHome}
         title={title}
+        logoSrc={logoSrc}
         menu={menu}
         openCart={openCart}
       />
       <MobileHeader
         isHome={isHome}
         title={title}
+        logoSrc={logoSrc}
         openCart={openCart}
         openMenu={openMenu}
       />
@@ -172,11 +176,13 @@ function MenuMobileNav({
 
 function MobileHeader({
   title,
+  logoSrc,
   isHome,
   openCart,
   openMenu,
 }: {
   title: string;
+  logoSrc: string;
   isHome: boolean;
   openCart: () => void;
   openMenu: () => void;
@@ -191,39 +197,40 @@ function MobileHeader({
       <button
         onClick={openMenu}
         className="flex items-center justify-center h-10 w-10 rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+        aria-label="Open menu"
       >
         <IconMenu />
       </button>
 
-      <Link className="flex-1 text-center" to="/" prefetch="intent">
-        <Heading className="font-black tracking-[0.24em] text-sm uppercase" as={isHome ? 'h1' : 'h2'}>
-          {title}
-        </Heading>
+      <Link to="/" prefetch="intent" className="flex-1 flex items-center justify-center">
+        <img
+          src={logoSrc}
+          alt={title}
+          className="h-8 w-auto object-contain md:h-10"
+          loading="eager"
+        />
       </Link>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={openCart}
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          aria-label="Open cart"
+        >
+          <IconBag />
+          <span className="sr-only">Cart</span>
+        </button>
+
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="flex items-center gap-2 rounded-full bg-contrast/10 px-3 py-2"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          role="search"
         >
-          <button
-            type="submit"
-            className="flex items-center justify-center h-9 w-9 rounded-full bg-notice text-contrast"
-          >
+          <button type="submit" className="flex items-center justify-center h-full w-full">
             <IconSearch />
           </button>
-          <Input
-            className="bg-transparent border-0 p-0 text-sm placeholder:text-contrast/70 focus:ring-0"
-            type="search"
-            variant="minisearch"
-            placeholder="Search"
-            name="q"
-          />
         </Form>
-
-        <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20" />
-        <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
   );
@@ -231,61 +238,40 @@ function MobileHeader({
 
 function DesktopHeader({
   isHome,
+  logoSrc,
   menu,
   openCart,
   title,
 }: {
   isHome: boolean;
+  logoSrc: string;
   openCart: () => void;
   menu?: EnhancedMenu;
   title: string;
 }) {
   const params = useParams();
   const {y} = useWindowScroll();
-  const brandMark = title?.[0] ?? 'T';
 
   return (
     <header
       role="banner"
-      className={`bg-primary text-contrast ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-10 xl:px-14 border-b border-contrast/10`}
+      className={`bg-primary text-contrast ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-14 border-b border-contrast/10`}
     >
-      <div className="flex items-center gap-10">
+      <div className="flex flex-1 items-center gap-8">
         <Link
-          className="inline-flex items-center gap-3"
+          className="inline-flex items-center gap-4"
           to="/"
           prefetch="intent"
         >
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded bg-notice text-contrast font-black uppercase tracking-[0.2em]">
-            {brandMark}
-          </span>
-          <span className="text-base font-semibold uppercase tracking-[0.24em] text-contrast/90">
-            {title}
-          </span>
+          <img
+            src={logoSrc}
+            alt={title}
+            className="h-10 w-auto object-contain"
+            loading="eager"
+          />
         </Link>
 
-        <nav className="flex items-center gap-8 text-sm uppercase tracking-[0.24em] text-contrast/60">
-          {(menu?.items || []).map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              target={item.target}
-              prefetch="intent"
-              className={({isActive}) =>
-                `transition ${
-                  isActive
-                    ? 'text-notice border-b-2 border-notice'
-                    : 'hover:text-contrast'
-                }`
-              }
-            >
-              {item.title}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <nav className="hidden lg:flex items-center gap-8 text-sm uppercase tracking-[0.24em] text-contrast/70">
+        <nav className="hidden xl:flex items-center gap-8 text-sm uppercase tracking-[0.22em] text-contrast/70">
           {(menu?.items || []).map((item) => (
             <Link
               key={item.id}
@@ -302,7 +288,9 @@ function DesktopHeader({
             </Link>
           ))}
         </nav>
+      </div>
 
+      <div className="flex items-center gap-3">
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
@@ -319,7 +307,14 @@ function DesktopHeader({
         </Form>
 
         <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20" />
-        <CartCount isHome={isHome} openCart={openCart} />
+
+        <button
+          onClick={openCart}
+          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          aria-label="Open cart"
+        >
+          <IconBag />
+        </button>
 
         <Link
           to="/collections/all"
