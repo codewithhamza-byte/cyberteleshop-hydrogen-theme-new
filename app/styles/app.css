@@ -4,15 +4,17 @@
 
 /* Tokens */
 :root {
-  --color-primary: 20 20 20; /* Text, buttons, etc. */
-  --color-contrast: 250 250 249; /* Backgrounds, borders, etc. */
-  --color-accent: 191 72 0; /* Labels like "On sale" */
+  --color-primary: 18 18 18; /* Charcoal text, icons, and borders */
+  --color-contrast: 250 250 249; /* Light paper background */
+  --color-accent: 255 114 51; /* Warm orange accent */
+  --color-surface: 245 245 242; /* Subtle surface panels */
   --font-size-fine: 0.75rem; /* text-xs */
   --font-size-copy: 1rem; /* text-base */
   --font-size-lead: 1.125rem; /* text-lg */
   --font-size-heading: 2rem; /* text-2xl */
   --font-size-display: 3rem; /* text-4xl */
-  --color-shop-pay: #5a31f4;
+  --color-shop-pay: #ff7a18;
+  --color-border: 225 225 220;
   --shop-pay-button--width: 100%; /* Sets the width for the shop-pay-button web component */
   --height-nav: 3rem;
   --screen-height: 100vh;
@@ -34,12 +36,8 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: 250 250 250;
-    --color-contrast: 32 33 36;
-    --color-accent: 235 86 40;
-  }
+html {
+  color-scheme: light;
 }
 
 @keyframes fadeInAnimation {
@@ -63,7 +61,7 @@ shop-pay-button {
   }
 
   body {
-    @apply border-primary/10 bg-contrast text-primary/90 antialiased;
+    @apply bg-contrast text-primary/90 antialiased;
   }
 
   html {

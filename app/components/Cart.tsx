@@ -209,7 +209,7 @@ function CartSummary({
 }) {
   const summary = {
     drawer: 'grid gap-4 p-6 border-t md:px-12',
-    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/5 rounded w-full',
+    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/10 rounded w-full',
   };
 
   return (

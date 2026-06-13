@@ -192,11 +192,11 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className="bg-primary text-contrast flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6 border-b border-contrast/10"
+      className="bg-contrast text-primary flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6 border-b border-primary/10"
     >
       <button
         onClick={openMenu}
-        className="flex items-center justify-center h-10 w-10 rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+        className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
         aria-label="Open menu"
       >
         <IconMenu />
@@ -214,7 +214,7 @@ function MobileHeader({
       <div className="flex items-center gap-2">
         <button
           onClick={openCart}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
           aria-label="Open cart"
         >
           <IconBag />
@@ -224,7 +224,7 @@ function MobileHeader({
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
           role="search"
         >
           <button type="submit" className="flex items-center justify-center h-full w-full">
@@ -255,7 +255,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`bg-primary text-contrast ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-14 border-b border-contrast/10`}
+      className={`bg-contrast text-primary ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-14 border-b border-primary/10`}
     >
       <div className="flex flex-1 items-center gap-8">
         <Link
@@ -271,7 +271,7 @@ function DesktopHeader({
           />
         </Link>
 
-        <nav className="hidden xl:flex items-center gap-8 text-sm uppercase tracking-[0.22em] text-contrast/70">
+        <nav className="hidden xl:flex items-center gap-8 text-sm uppercase tracking-[0.22em] text-primary/70">
           {(menu?.items || []).map((item) => (
             <Link
               key={item.id}
@@ -280,7 +280,7 @@ function DesktopHeader({
               prefetch="intent"
               className={({isActive}) =>
                 `transition ${
-                  isActive ? 'text-notice' : 'hover:text-contrast'
+                  isActive ? 'text-notice' : 'hover:text-primary'
                 }`
               }
             >
@@ -294,11 +294,11 @@ function DesktopHeader({
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden lg:flex items-center gap-2 rounded-full bg-contrast/10 px-3 py-2"
+          className="hidden lg:flex items-center gap-2 rounded-full bg-primary/5 px-3 py-2"
         >
-          <IconSearch className="text-contrast/70" />
+          <IconSearch className="text-primary/70" />
           <Input
-            className="bg-transparent border-0 p-0 text-sm text-contrast placeholder:text-contrast/60 focus:ring-0"
+            className="bg-transparent border-0 p-0 text-sm text-primary placeholder:text-primary/60 focus:ring-0"
             type="search"
             variant="minisearch"
             placeholder="Search"
@@ -306,23 +306,16 @@ function DesktopHeader({
           />
         </Form>
 
-        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20" />
+        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10" />
 
         <button
           onClick={openCart}
-          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
+          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
           aria-label="Open cart"
         >
           <IconBag />
         </button>
 
-        <Link
-          to="/collections/all"
-          className="hidden xl:inline-flex items-center gap-2 rounded-full bg-notice px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-contrast transition hover:bg-[#ff8d3c]"
-        >
-          Get started
-          <IconArrow className="text-contrast" />
-        </Link>
       </div>
     </header>
   );
@@ -428,7 +421,7 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
       as="footer"
       role="contentinfo"
       className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
-        bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
+        bg-contrast text-primary overflow-hidden`}
     >
       <FooterMenu menu={menu} />
       <CountrySelector />
