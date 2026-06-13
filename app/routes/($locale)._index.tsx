@@ -203,6 +203,21 @@ function CategorySlider({
           </Button>
         </div>
 
+        <nav
+          aria-label="Category navigation"
+          className="mt-6 flex items-center gap-3 overflow-x-auto pb-4 text-sm font-semibold text-primary"
+        >
+          {items.map((collection) => (
+            <Link
+              key={`${collection.id}-nav`}
+              to={`/collections/${collection.handle}`}
+              className="inline-flex whitespace-nowrap rounded-full border border-primary/10 bg-contrast/90 px-4 py-2 transition duration-200 hover:border-primary hover:bg-primary/10"
+            >
+              {collection.title}
+            </Link>
+          ))}
+        </nav>
+
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {items.map((collection) => (
             <Link
@@ -216,7 +231,7 @@ function CategorySlider({
                   alt={collection.image?.altText || collection.title}
                   className="h-64 w-full object-cover transition duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent px-4 py-4 text-white">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-4 py-4 text-white">
                   <Heading size="copy" className="text-copy text-lg font-semibold">
                     {collection.title}
                   </Heading>
