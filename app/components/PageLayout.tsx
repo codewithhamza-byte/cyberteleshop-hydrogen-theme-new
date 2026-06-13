@@ -19,6 +19,7 @@ import {
   IconAccount,
   IconBag,
   IconSearch,
+  IconArrow,
 } from '~/components/Icon';
 import {
   type EnhancedMenu,
@@ -185,28 +186,17 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`${
-        isHome
-          ? 'bg-primary/90 text-contrast shadow-darkHeader border-b border-contrast/10'
-          : 'bg-contrast/95 text-primary border-b border-primary/10'
-      } flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6`}
+      className="bg-primary text-contrast flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6 border-b border-contrast/10"
     >
       <button
         onClick={openMenu}
-        className="flex items-center justify-center h-10 w-10 rounded-full border border-primary/10 bg-contrast/90 text-current transition hover:border-primary/20 hover:bg-contrast"
+        className="flex items-center justify-center h-10 w-10 rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20"
       >
         <IconMenu />
       </button>
 
-      <Link
-        className="flex-1 text-center"
-        to="/"
-        prefetch="intent"
-      >
-        <Heading
-          className="font-black tracking-[0.24em] text-sm uppercase"
-          as={isHome ? 'h1' : 'h2'}
-        >
+      <Link className="flex-1 text-center" to="/" prefetch="intent">
+        <Heading className="font-black tracking-[0.24em] text-sm uppercase" as={isHome ? 'h1' : 'h2'}>
           {title}
         </Heading>
       </Link>
@@ -215,11 +205,16 @@ function MobileHeader({
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden sm:flex items-center gap-2 rounded-full border border-primary/10 bg-contrast/90 px-3 py-2 shadow-sm"
+          className="flex items-center gap-2 rounded-full bg-contrast/10 px-3 py-2"
         >
-          <IconSearch className="text-primary/70" />
+          <button
+            type="submit"
+            className="flex items-center justify-center h-9 w-9 rounded-full bg-notice text-contrast"
+          >
+            <IconSearch />
+          </button>
           <Input
-            className="bg-transparent border-0 p-0 text-sm placeholder:text-primary/60 focus:ring-0"
+            className="bg-transparent border-0 p-0 text-sm placeholder:text-contrast/70 focus:ring-0"
             type="search"
             variant="minisearch"
             placeholder="Search"
@@ -227,15 +222,7 @@ function MobileHeader({
           />
         </Form>
 
-        <button
-          type="submit"
-          form={params.locale ? `/${params.locale}/search` : '/search'}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 text-current transition hover:border-primary/20 hover:bg-contrast"
-        >
-          <IconSearch />
-        </button>
-
-        <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 transition hover:border-primary/20 hover:bg-contrast" />
+        <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20" />
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
@@ -255,25 +242,28 @@ function DesktopHeader({
 }) {
   const params = useParams();
   const {y} = useWindowScroll();
+  const brandMark = title?.[0] ?? 'T';
+
   return (
     <header
       role="banner"
-      className={`${
-        isHome
-          ? 'bg-primary/90 text-contrast shadow-darkHeader border-b border-contrast/10'
-          : 'bg-contrast/95 text-primary border-b border-primary/10'
-      } ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-12`}
+      className={`bg-primary text-contrast ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-10 xl:px-14 border-b border-contrast/10`}
     >
       <div className="flex items-center gap-10">
         <Link
-          className="inline-flex items-center rounded-full border border-primary/10 bg-contrast/90 px-4 py-2 text-base font-bold uppercase tracking-[0.14em] transition hover:border-primary/20 hover:bg-contrast"
+          className="inline-flex items-center gap-3"
           to="/"
           prefetch="intent"
         >
-          {title}
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded bg-notice text-contrast font-black uppercase tracking-[0.2em]">
+            {brandMark}
+          </span>
+          <span className="text-base font-semibold uppercase tracking-[0.24em] text-contrast/90">
+            {title}
+          </span>
         </Link>
 
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-8 text-sm uppercase tracking-[0.24em] text-contrast/60">
           {(menu?.items || []).map((item) => (
             <Link
               key={item.id}
@@ -281,10 +271,10 @@ function DesktopHeader({
               target={item.target}
               prefetch="intent"
               className={({isActive}) =>
-                `text-sm font-medium tracking-[0.08em] transition ${
+                `transition ${
                   isActive
-                    ? 'border-b-2 border-primary text-primary'
-                    : 'text-primary/70 hover:text-primary'
+                    ? 'text-notice border-b-2 border-notice'
+                    : 'hover:text-contrast'
                 }`
               }
             >
@@ -295,22 +285,49 @@ function DesktopHeader({
       </div>
 
       <div className="flex items-center gap-3">
+        <nav className="hidden lg:flex items-center gap-8 text-sm uppercase tracking-[0.24em] text-contrast/70">
+          {(menu?.items || []).map((item) => (
+            <Link
+              key={item.id}
+              to={item.to}
+              target={item.target}
+              prefetch="intent"
+              className={({isActive}) =>
+                `transition ${
+                  isActive ? 'text-notice' : 'hover:text-contrast'
+                }`
+              }
+            >
+              {item.title}
+            </Link>
+          ))}
+        </nav>
+
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden lg:flex items-center gap-2 rounded-full border border-primary/10 bg-contrast/90 px-3 py-2 shadow-sm"
+          className="hidden lg:flex items-center gap-2 rounded-full bg-contrast/10 px-3 py-2"
         >
-          <IconSearch className="text-primary/70" />
+          <IconSearch className="text-contrast/70" />
           <Input
-            className="bg-transparent border-0 p-0 text-sm placeholder:text-primary/60 focus:ring-0"
+            className="bg-transparent border-0 p-0 text-sm text-contrast placeholder:text-contrast/60 focus:ring-0"
             type="search"
             variant="minisearch"
-            placeholder="Search products"
+            placeholder="Search"
             name="q"
           />
         </Form>
-        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 transition hover:border-primary/20 hover:bg-contrast" />
+
+        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full bg-contrast/10 text-contrast transition hover:bg-contrast/20" />
         <CartCount isHome={isHome} openCart={openCart} />
+
+        <Link
+          to="/collections/all"
+          className="hidden xl:inline-flex items-center gap-2 rounded-full bg-notice px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-contrast transition hover:bg-[#ff8d3c]"
+        >
+          Get started
+          <IconArrow className="text-contrast" />
+        </Link>
       </div>
     </header>
   );
