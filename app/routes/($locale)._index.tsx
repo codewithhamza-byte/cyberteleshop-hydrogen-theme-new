@@ -171,7 +171,7 @@ function LandingHero() {
       <img
         src="https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973&width=2000"
         alt="Electronic sales promotion banner"
-        className="block h-[26rem] w-full object-cover sm:h-[32rem] md:h-[38rem] lg:h-[46rem]"
+        className="block h-[26rem] w-full object-cover sm:h-[32rem] md:h-[38rem] lg:h-[30rem]"
         loading="eager"
       />
     </section>
@@ -183,7 +183,9 @@ function CategorySlider({
 }: {
   collections?: HomepageCategoryCollectionsQuery | null;
 }) {
-  const items = collections?.collections?.nodes ?? [];
+  const items = collections?.collections?.nodes?.filter(
+    (collection) => !!collection?.image?.url,
+  ) ?? [];
   if (items.length === 0) return null;
 
   return (
@@ -193,7 +195,7 @@ function CategorySlider({
           <div>
             <Heading size="heading">Shop by category</Heading>
             <Text className="mt-3 max-w-2xl text-primary/80">
-              Browse top collections in a modern layout built for fast discovery.
+              Discover curated categories with beautiful imagery for every product need.
             </Text>
           </div>
           <Button to="/collections/all" variant="inline">
@@ -201,27 +203,27 @@ function CategorySlider({
           </Button>
         </div>
 
-        <div className="mt-8 overflow-x-auto pb-4">
-          <div className="grid auto-cols-[minmax(220px,1fr)] grid-flow-col gap-4 lg:grid-flow-row lg:grid-cols-6">
-            {items.map((collection) => (
-              <Link
-                key={collection.id}
-                to={`/collections/${collection.handle}`}
-                className="group block min-w-[220px] rounded-[2rem] border border-primary/10 bg-contrast/95 p-4 transition hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="overflow-hidden rounded-[1.75rem] bg-primary/5">
-                  <img
-                    src={collection.image?.url || ''}
-                    alt={collection.image?.altText || collection.title}
-                    className="h-36 w-full object-cover"
-                  />
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {items.map((collection) => (
+            <Link
+              key={collection.id}
+              to={`/collections/${collection.handle}`}
+              className="group block overflow-hidden rounded-[2rem] border border-primary/10 bg-contrast/95 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="relative overflow-hidden bg-primary/5">
+                <img
+                  src={collection.image?.url || ''}
+                  alt={collection.image?.altText || collection.title}
+                  className="h-64 w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent px-4 py-4 text-white">
+                  <Heading size="copy" className="text-copy text-lg font-semibold">
+                    {collection.title}
+                  </Heading>
                 </div>
-                <Heading size="copy" className="mt-4 text-copy">
-                  {collection.title}
-                </Heading>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </Section>
