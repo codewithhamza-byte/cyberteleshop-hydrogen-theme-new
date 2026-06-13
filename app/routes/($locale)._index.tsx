@@ -81,52 +81,14 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 };
 
 export default function Homepage() {
-  const {shop, featuredProducts, featuredCollections} =
+  const {featuredProducts, featuredCollections} =
     useLoaderData<typeof loader>();
 
   return (
     <>
-      <LandingHero shop={shop} />
-
-      <Section padding="y" divider="top" className="bg-primary/5">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 lg:grid-cols-3 lg:px-8">
-          <div className="rounded-3xl border border-primary/10 bg-contrast/95 p-8">
-            <Text color="subtle" size="fine" className="uppercase tracking-[0.24em]">
-              Minimal + Bold
-            </Text>
-            <Heading size="lead" className="mt-4">
-              A modern store built for every product.
-            </Heading>
-            <Text className="mt-4 text-primary/80">
-              Clean layout, fast shopping, and a polished design system that keeps product detail front and center.
-            </Text>
-          </div>
-
-          <div className="rounded-3xl border border-primary/10 bg-contrast/95 p-8">
-            <Text color="subtle" size="fine" className="uppercase tracking-[0.24em]">
-              Responsive everywhere
-            </Text>
-            <Heading size="lead" className="mt-4">
-              Smooth browsing on mobile, tablet, and desktop.
-            </Heading>
-            <Text className="mt-4 text-primary/80">
-              Every section adapts cleanly so shoppers can explore products and collections effortlessly.
-            </Text>
-          </div>
-
-          <div className="rounded-3xl border border-primary/10 bg-contrast/95 p-8">
-            <Text color="subtle" size="fine" className="uppercase tracking-[0.24em]">
-              Product first
-            </Text>
-            <Heading size="lead" className="mt-4">
-              Highlight your best sellers.
-            </Heading>
-            <Text className="mt-4 text-primary/80">
-              Dynamic featured product rows and collections make it easy to showcase what matters most.
-            </Text>
-          </div>
-        </div>
-      </Section>
+      <LandingHero />
+      <FeatureBlocks />
+      <WhyChooseSection />
 
       {featuredProducts && (
         <Suspense>
@@ -178,54 +140,124 @@ export default function Homepage() {
   );
 }
 
-function LandingHero({shop}: {shop?: {name?: string; description?: string}}) {
+function LandingHero() {
   return (
-    <section className="bg-contrast text-primary">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-24">
-        <div className="max-w-2xl">
-          <Text color="subtle" size="fine" className="inline-flex rounded-full border border-primary/10 px-3 py-1 uppercase tracking-[0.28em] text-primary/80">
-            Modern Shopify storefront
-          </Text>
+    <section className="relative w-screen overflow-hidden">
+      <div className="relative left-1/2 right-1/2 mx-[calc(50%-50vw)] w-screen">
+        <img
+          src="https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973&width=2000"
+          alt="Electronic sales promotion banner"
+          className="block w-full object-cover"
+          style={{ minHeight: '360px' }}
+          loading="eager"
+        />
+      </div>
+    </section>
+  );
+}
 
-          <Heading as="h1" size="display" className="mt-6 leading-tight text-4xl sm:text-5xl lg:text-6xl">
-            {shop?.name ?? 'Cyberteleshop'}
+function FeatureBlocks() {
+  return (
+    <Section padding="y" divider="top" className="bg-primary/5">
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 lg:grid-cols-4 lg:px-8">
+        <ComparisonCard
+          title="💵 COD"
+          description="Available nationwide"
+        />
+        <ComparisonCard
+          title="🚚 Fast Delivery"
+          description="1-3 Days in major cities"
+        />
+        <ComparisonCard
+          title="🔄 Money-Back Guarantee"
+          description="15 days refund policy"
+        />
+        <ComparisonCard
+          title="🔓 Allow to open"
+          description="Check before payment"
+        />
+      </div>
+    </Section>
+  );
+}
+
+function ComparisonCard({title, description}: {title: string; description: string}) {
+  return (
+    <div className="rounded-[2rem] border border-primary/10 bg-contrast/95 p-8 shadow-sm">
+      <Heading size="lead" className="text-copy">
+        {title}
+      </Heading>
+      <Text className="mt-3 text-primary/80">{description}</Text>
+    </div>
+  );
+}
+
+function WhyChooseSection() {
+  return (
+    <Section padding="y" className="bg-contrast">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <div className="flex flex-col justify-center gap-6">
+          <Text
+            color="subtle"
+            size="fine"
+            className="uppercase tracking-[0.24em] text-primary/80"
+          >
+            Why Choose Our Store
+          </Text>
+          <Heading size="heading" className="max-w-xl">
+            Trusted shopping with flexible payment and fast delivery.
           </Heading>
-
-          <Text size="lead" className="mt-6 max-w-2xl text-primary/80">
-            {shop?.description ||
-              'A fully responsive and minimal Shopify storefront for modern brands. Explore fresh products, curated collections, and seamless browsing across all devices.'}
-          </Text>
-
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Button to="/collections/all" variant="primary">
-              Browse all products
-            </Button>
-            <Button to="/search" variant="secondary">
-              Search the store
-            </Button>
+          <div className="grid gap-4 text-primary/80">
+            <FeatureRow label="💵 COD" detail="Pay cash on delivery, available nationwide." />
+            <FeatureRow label="🚚 Fast Delivery" detail="1-3 days in major metro cities." />
+            <FeatureRow label="🔄 Money-Back Guarantee" detail="15 days refund policy for peace of mind." />
+            <FeatureRow label="🔓 Allow to open" detail="Inspect your order before you pay." />
           </div>
+          <Text className="text-sm text-primary/70">
+            <a
+              href="https://www.cyberteleshop.com/privacy.html"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-primary transition hover:text-notice"
+            >
+              Privacy Policy
+            </a>
+          </Text>
         </div>
 
-        <div className="grid gap-5">
-          <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 shadow-sm">
-            <Heading size="copy" className="text-copy">
-              Minimal palette, bold accents
-            </Heading>
-            <Text className="mt-4 text-primary/80">
-              Light charcoal backgrounds with modern orange highlights create an elegant, premium shopping experience.
-            </Text>
-          </div>
-          <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 shadow-sm">
-            <Heading size="copy" className="text-copy">
-              Clear product storytelling
-            </Heading>
-            <Text className="mt-4 text-primary/80">
-              Use collections and featured products to guide shoppers from discovery to checkout with ease.
-            </Text>
+        <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 shadow-sm">
+          <Text size="lead" className="text-primary/80">
+            Our store combines speed, transparency, and trusted buyer protection so your customers feel confident each step of the way.
+          </Text>
+          <div className="mt-8 grid gap-4">
+            <StatLabel label="COD" value="Nationwide availability" />
+            <StatLabel label="Shipping" value="1-3 days in major cities" />
+            <StatLabel label="Returns" value="15-day money-back policy" />
+            <StatLabel label="Inspection" value="Open before payment" />
           </div>
         </div>
       </div>
-    </section>
+    </Section>
+  );
+}
+
+function FeatureRow({label, detail}: {label: string; detail: string}) {
+  return (
+    <div className="rounded-3xl border border-primary/10 bg-contrast/90 p-5">
+      <Heading size="copy" className="text-copy">
+        {label}
+      </Heading>
+      <Text className="mt-2 text-primary/80">{detail}</Text>
+    </div>
+  );
+}
+
+function StatLabel({label, value}: {label: string; value: string}) {
+  return (
+    <div className="rounded-3xl bg-contrast/95 p-5">
+      <Text className="font-semibold text-primary">{label}</Text>
+      <Text className="mt-2 text-primary/80">{value}</Text>
+    </div>
   );
 }
 
