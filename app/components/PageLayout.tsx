@@ -180,8 +180,6 @@ function MobileHeader({
   openCart: () => void;
   openMenu: () => void;
 }) {
-  // useHeaderStyleFix(containerStyle, setContainerStyle, isHome);
-
   const params = useParams();
 
   return (
@@ -189,56 +187,55 @@ function MobileHeader({
       role="banner"
       className={`${
         isHome
-          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
-          : 'bg-contrast/80 text-primary'
-      } flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
+          ? 'bg-primary/90 text-contrast shadow-darkHeader border-b border-contrast/10'
+          : 'bg-contrast/95 text-primary border-b border-primary/10'
+      } flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6`}
     >
-      <div className="flex items-center justify-start w-full gap-4">
-        <button
-          onClick={openMenu}
-          className="relative flex items-center justify-center w-8 h-8"
-        >
-          <IconMenu />
-        </button>
-        <Form
-          method="get"
-          action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="items-center gap-2 sm:flex"
-        >
-          <button
-            type="submit"
-            className="relative flex items-center justify-center w-8 h-8"
-          >
-            <IconSearch />
-          </button>
-          <Input
-            className={
-              isHome
-                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
-                : 'focus:border-primary/20'
-            }
-            type="search"
-            variant="minisearch"
-            placeholder="Search"
-            name="q"
-          />
-        </Form>
-      </div>
+      <button
+        onClick={openMenu}
+        className="flex items-center justify-center h-10 w-10 rounded-full border border-primary/10 bg-contrast/90 text-current transition hover:border-primary/20 hover:bg-contrast"
+      >
+        <IconMenu />
+      </button>
 
       <Link
-        className="flex items-center self-stretch leading-[3rem] md:leading-[4rem] justify-center flex-grow w-full h-full"
+        className="flex-1 text-center"
         to="/"
+        prefetch="intent"
       >
         <Heading
-          className="font-bold text-center leading-none"
+          className="font-black tracking-[0.24em] text-sm uppercase"
           as={isHome ? 'h1' : 'h2'}
         >
           {title}
         </Heading>
       </Link>
 
-      <div className="flex items-center justify-end w-full gap-4">
-        <AccountLink className="relative flex items-center justify-center w-8 h-8" />
+      <div className="flex items-center gap-3">
+        <Form
+          method="get"
+          action={params.locale ? `/${params.locale}/search` : '/search'}
+          className="hidden sm:flex items-center gap-2 rounded-full border border-primary/10 bg-contrast/90 px-3 py-2 shadow-sm"
+        >
+          <IconSearch className="text-primary/70" />
+          <Input
+            className="bg-transparent border-0 p-0 text-sm placeholder:text-primary/60 focus:ring-0"
+            type="search"
+            variant="minisearch"
+            placeholder="Search"
+            name="q"
+          />
+        </Form>
+
+        <button
+          type="submit"
+          form={params.locale ? `/${params.locale}/search` : '/search'}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 text-current transition hover:border-primary/20 hover:bg-contrast"
+        >
+          <IconSearch />
+        </button>
+
+        <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 transition hover:border-primary/20 hover:bg-contrast" />
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
@@ -263,18 +260,20 @@ function DesktopHeader({
       role="banner"
       className={`${
         isHome
-          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
-          : 'bg-contrast/80 text-primary'
-      } ${
-        !isHome && y > 50 && ' shadow-lightHeader'
-      } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
+          ? 'bg-primary/90 text-contrast shadow-darkHeader border-b border-contrast/10'
+          : 'bg-contrast/95 text-primary border-b border-primary/10'
+      } ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-12`}
     >
-      <div className="flex gap-12">
-        <Link className="font-bold" to="/" prefetch="intent">
+      <div className="flex items-center gap-10">
+        <Link
+          className="inline-flex items-center rounded-full border border-primary/10 bg-contrast/90 px-4 py-2 text-base font-bold uppercase tracking-[0.14em] transition hover:border-primary/20 hover:bg-contrast"
+          to="/"
+          prefetch="intent"
+        >
           {title}
         </Link>
-        <nav className="flex gap-8">
-          {/* Top level menu items */}
+
+        <nav className="flex items-center gap-6">
           {(menu?.items || []).map((item) => (
             <Link
               key={item.id}
@@ -282,7 +281,11 @@ function DesktopHeader({
               target={item.target}
               prefetch="intent"
               className={({isActive}) =>
-                isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
+                `text-sm font-medium tracking-[0.08em] transition ${
+                  isActive
+                    ? 'border-b-2 border-primary text-primary'
+                    : 'text-primary/70 hover:text-primary'
+                }`
               }
             >
               {item.title}
@@ -290,31 +293,23 @@ function DesktopHeader({
           ))}
         </nav>
       </div>
-      <div className="flex items-center gap-1">
+
+      <div className="flex items-center gap-3">
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="flex items-center gap-2"
+          className="hidden lg:flex items-center gap-2 rounded-full border border-primary/10 bg-contrast/90 px-3 py-2 shadow-sm"
         >
+          <IconSearch className="text-primary/70" />
           <Input
-            className={
-              isHome
-                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
-                : 'focus:border-primary/20'
-            }
+            className="bg-transparent border-0 p-0 text-sm placeholder:text-primary/60 focus:ring-0"
             type="search"
             variant="minisearch"
-            placeholder="Search"
+            placeholder="Search products"
             name="q"
           />
-          <button
-            type="submit"
-            className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
-          >
-            <IconSearch />
-          </button>
         </Form>
-        <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
+        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full border border-primary/10 bg-contrast/90 transition hover:border-primary/20 hover:bg-contrast" />
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
