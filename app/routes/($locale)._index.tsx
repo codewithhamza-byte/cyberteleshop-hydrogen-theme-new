@@ -11,6 +11,8 @@ import {Button} from '~/components/Button';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {ProductSwimlane} from '~/components/ProductSwimlane';
 import {Heading, Section, Text} from '~/components/Text';
+import {Link} from '~/components/Link';
+import type {HomepageCategoryCollectionsQuery} from 'storefrontapi.generated';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
@@ -70,9 +72,22 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
+  const categoryCollections = context.storefront
+    .query(CATEGORY_COLLECTIONS_QUERY, {
+      variables: {
+        country,
+        language,
+      },
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+
   return {
     featuredProducts,
     featuredCollections,
+    categoryCollections,
   };
 }
 
@@ -81,12 +96,22 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 };
 
 export default function Homepage() {
-  const {featuredProducts, featuredCollections} =
-    useLoaderData<typeof loader>();
+  const {
+    featuredProducts,
+    featuredCollections,
+    categoryCollections,
+  } = useLoaderData<typeof loader>();
 
   return (
     <>
       <LandingHero />
+      {categoryCollections && (
+        <Suspense>
+          <Await resolve={categoryCollections}>
+            {(response) => <CategorySlider collections={response} />}
+          </Await>
+        </Suspense>
+      )}
       <FeatureBlocks />
       <WhyChooseSection />
 
@@ -142,17 +167,64 @@ export default function Homepage() {
 
 function LandingHero() {
   return (
-    <section className="relative w-screen overflow-hidden">
-      <div className="relative left-1/2 right-1/2 mx-[calc(50%-50vw)] w-screen">
-        <img
-          src="https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973&width=2000"
-          alt="Electronic sales promotion banner"
-          className="block w-full object-cover"
-          style={{ minHeight: '360px' }}
-          loading="eager"
-        />
-      </div>
+    <section className="w-full overflow-hidden bg-contrast">
+      <img
+        src="https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973&width=2000"
+        alt="Electronic sales promotion banner"
+        className="block h-[26rem] w-full object-cover sm:h-[32rem] md:h-[38rem] lg:h-[46rem]"
+        loading="eager"
+      />
     </section>
+  );
+}
+
+function CategorySlider({
+  collections,
+}: {
+  collections?: HomepageCategoryCollectionsQuery | null;
+}) {
+  const items = collections?.collections?.nodes ?? [];
+  if (items.length === 0) return null;
+
+  return (
+    <Section padding="y" className="bg-contrast">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Heading size="heading">Shop by category</Heading>
+            <Text className="mt-3 max-w-2xl text-primary/80">
+              Browse top collections in a modern layout built for fast discovery.
+            </Text>
+          </div>
+          <Button to="/collections/all" variant="inline">
+            View all categories
+          </Button>
+        </div>
+
+        <div className="mt-8 overflow-x-auto pb-4">
+          <div className="grid auto-cols-[minmax(220px,1fr)] grid-flow-col gap-4 lg:grid-flow-row lg:grid-cols-6">
+            {items.map((collection) => (
+              <Link
+                key={collection.id}
+                to={`/collections/${collection.handle}`}
+                className="group block min-w-[220px] rounded-[2rem] border border-primary/10 bg-contrast/95 p-4 transition hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className="overflow-hidden rounded-[1.75rem] bg-primary/5">
+                  <img
+                    src={collection.image?.url || ''}
+                    alt={collection.image?.altText || collection.title}
+                    className="h-36 w-full object-cover"
+                  />
+                </div>
+                <Heading size="copy" className="mt-4 text-copy">
+                  {collection.title}
+                </Heading>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Section>
   );
 }
 
@@ -266,6 +338,23 @@ const HOMEPAGE_SEO_QUERY = `#graphql
     shop {
       name
       description
+    }
+  }
+` as const;
+
+export const CATEGORY_COLLECTIONS_QUERY = `#graphql
+  query homepageCategoryCollections($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    collections(first: 6, sortKey: UPDATED_AT) {
+      nodes {
+        id
+        title
+        handle
+        image {
+          altText
+          url
+        }
+      }
     }
   }
 ` as const;

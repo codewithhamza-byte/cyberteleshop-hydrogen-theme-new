@@ -24,6 +24,12 @@ export default async function handleRequest(
       'https://www.googletagmanager.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
+    imgSrc: [
+      'self',
+      'https://www.cyberteleshop.com',
+      'https://cdn.shopify.com',
+      'data:',
+    ],
   });
 
   const body = await renderToReadableStream(
