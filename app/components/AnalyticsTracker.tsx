@@ -46,7 +46,15 @@ export function AnalyticsTracker({
       console.log(`[Analytics] Initializing Meta Pixel with ID: ${metaPixelId}`);
       const fbInstance = (window as any).fbq;
       if (!fbInstance) {
-        !(function (f: any, b: any, e: any, v: any, n: any, t: any, s: any) {
+        const initFB = function (
+          f: any,
+          b: any,
+          e: any,
+          v: any,
+          n?: any,
+          t?: any,
+          s?: any,
+        ) {
           if (f.fbq) return;
           n = f.fbq = function () {
             n.callMethod
@@ -63,7 +71,8 @@ export function AnalyticsTracker({
           t.src = v;
           s = b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t, s);
-        })(
+        };
+        initFB(
           window,
           document,
           'script',
@@ -168,16 +177,16 @@ export function AnalyticsTracker({
     };
 
     // Subscriptions
-    const unsubPage = subscribe('page_viewed', (data) => fireEvent('page_viewed', data));
-    const unsubProduct = subscribe('product_viewed', (data) => fireEvent('product_viewed', data));
-    const unsubCart = subscribe('cart_updated', (data) => fireEvent('cart_updated', data));
-    const unsubSearch = subscribe('search_viewed', (data) => fireEvent('search_viewed', data));
+    const unsubPage = subscribe('page_viewed', (data) => fireEvent('page_viewed', data)) as any;
+    const unsubProduct = subscribe('product_viewed', (data) => fireEvent('product_viewed', data)) as any;
+    const unsubCart = subscribe('cart_updated', (data) => fireEvent('cart_updated', data)) as any;
+    const unsubSearch = subscribe('search_viewed', (data) => fireEvent('search_viewed', data)) as any;
 
     return () => {
-      unsubPage();
-      unsubProduct();
-      unsubCart();
-      unsubSearch();
+      if (typeof unsubPage === 'function') unsubPage();
+      if (typeof unsubProduct === 'function') unsubProduct();
+      if (typeof unsubCart === 'function') unsubCart();
+      if (typeof unsubSearch === 'function') unsubSearch();
     };
   }, [subscribe, location]);
 

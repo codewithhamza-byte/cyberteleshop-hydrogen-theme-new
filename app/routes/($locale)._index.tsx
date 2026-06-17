@@ -361,21 +361,6 @@ function CategorySlider({
           </div>
         </div>
 
-        <nav
-          aria-label="Category navigation"
-          className="mt-6 flex items-center gap-3 overflow-x-auto pb-4 text-sm font-semibold text-primary hiddenScroll"
-        >
-          {items.map((collection) => (
-            <Link
-              key={`${collection.id}-nav`}
-              to={`/collections/${collection.handle}`}
-              className="inline-flex whitespace-nowrap rounded-full border border-primary/10 bg-contrast/90 px-4 py-2 transition duration-200 hover:border-primary hover:bg-primary/10"
-            >
-              {collection.title}
-            </Link>
-          ))}
-        </nav>
-
         {/* Categories Slider */}
         <div
           ref={containerRef}
