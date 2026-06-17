@@ -174,15 +174,7 @@ export default function Product() {
 
   const isOutOfStock = !selectedVariant?.availableForSale;
 
-  const [whatsappUrl, setWhatsappUrl] = useState('');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const variantText = selectedVariant?.title !== 'Default Title' ? ` (${selectedVariant?.title})` : '';
-      const text = `Hi CyberTeleshop, I'd like to order:\n\n*Product:* ${title}${variantText}\n*Price:* ${selectedVariant?.price?.amount} ${selectedVariant?.price?.currencyCode}\n*URL:* ${window.location.href}`;
-      setWhatsappUrl(`https://wa.me/923146257174?text=${encodeURIComponent(text)}`);
-    }
-  }, [title, selectedVariant?.title, selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode]);
 
   return (
     <>
@@ -694,23 +686,12 @@ export default function Product() {
           </div>
           <div className="flex items-center gap-2">
             {!isOutOfStock ? (
-              <>
-                <AddToCartButton
-                  lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
-                  className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-4 rounded-xl text-xs shadow-md shadow-[#D33E13]/10"
-                >
-                  Add
-                </AddToCartButton>
-                <a
-                  href={whatsappUrl || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-3.5 rounded-xl text-xs shadow-md flex items-center gap-1"
-                >
-                  <WhatsAppIcon className="w-4 h-4 fill-white" />
-                  Order
-                </a>
-              </>
+              <AddToCartButton
+                lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
+                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-5 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
+              >
+                Add to Cart
+              </AddToCartButton>
             ) : (
               <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl">Sold Out</span>
             )}
@@ -751,15 +732,7 @@ export function ProductForm({
     }
   }, [product.id]);
 
-  const [whatsappUrl, setWhatsappUrl] = useState('');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const variantText = selectedVariant?.title !== 'Default Title' ? ` (${selectedVariant?.title})` : '';
-      const text = `Hi CyberTeleshop, I'd like to order:\n\n*Product:* ${product.title}${variantText}\n*Price:* ${selectedVariant?.price?.amount} ${selectedVariant?.price?.currencyCode}\n*Quantity:* ${quantity}\n*URL:* ${window.location.href}`;
-      setWhatsappUrl(`https://wa.me/923146257174?text=${encodeURIComponent(text)}`);
-    }
-  }, [product.title, selectedVariant?.title, selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode, quantity]);
 
   const toggleWishlist = () => {
     if (typeof window !== 'undefined') {
@@ -993,32 +966,21 @@ export function ProductForm({
               </button>
             </div>
 
-            {/* Row 2: Buy It Now Checkout CTA & WhatsApp direct checkout */}
+            {/* Row 2: Buy It Now Checkout CTA */}
             {!isOutOfStock && (
               <>
-                <div className="flex flex-col sm:flex-row gap-3 mt-1">
-                  <button
-                    onClick={() => {
-                      const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
-                        'gid://shopify/ProductVariant/',
-                        '',
-                      )}:${quantity}`;
-                      window.location.href = checkoutUrl;
-                    }}
-                    className="flex-1 bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-sm md:text-base tracking-wide uppercase active:scale-[0.98]"
-                  >
-                    Buy it now
-                  </button>
-                  <a
-                    href={whatsappUrl || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center gap-2 text-sm md:text-base tracking-wide uppercase active:scale-[0.98]"
-                  >
-                    <WhatsAppIcon className="w-5 h-5 fill-white" />
-                    Order on WhatsApp
-                  </a>
-                </div>
+                <button
+                  onClick={() => {
+                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                      'gid://shopify/ProductVariant/',
+                      '',
+                    )}:${quantity}`;
+                    window.location.href = checkoutUrl;
+                  }}
+                  className="w-full bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
+                >
+                  Buy it now
+                </button>
 
                 {/* Secure Checkout Badges */}
                 <div className="flex flex-col items-center gap-2 mt-4 py-2 border-t border-gray-100">
@@ -1168,13 +1130,7 @@ function ChevronRightIcon(props: React.ComponentProps<'svg'>) {
   );
 }
 
-function WhatsAppIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <path d="M12.012 2C6.48 2 2.004 6.48 2.004 12.012c0 2.22.732 4.272 1.968 5.928L2.004 22l4.248-1.92c1.62.96 3.492 1.512 5.508 1.512 5.532 0 10.008-4.476 10.008-10.008C21.768 6.48 17.52 2 12.012 2zm5.796 14.316c-.24.684-1.212 1.26-1.668 1.344-.456.096-.9-.096-2.916-.9-2.58-1.032-4.224-3.66-4.356-3.84-.132-.18-1.056-1.404-1.056-2.676 0-1.272.66-1.896.9-2.148.24-.252.528-.312.708-.312.18 0 .36 0 .516.012.168.012.396-.06.612.456.228.54.78 1.908.852 2.052.072.144.12.312.024.504-.096.192-.144.312-.288.48-.144.168-.312.384-.444.516-.156.156-.324.324-.132.66.192.324.852 1.404 1.824 2.268.972.864 1.788 1.14 2.088 1.284.3.144.48.12.66-.084.18-.204.78-.9 1-.192.216.3.708 1.008 1.416 1.344.708.348 1.188.18 1.368.108.18-.084.816-.336 1.056-.996z"/>
-    </svg>
-  );
-}
+
 
 function GridIcon(props: React.ComponentProps<'svg'>) {
   return (
