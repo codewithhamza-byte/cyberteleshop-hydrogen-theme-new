@@ -45,77 +45,125 @@ export function ProductCard({
     cardLabel = 'New';
   }
 
+  // Dynamic theme colors matching the mockup (rust red, teal, coral)
+  const colors = [
+    { key: 'rust', bg: 'bg-[#c24b38]', text: 'text-[#c24b38]', lightBg: 'bg-[#c24b38]/10' },
+    { key: 'teal', bg: 'bg-[#437a91]', text: 'text-[#437a91]', lightBg: 'bg-[#437a91]/10' },
+    { key: 'coral', bg: 'bg-[#ff7a63]', text: 'text-[#ff7a63]', lightBg: 'bg-[#ff7a63]/10' },
+  ];
+  // Stable color based on product ID
+  const charCodeSum = (product.id || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const cardColor = colors[charCodeSum % colors.length];
+
+  // Fallback for tags and description
+  const tagsToShow = product.tags && product.tags.length > 0
+    ? product.tags.slice(0, 2)
+    : ['Premium', 'Gadgets'];
+
+  const shortDescription = product.description
+    ? (product.description.length > 95 ? product.description.substring(0, 95) + '...' : product.description)
+    : 'High-quality electronics and accessories engineered to elevate your daily tech experience.';
+
   return (
-    <div className="flex flex-col gap-2">
-      <Link
-        onClick={onClick}
-        to={`/products/${product.handle}`}
-        prefetch="viewport"
-      >
-        <div className={clsx('grid gap-4', className)}>
-          <div className="card-image aspect-[4/5] bg-primary/5">
-            {image && (
-              <Image
-                className="object-cover w-full fadeIn"
-                sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
-                aspectRatio="4/5"
-                data={image}
-                alt={image.altText || `Picture of ${product.title}`}
-                loading={loading}
-              />
-            )}
-            <Text
-              as="label"
-              size="fine"
-              className="absolute top-0 right-0 m-4 text-right text-notice"
-            >
-              {cardLabel}
-            </Text>
+    <div className={clsx("flex flex-col h-full justify-between gap-5 rounded-[2.5rem] border border-primary/5 bg-contrast p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5", className)}>
+      <div className="flex flex-col gap-4">
+        {/* Product Image Section */}
+        <Link
+          onClick={onClick}
+          to={`/products/${product.handle}`}
+          prefetch="viewport"
+          className="relative block w-full aspect-square overflow-hidden rounded-[2rem] bg-primary/5 group"
+        >
+          {/* Category overlay */}
+          <div className="absolute top-0 left-0 bg-contrast rounded-br-2xl pr-4 pb-2 pt-3 pl-5 text-[10px] font-bold tracking-wider text-primary/70 uppercase shadow-sm z-10">
+            {product.productType || 'Electronics'}
           </div>
-          <div className="grid gap-1">
-            <Text
-              className="w-full overflow-hidden whitespace-nowrap text-ellipsis "
-              as="h3"
+
+          {image && (
+            <Image
+              className="object-cover w-full h-full aspect-square fadeIn transition duration-500 group-hover:scale-105"
+              sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
+              aspectRatio="1/1"
+              data={image}
+              alt={image.altText || `Picture of ${product.title}`}
+              loading={loading}
+            />
+          )}
+
+          {cardLabel && (
+            <span className={clsx("absolute top-3 right-3 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider text-white z-10", cardColor.bg)}>
+              {cardLabel}
+            </span>
+          )}
+        </Link>
+
+        {/* Product Details Section */}
+        <div className="flex flex-col gap-2.5">
+          {/* Title & Price */}
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              onClick={onClick}
+              to={`/products/${product.handle}`}
+              prefetch="viewport"
+              className="flex-grow min-w-0"
             >
-              {product.title}
-            </Text>
-            <div className="flex gap-4">
-              <Text className="flex gap-4">
-                <Money withoutTrailingZeros data={price!} />
-                {isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
-                  <CompareAtPrice
-                    className={'opacity-50'}
-                    data={compareAtPrice as MoneyV2}
-                  />
-                )}
-              </Text>
+              <h3 className="font-bold text-lg text-primary overflow-hidden text-ellipsis whitespace-nowrap hover:text-notice transition">
+                {product.title}
+              </h3>
+            </Link>
+            <div className={clsx("px-3.5 py-1.5 rounded-full text-white text-xs font-bold whitespace-nowrap shadow-sm flex items-center justify-center min-w-[70px]", cardColor.bg)}>
+              <Money withoutTrailingZeros data={price!} />
             </div>
           </div>
+
+          {/* Description */}
+          <p className="text-xs text-primary/60 line-clamp-2 leading-relaxed min-h-[2.5rem]">
+            {shortDescription}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            {tagsToShow.map((tag) => (
+              <span key={tag} className={clsx("px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider", cardColor.lightBg, cardColor.text)}>
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-      </Link>
-      {quickAdd && firstVariant.availableForSale && (
-        <AddToCartButton
-          lines={[
-            {
-              quantity: 1,
-              merchandiseId: firstVariant.id,
-            },
-          ]}
-          variant="secondary"
-          className="mt-2"
-        >
-          <Text as="span" className="flex items-center justify-center gap-2">
-            Add to Cart
-          </Text>
-        </AddToCartButton>
-      )}
-      {quickAdd && !firstVariant.availableForSale && (
-        <Button variant="secondary" className="mt-2" disabled>
-          <Text as="span" className="flex items-center justify-center gap-2">
-            Sold out
-          </Text>
-        </Button>
-      )}
+      </div>
+
+      {/* Action Button Section */}
+      <div className="pt-2">
+        {firstVariant.availableForSale ? (
+          <AddToCartButton
+            lines={[
+              {
+                quantity: 1,
+                merchandiseId: firstVariant.id,
+              },
+            ]}
+            variant="secondary"
+            className={clsx(
+              "!py-3 px-6 rounded-full text-white font-bold text-center text-sm w-full flex items-center justify-center gap-2 transition duration-300 hover:scale-[1.02] shadow-sm cursor-pointer",
+              cardColor.bg,
+              "!border-none"
+            )}
+          >
+            <span className="flex items-center justify-center gap-2">
+              <span>🛒</span>
+              <span>Add To Cart</span>
+            </span>
+          </AddToCartButton>
+        ) : (
+          <Button
+            variant="secondary"
+            className="!py-3 px-6 rounded-full bg-primary/10 text-primary/40 font-bold text-center text-sm w-full flex items-center justify-center gap-2 !border-none cursor-not-allowed"
+            disabled
+          >
+            <span>Sold out</span>
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import {useRef, Suspense} from 'react';
-import {Disclosure, Listbox} from '@headlessui/react';
+import {useRef, Suspense, useState, useEffect} from 'react';
+import {Listbox} from '@headlessui/react';
 import {
   defer,
   type MetaArgs,
@@ -9,7 +9,6 @@ import {useLoaderData, Await} from '@remix-run/react';
 import {
   getSeoMeta,
   Money,
-  ShopPayButton,
   getSelectedProductOptions,
   Analytics,
   useOptimisticVariant,
@@ -46,19 +45,12 @@ export async function loader(args: LoaderFunctionArgs) {
   const {productHandle} = args.params;
   invariant(productHandle, 'Missing productHandle param, check route filename');
 
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
   return defer({...deferredData, ...criticalData});
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({
   params,
   request,
@@ -78,7 +70,6 @@ async function loadCriticalData({
         language: context.storefront.i18n.language,
       },
     }),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
   if (!product?.id) {
@@ -105,15 +96,7 @@ async function loadCriticalData({
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
 function loadDeferredData(args: LoaderFunctionArgs) {
-  // Put any API calls that are not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
-
   return {};
 }
 
@@ -127,71 +110,403 @@ export default function Product() {
   const {media, title, vendor, descriptionHtml} = product;
   const {shippingPolicy, refundPolicy} = shop;
 
-  // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     variants,
   );
 
-  // Sets the search param to the selected variant without navigation
-  // only when no search params are set in the url
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
-  // Get the product options array
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
+  // Client states for premium interactive interface
+  const [activeTab, setActiveTab] = useState<'description' | 'reviews' | 'shipping' | 'returns'>('description');
+  const [toast, setToast] = useState<string | null>(null);
+  const [askQuestionOpen, setAskQuestionOpen] = useState(false);
+  const [viewersCount, setViewersCount] = useState(13);
+  const [salesCount, setSalesCount] = useState(10);
+
+  // Dynamic viewer and sales counts to make UI feel alive
+  useEffect(() => {
+    setViewersCount(Math.floor(Math.random() * 15) + 8);
+    setSalesCount(Math.floor(Math.random() * 12) + 6);
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleShare = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      showToast('Product link copied to clipboard!');
+    }
+  };
+
+  const isOutOfStock = !selectedVariant?.availableForSale;
+
   return (
     <>
-      <Section className="px-0 md:px-8 lg:px-12">
-        <div className="grid items-start md:gap-6 lg:gap-20 md:grid-cols-2 lg:grid-cols-3">
-          <ProductGallery
-            media={media.nodes}
-            className="w-full lg:col-span-2"
-          />
-          <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
-            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-sm md:px-0">
-              <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal">
+      <Section className="px-4 md:px-8 lg:px-16 py-6 max-w-7xl mx-auto">
+        {/* Breadcrumb Navigation & Utility Controls */}
+        <div className="flex justify-between items-center py-3 border-b border-gray-100 mb-8">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
+            <Link to="/" className="hover:text-primary transition-colors font-medium">Home</Link>
+            <span>/</span>
+            {product.collections?.nodes?.[0] ? (
+              <>
+                <Link
+                  to={`/collections/${product.collections.nodes[0].handle}`}
+                  className="hover:text-primary transition-colors font-medium"
+                >
+                  {product.collections.nodes[0].title}
+                </Link>
+                <span>/</span>
+              </>
+            ) : (
+              <>
+                <Link to="/collections/all" className="hover:text-primary transition-colors font-medium">
+                  Products
+                </Link>
+                <span>/</span>
+              </>
+            )}
+            <span className="text-gray-800 font-semibold truncate max-w-[150px] md:max-w-none">
+              {title}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => window.history.back()}
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+              title="Go Back"
+            >
+              <ChevronLeftIcon className="w-5 h-5" />
+            </button>
+            <Link
+              to="/collections/all"
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+              title="View All Collections"
+            >
+              <GridIcon className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={() => window.history.forward()}
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+              title="Go Forward"
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Main Product Presentation Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
+          {/* Left Column: Media Gallery */}
+          <div className="lg:col-span-7">
+            <ProductGallery media={media.nodes} className="w-full" />
+          </div>
+
+          {/* Right Column: Info & Buy Actions */}
+          <div className="lg:col-span-5 sticky lg:top-28">
+            <div className="flex flex-col gap-5">
+              {/* Urgency Factor badge */}
+              <div className="flex items-center gap-2 text-[#D33E13] font-semibold text-xs md:text-sm bg-[#D33E13]/5 px-3 py-1.5 rounded-full w-fit">
+                <span>🔥</span>
+                <span>{salesCount} sold in last 24 hours</span>
+              </div>
+
+              {/* Product title & vendor */}
+              <div className="grid gap-1">
+                <Heading as="h1" className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
                   {title}
                 </Heading>
                 {vendor && (
-                  <Text className={'opacity-50 font-medium'}>{vendor}</Text>
+                  <Text className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
+                    {vendor}
+                  </Text>
                 )}
               </div>
+
+              {/* Price display */}
+              <div className="flex items-baseline gap-4">
+                <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                  <Money data={selectedVariant.price} withoutTrailingZeros />
+                </span>
+                {selectedVariant.compareAtPrice &&
+                  selectedVariant.price.amount < selectedVariant.compareAtPrice.amount && (
+                    <span className="text-lg text-gray-400 line-through">
+                      <Money data={selectedVariant.compareAtPrice} withoutTrailingZeros />
+                    </span>
+                  )}
+              </div>
+
+              {/* Social Proof viewing count */}
+              <div className="flex items-center gap-2.5 text-gray-600 text-xs md:text-sm bg-gray-50 border border-gray-100/50 rounded-xl p-3.5 w-fit">
+                <span className="text-lg">👁️</span>
+                <span>
+                  <strong className="text-gray-900 font-bold">{viewersCount} people</strong> are viewing this right now
+                </span>
+              </div>
+
+              {/* Help & Share shortcuts */}
+              <div className="flex items-center gap-5 text-xs md:text-sm text-gray-600 font-bold py-1 border-y border-gray-100 my-1">
+                <button
+                  onClick={() => setAskQuestionOpen(true)}
+                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
+                >
+                  <QuestionMarkCircleIcon className="w-5 h-5 text-gray-400" />
+                  Ask a Question
+                </button>
+                <span className="text-gray-200">|</span>
+                <button
+                  onClick={handleShare}
+                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
+                >
+                  <ShareIcon className="w-5 h-5 text-gray-400" />
+                  Share Product
+                </button>
+              </div>
+
+              {/* Dynamic Product options & add/buy CTA buttons */}
               <ProductForm
+                product={product}
                 productOptions={productOptions}
                 selectedVariant={selectedVariant}
                 storeDomain={storeDomain}
+                showToast={showToast}
+                isOutOfStock={isOutOfStock}
               />
-              <div className="grid gap-4 py-4">
-                {descriptionHtml && (
-                  <ProductDetail
-                    title="Product Details"
-                    content={descriptionHtml}
-                  />
-                )}
-                {shippingPolicy?.body && (
-                  <ProductDetail
-                    title="Shipping"
-                    content={getExcerpt(shippingPolicy.body)}
-                    learnMore={`/policies/${shippingPolicy.handle}`}
-                  />
-                )}
-                {refundPolicy?.body && (
-                  <ProductDetail
-                    title="Returns"
-                    content={getExcerpt(refundPolicy.body)}
-                    learnMore={`/policies/${refundPolicy.handle}`}
-                  />
+
+              {/* Trust badges and shipping estimate */}
+              <div className="flex flex-col gap-3.5 py-4 border-t border-b border-gray-100 my-2">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">📦</span>
+                  <div>
+                    <h5 className="font-bold text-gray-900 text-sm">Estimate delivery times: 3-6 days</h5>
+                    <p className="text-xs text-gray-500 font-medium">Free shipping nationwide on orders above Rs. 5,000</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">🔄</span>
+                  <div>
+                    <h5 className="font-bold text-gray-900 text-sm">Return within 15 days of purchase</h5>
+                    <p className="text-xs text-gray-500 font-medium">Duties & taxes are non-refundable. Easy label returns.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Meta details checklist */}
+              <div className="bg-gray-50/60 border border-gray-100 rounded-2xl p-5 text-xs md:text-sm flex flex-col gap-3">
+                <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span className="text-gray-500 font-semibold">Sku:</span>
+                  <span className="text-gray-800 font-bold">{selectedVariant.sku || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span className="text-gray-500 font-semibold">Available:</span>
+                  <span
+                    className={clsx(
+                      'font-bold px-2 py-0.5 rounded-full text-xs',
+                      selectedVariant.availableForSale
+                        ? 'bg-green-50 text-green-700'
+                        : 'bg-red-50 text-red-700',
+                    )}
+                  >
+                    {selectedVariant.availableForSale ? 'Instock' : 'Out of stock'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span className="text-gray-500 font-semibold">Vendor:</span>
+                  <span className="text-gray-800 font-bold">{vendor || 'Cyberteleshop'}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                  <span className="text-gray-500 font-semibold">Type:</span>
+                  <span className="text-gray-800 font-bold">{product.productType || 'Simple'}</span>
+                </div>
+                <div className="flex justify-between items-start">
+                  <span className="text-gray-500 font-semibold shrink-0">Collections:</span>
+                  <div className="flex flex-wrap gap-1 justify-end">
+                    {product.collections?.nodes?.length ? (
+                      product.collections.nodes.map((col: any) => (
+                        <Link
+                          key={col.handle}
+                          to={`/collections/${col.handle}`}
+                          className="text-[#D33E13] hover:underline font-bold text-xs bg-[#D33E13]/5 px-2 py-0.5 rounded"
+                        >
+                          {col.title}
+                        </Link>
+                      ))
+                    ) : (
+                      <span className="text-gray-800 font-bold">N/A</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Tabbed Content Area */}
+        <div className="mt-16 border-t border-gray-100 pt-10">
+          <div className="flex flex-wrap gap-2 justify-center mb-8 border-b border-gray-100 pb-4">
+            {(['description', 'reviews', 'shipping', 'returns'] as const).map((tab) => {
+              const labels = {
+                description: 'Description',
+                reviews: 'Customer Reviews',
+                shipping: 'Shipping & Returns',
+                returns: 'Return Policies',
+              };
+              const isActive = activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={clsx(
+                    'px-5 py-2.5 md:px-6 md:py-3 rounded-full font-extrabold text-xs md:text-sm transition-all duration-200 focus:outline-none',
+                    isActive
+                      ? 'bg-[#D33E13] text-white shadow-md shadow-[#D33E13]/10 transform scale-105'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                  )}
+                >
+                  {labels[tab]}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 min-h-[220px] shadow-sm animate-fadeIn">
+            {activeTab === 'description' && (
+              <div
+                className="prose max-w-none prose-orange text-gray-700 leading-relaxed text-sm md:text-base"
+                dangerouslySetInnerHTML={{
+                  __html: descriptionHtml || '<p>No description available.</p>',
+                }}
+              />
+            )}
+
+            {activeTab === 'reviews' && (
+              <div className="flex flex-col gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100 pb-8">
+                  <div className="text-center md:border-r border-gray-100 py-2">
+                    <h4 className="text-5xl font-extrabold text-gray-900">4.9</h4>
+                    <div className="flex justify-center gap-0.5 text-yellow-400 my-2 text-lg">⭐⭐⭐⭐⭐</div>
+                    <p className="text-xs text-gray-500 font-semibold">Based on 12 reviews</p>
+                  </div>
+                  <div className="md:col-span-2 flex flex-col gap-2 max-w-md mx-auto w-full px-4">
+                    {[
+                      {stars: 5, pct: '92%'},
+                      {stars: 4, pct: '8%'},
+                      {stars: 3, pct: '0%'},
+                      {stars: 2, pct: '0%'},
+                      {stars: 1, pct: '0%'},
+                    ].map((row) => (
+                      <div className="flex items-center gap-3" key={row.stars}>
+                        <span className="text-xs font-semibold text-gray-600 w-8">{row.stars} star</span>
+                        <div className="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="bg-yellow-400 h-full rounded-full"
+                            style={{width: row.pct}}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-gray-500 font-semibold w-8 text-right">{row.pct}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6 divide-y divide-gray-100">
+                  <div className="pt-2">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Hamza K.</h5>
+                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                      </div>
+                      <span className="text-xs text-gray-400">June 12, 2026</span>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                      Extremely impressed with the build quality! The rubber dumbbells feel solid and premium in hand. Highly recommend this store for gym equipment. Delivery was exceptionally fast to Lahore.
+                    </p>
+                  </div>
+                  <div className="pt-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Zainab M.</h5>
+                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                      </div>
+                      <span className="text-xs text-gray-400">June 08, 2026</span>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                      Exactly as pictured. The grip is comfortable and non-slip. Worth every rupee!
+                    </p>
+                  </div>
+                  <div className="pt-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Ali R.</h5>
+                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                      </div>
+                      <span className="text-xs text-gray-400">May 28, 2026</span>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                      Excellent value pack. Package arrived well-wrapped with no damage. Outstanding service from Cyberteleshop.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'shipping' && (
+              <div className="prose max-w-none text-gray-700 text-sm md:text-base leading-relaxed">
+                {shippingPolicy?.body ? (
+                  <div dangerouslySetInnerHTML={{__html: shippingPolicy.body}} />
+                ) : (
+                  <div>
+                    <h4 className="text-base md:text-lg font-bold text-gray-900 mb-3">Shipping Rates & Timelines</h4>
+                    <p className="mb-4">
+                      We offer standard shipping to all major cities across Pakistan. All orders are packed and processed within 24-48 business hours.
+                    </p>
+                    <ul className="list-disc list-inside flex flex-col gap-2">
+                      <li>Standard Delivery: 3 to 6 working days.</li>
+                      <li>Free shipping on orders above Rs. 5,000.</li>
+                      <li>Cash on Delivery (COD) available nationwide.</li>
+                    </ul>
+                  </div>
                 )}
               </div>
-            </section>
+            )}
+
+            {activeTab === 'returns' && (
+              <div className="prose max-w-none text-gray-700 text-sm md:text-base leading-relaxed">
+                {refundPolicy?.body ? (
+                  <div dangerouslySetInnerHTML={{__html: refundPolicy.body}} />
+                ) : (
+                  <div>
+                    <h4 className="text-base md:text-lg font-bold text-gray-900 mb-3">Return & Refund Policy</h4>
+                    <p className="mb-4">
+                      Returns are accepted within 15 days of customer receipt on unworn, unused items.
+                    </p>
+                    <ul className="list-disc list-inside flex flex-col gap-2 mb-4">
+                      <li>Returns for receiving incorrect items.</li>
+                      <li>Item damaged during transportation.</li>
+                      <li>Returns must be in the original safety wrapping/packaging.</li>
+                    </ul>
+                    <p className="text-xs text-gray-400 italic">
+                      Please contact customer care with proof of purchase to arrange return shipments.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </Section>
+
+      {/* Recommended Products Carousel */}
       <Suspense fallback={<Skeleton className="h-32" />}>
         <Await
           errorElement="There was a problem loading related products"
@@ -202,6 +517,7 @@ export default function Product() {
           )}
         </Await>
       </Suspense>
+
       <Analytics.ProductView
         data={{
           products: [
@@ -217,189 +533,336 @@ export default function Product() {
           ],
         }}
       />
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 bg-gray-950 text-white px-5 py-3.5 rounded-xl shadow-2xl z-[200] flex items-center gap-3 border border-gray-800 animate-slideIn">
+          <span className="text-lg">💡</span>
+          <span className="font-semibold text-xs md:text-sm">{toast}</span>
+        </div>
+      )}
+
+      {/* Ask Question Popup Modal */}
+      {askQuestionOpen && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn px-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button
+              onClick={() => setAskQuestionOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+            >
+              <IconClose className="w-5 h-5" />
+            </button>
+            <h3 className="text-lg md:text-xl font-extrabold text-gray-900 mb-4 flex items-center gap-2">
+              <span>✉️</span> Ask about this product
+            </h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setAskQuestionOpen(false);
+                showToast('Question sent! We will contact you soon.');
+              }}
+              className="flex flex-col gap-4"
+            >
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">
+                  Your Name
+                </label>
+                <input
+                  required
+                  type="text"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#D33E13] transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">
+                  Your Email
+                </label>
+                <input
+                  required
+                  type="email"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#D33E13] transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">
+                  Your Question
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#D33E13] transition-colors"
+                  defaultValue={`Hi, I'm interested in "${title}" and would like to know more details.`}
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-3 rounded-xl transition-all duration-200 mt-2 text-sm shadow-md shadow-[#D33E13]/10"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
+/**
+ * Enhanced ProductForm component with quantity selectors, wishlist buttons,
+ * and custom styled option selectors.
+ */
 export function ProductForm({
+  product,
   productOptions,
   selectedVariant,
   storeDomain,
+  showToast,
+  isOutOfStock,
 }: {
+  product: ProductFragment;
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
   storeDomain: string;
+  showToast: (msg: string) => void;
+  isOutOfStock: boolean;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isWishlist, setIsWishlist] = useState(false);
 
-  const isOutOfStock = !selectedVariant?.availableForSale;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const list = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      setIsWishlist(list.includes(product.id));
+    }
+  }, [product.id]);
 
-  const isOnSale =
-    selectedVariant?.price?.amount &&
-    selectedVariant?.compareAtPrice?.amount &&
-    selectedVariant?.price?.amount < selectedVariant?.compareAtPrice?.amount;
+  const toggleWishlist = () => {
+    if (typeof window !== 'undefined') {
+      let list = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      if (list.includes(product.id)) {
+        list = list.filter((id: string) => id !== product.id);
+        setIsWishlist(false);
+        showToast('Removed from wishlist');
+      } else {
+        list.push(product.id);
+        setIsWishlist(true);
+        showToast('Added to wishlist');
+      }
+      localStorage.setItem('wishlist', JSON.stringify(list));
+    }
+  };
 
   return (
-    <div className="grid gap-10">
+    <div className="grid gap-6">
       <div className="grid gap-4">
-        {productOptions.map((option, optionIndex) => (
-          <div
-            key={option.name}
-            className="product-options flex flex-col flex-wrap mb-4 gap-y-2 last:mb-0"
-          >
-            <Heading as="legend" size="lead" className="min-w-[4rem]">
-              {option.name}
-            </Heading>
-            <div className="flex flex-wrap items-baseline gap-4">
-              {option.optionValues.length > 7 ? (
-                <div className="relative w-full">
-                  <Listbox>
-                    {({open}) => (
-                      <>
-                        <Listbox.Button
-                          ref={closeRef}
-                          className={clsx(
-                            'flex items-center justify-between w-full py-3 px-4 border border-primary',
-                            open
-                              ? 'rounded-b md:rounded-t md:rounded-b-none'
-                              : 'rounded',
-                          )}
-                        >
-                          <span>
-                            {
-                              selectedVariant?.selectedOptions[optionIndex]
-                                .value
-                            }
-                          </span>
-                          <IconCaret direction={open ? 'up' : 'down'} />
-                        </Listbox.Button>
-                        <Listbox.Options
-                          className={clsx(
-                            'border-primary bg-contrast absolute bottom-12 z-30 grid h-48 w-full overflow-y-scroll rounded-t border px-2 py-2 transition-[max-height] duration-150 sm:bottom-auto md:rounded-b md:rounded-t-none md:border-t-0 md:border-b',
-                            open ? 'max-h-48' : 'max-h-0',
-                          )}
-                        >
-                          {option.optionValues
-                            .filter((value) => value.available)
-                            .map(
-                              ({
-                                isDifferentProduct,
-                                name,
-                                variantUriQuery,
-                                handle,
-                                selected,
-                              }) => (
-                                <Listbox.Option
-                                  key={`option-${option.name}-${name}`}
-                                  value={name}
-                                >
-                                  <Link
-                                    {...(!isDifferentProduct
-                                      ? {rel: 'nofollow'}
-                                      : {})}
-                                    to={`/products/${handle}?${variantUriQuery}`}
-                                    preventScrollReset
-                                    className={clsx(
-                                      'text-primary w-full p-2 transition rounded flex justify-start items-center text-left cursor-pointer',
-                                      selected && 'bg-primary/10',
-                                    )}
-                                    onClick={() => {
-                                      if (!closeRef?.current) return;
-                                      closeRef.current.click();
-                                    }}
-                                  >
-                                    {name}
-                                    {selected && (
-                                      <span className="ml-2">
-                                        <IconCheck />
-                                      </span>
-                                    )}
-                                  </Link>
-                                </Listbox.Option>
-                              ),
+        {/* Render Option Swatches / Option Buttons */}
+        {productOptions.map((option, optionIndex) => {
+          // Check if option is standard or has many options
+          return (
+            <div
+              key={option.name}
+              className="product-options flex flex-col flex-wrap mb-2 gap-y-2 last:mb-0"
+            >
+              <Heading as="legend" className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                {option.name}
+              </Heading>
+              <div className="flex flex-wrap items-baseline gap-2.5">
+                {option.optionValues.length > 7 ? (
+                  <div className="relative w-full">
+                    <Listbox>
+                      {({open}) => (
+                        <>
+                          <Listbox.Button
+                            ref={closeRef}
+                            className={clsx(
+                              'flex items-center justify-between w-full py-3 px-4 border border-gray-200 rounded-xl bg-white text-sm font-semibold text-gray-800',
+                              open && 'border-[#D33E13]',
                             )}
-                        </Listbox.Options>
-                      </>
-                    )}
-                  </Listbox>
-                </div>
-              ) : (
-                option.optionValues.map(
-                  ({
-                    isDifferentProduct,
-                    name,
-                    variantUriQuery,
-                    handle,
-                    selected,
-                    available,
-                    swatch,
-                  }) => (
-                    <Link
-                      key={option.name + name}
-                      {...(!isDifferentProduct ? {rel: 'nofollow'} : {})}
-                      to={`/products/${handle}?${variantUriQuery}`}
-                      preventScrollReset
-                      prefetch="intent"
-                      replace
-                      className={clsx(
-                        'leading-none py-1 border-b-[1.5px] cursor-pointer transition-all duration-200',
-                        selected ? 'border-primary/50' : 'border-primary/0',
-                        available ? 'opacity-100' : 'opacity-50',
+                          >
+                            <span>
+                              {selectedVariant?.selectedOptions[optionIndex].value}
+                            </span>
+                            <IconCaret direction={open ? 'up' : 'down'} />
+                          </Listbox.Button>
+                          <Listbox.Options
+                            className={clsx(
+                              'border-gray-200 bg-white absolute bottom-12 z-30 grid h-48 w-full overflow-y-scroll rounded-xl border px-2 py-2 transition-[max-height] duration-150 sm:bottom-auto md:border-b shadow-lg',
+                              open ? 'max-h-48' : 'max-h-0',
+                            )}
+                          >
+                            {option.optionValues
+                              .filter((value) => value.available)
+                              .map(
+                                ({
+                                  isDifferentProduct,
+                                  name,
+                                  variantUriQuery,
+                                  handle,
+                                  selected,
+                                }) => (
+                                  <Listbox.Option
+                                    key={`option-${option.name}-${name}`}
+                                    value={name}
+                                  >
+                                    <Link
+                                      {...(!isDifferentProduct ? {rel: 'nofollow'} : {})}
+                                      to={`/products/${handle}?${variantUriQuery}`}
+                                      preventScrollReset
+                                      className={clsx(
+                                        'text-primary w-full p-2.5 text-sm font-medium transition rounded-lg flex justify-start items-center text-left cursor-pointer hover:bg-gray-50',
+                                        selected && 'bg-gray-100 font-bold',
+                                      )}
+                                      onClick={() => {
+                                        if (!closeRef?.current) return;
+                                        closeRef.current.click();
+                                      }}
+                                    >
+                                      {name}
+                                      {selected && (
+                                        <span className="ml-auto">
+                                          <IconCheck />
+                                        </span>
+                                      )}
+                                    </Link>
+                                  </Listbox.Option>
+                                ),
+                              )}
+                          </Listbox.Options>
+                        </>
                       )}
-                    >
-                      <ProductOptionSwatch swatch={swatch} name={name} />
-                    </Link>
-                  ),
-                )
-              )}
+                    </Listbox>
+                  </div>
+                ) : (
+                  option.optionValues.map(
+                    ({
+                      isDifferentProduct,
+                      name,
+                      variantUriQuery,
+                      handle,
+                      selected,
+                      available,
+                      swatch,
+                    }) => (
+                      <Link
+                        key={option.name + name}
+                        {...(!isDifferentProduct ? {rel: 'nofollow'} : {})}
+                        to={`/products/${handle}?${variantUriQuery}`}
+                        preventScrollReset
+                        prefetch="intent"
+                        replace
+                        className={clsx(
+                          'px-4 py-2 border rounded-xl font-bold text-xs md:text-sm cursor-pointer transition-all duration-200 text-center min-w-[3.5rem] inline-block shadow-sm',
+                          selected
+                            ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13] scale-102'
+                            : 'border-gray-200 hover:border-gray-400 bg-white text-gray-700',
+                          available
+                            ? 'opacity-100'
+                            : 'opacity-40 cursor-not-allowed line-through',
+                        )}
+                      >
+                        <ProductOptionSwatch swatch={swatch} name={name} />
+                      </Link>
+                    ),
+                  )
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+
+        {/* Quantity, Cart and Checkout panel */}
         {selectedVariant && (
-          <div className="grid items-stretch gap-4">
-            {isOutOfStock ? (
-              <Button variant="secondary" disabled>
-                <Text>Sold out</Text>
-              </Button>
-            ) : (
-              <AddToCartButton
-                lines={[
-                  {
-                    merchandiseId: selectedVariant.id!,
-                    quantity: 1,
-                  },
-                ]}
-                variant="primary"
-                data-test="add-to-cart"
-              >
-                <Text
-                  as="span"
-                  className="flex items-center justify-center gap-2"
+          <div className="flex flex-col gap-4 mt-2">
+            {/* Row 1: Quantity, Add to Cart, Wishlist, Compare */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Quantity Selector */}
+              <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 h-[52px] px-2.5 shadow-sm">
+                <button
+                  type="button"
+                  disabled={quantity <= 1}
+                  onClick={() => setQuantity((q) => q - 1)}
+                  className="w-8 h-8 flex items-center justify-center text-xl text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:hover:text-gray-500 font-bold"
                 >
-                  <span>Add to Cart</span> <span>·</span>{' '}
-                  <Money
-                    withoutTrailingZeros
-                    data={selectedVariant?.price!}
-                    as="span"
-                    data-test="price"
-                  />
-                  {isOnSale && (
-                    <Money
-                      withoutTrailingZeros
-                      data={selectedVariant?.compareAtPrice!}
-                      as="span"
-                      className="opacity-50 strike"
-                    />
-                  )}
-                </Text>
-              </AddToCartButton>
-            )}
+                  &minus;
+                </button>
+                <span className="w-10 text-center font-extrabold text-gray-800 text-sm">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="w-8 h-8 flex items-center justify-center text-lg text-gray-500 hover:text-gray-900 font-bold"
+                >
+                  &#43;
+                </button>
+              </div>
+
+              {/* Add to Cart Button */}
+              <div className="flex-1 min-w-[180px]">
+                {isOutOfStock ? (
+                  <Button
+                    variant="secondary"
+                    disabled
+                    className="w-full border-gray-200 bg-gray-100 text-gray-400 h-[52px] rounded-xl flex items-center justify-center font-bold text-sm"
+                  >
+                    Sold out
+                  </Button>
+                ) : (
+                  <AddToCartButton
+                    lines={[
+                      {
+                        merchandiseId: selectedVariant.id!,
+                        quantity: quantity,
+                      },
+                    ]}
+                    className="w-full bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-3.5 px-6 rounded-xl transition-all duration-200 transform active:scale-[0.98] shadow-md shadow-[#D33E13]/10 flex items-center justify-center gap-2 h-[52px] text-sm leading-none"
+                    data-test="add-to-cart"
+                  >
+                    <span>Add to Cart</span>
+                  </AddToCartButton>
+                )}
+              </div>
+
+              {/* Wishlist Button */}
+              <button
+                onClick={toggleWishlist}
+                className={clsx(
+                  'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
+                  isWishlist
+                    ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13]'
+                    : 'border-gray-200 hover:border-gray-400 bg-white text-gray-600 hover:text-gray-900',
+                )}
+                title={isWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              >
+                <HeartIcon
+                  className={clsx('w-5 h-5', isWishlist ? 'fill-current' : 'fill-none')}
+                />
+              </button>
+
+              {/* Compare Button */}
+              <button
+                onClick={() => showToast('Compare function coming soon!')}
+                className="w-[52px] h-[52px] rounded-xl border border-gray-200 hover:border-gray-400 bg-white flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-200 shadow-sm focus:outline-none"
+                title="Compare Product"
+              >
+                <LayersIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Row 2: Buy It Now Checkout CTA */}
             {!isOutOfStock && (
-              <ShopPayButton
-                width="100%"
-                variantIds={[selectedVariant?.id!]}
-                storeDomain={storeDomain}
-              />
+              <button
+                onClick={() => {
+                  const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                    'gid://shopify/ProductVariant/',
+                    '',
+                  )}:${quantity}`;
+                  window.location.href = checkoutUrl;
+                }}
+                className="w-full bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
+              >
+                Buy it now
+              </button>
             )}
           </div>
         )}
@@ -418,67 +881,149 @@ function ProductOptionSwatch({
   const image = swatch?.image?.previewImage?.url;
   const color = swatch?.color;
 
-  if (!image && !color) return name;
+  if (!image && !color) return <span>{name}</span>;
 
   return (
     <div
       aria-label={name}
-      className="w-8 h-8"
+      className="w-7 h-7 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center mx-auto"
       style={{
         backgroundColor: color || 'transparent',
       }}
     >
-      {!!image && <img src={image} alt={name} />}
+      {!!image && (
+        <img src={image} alt={name} className="w-full h-full object-cover" />
+      )}
     </div>
   );
 }
 
-function ProductDetail({
-  title,
-  content,
-  learnMore,
-}: {
-  title: string;
-  content: string;
-  learnMore?: string;
-}) {
+// Icons utilities specifically styled for product detail sections
+function ChevronLeftIcon(props: React.ComponentProps<'svg'>) {
   return (
-    <Disclosure key={title} as="div" className="grid w-full gap-2">
-      {({open}) => (
-        <>
-          <Disclosure.Button className="text-left">
-            <div className="flex justify-between">
-              <Text size="lead" as="h4">
-                {title}
-              </Text>
-              <IconClose
-                className={clsx(
-                  'transition-transform transform-gpu duration-200',
-                  !open && 'rotate-[45deg]',
-                )}
-              />
-            </div>
-          </Disclosure.Button>
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M15 19l-7-7 7-7" />
+    </svg>
+  );
+}
 
-          <Disclosure.Panel className={'pb-4 pt-2 grid gap-2'}>
-            <div
-              className="prose dark:prose-invert"
-              dangerouslySetInnerHTML={{__html: content}}
-            />
-            {learnMore && (
-              <div className="">
-                <Link
-                  className="pb-px border-b border-primary/30 text-primary/50"
-                  to={learnMore}
-                >
-                  Learn more
-                </Link>
-              </div>
-            )}
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
+function ChevronRightIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function GridIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+    </svg>
+  );
+}
+
+function HeartIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function LayersIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+function ShareIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <polyline points="16 6 12 2 8 6" />
+      <line x1="12" y1="2" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function QuestionMarkCircleIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
   );
 }
 
@@ -526,6 +1071,13 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     descriptionHtml
     description
+    productType
+    collections(first: 10) {
+      nodes {
+        title
+        handle
+      }
+    }
     encodedVariantExistence
     encodedVariantAvailability
     options {

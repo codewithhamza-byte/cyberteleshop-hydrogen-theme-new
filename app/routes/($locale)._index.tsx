@@ -5,7 +5,7 @@ import {
 } from '@shopify/remix-oxygen';
 import {Suspense} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
-import {getSeoMeta} from '@shopify/hydrogen';
+import {getSeoMeta, Image} from '@shopify/hydrogen';
 
 import {Button} from '~/components/Button';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
@@ -14,7 +14,7 @@ import {Heading, Section, Text} from '~/components/Text';
 import {Link} from '~/components/Link';
 import type {HomepageCategoryCollectionsQuery} from 'storefrontapi.generated';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders} from '~/data/cache';
+import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 
 export const headers = routeHeaders;
@@ -33,7 +33,14 @@ export async function loader(args: LoaderFunctionArgs) {
   const deferredData = loadDeferredData(args);
   const criticalData = await loadCriticalData(args);
 
-  return defer({...deferredData, ...criticalData});
+  return defer(
+    {...deferredData, ...criticalData},
+    {
+      headers: {
+        'Cache-Control': CACHE_SHORT,
+      },
+    },
+  );
 }
 
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
@@ -167,13 +174,71 @@ export default function Homepage() {
 
 function LandingHero() {
   return (
-    <section className="w-full overflow-hidden bg-contrast">
-      <img
-        src="https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973&width=2000"
-        alt="Electronic sales promotion banner"
-        className="block h-[26rem] w-full object-cover sm:h-[32rem] md:h-[38rem] lg:h-[30rem]"
-        loading="eager"
-      />
+    <section className="relative w-full bg-contrast py-12 md:py-20 lg:py-24 overflow-hidden border-b border-primary/5">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 grid gap-12 lg:grid-cols-12 items-center">
+        {/* Left Content Column */}
+        <div className="lg:col-span-6 flex flex-col items-start gap-6 text-left">
+          <div className="inline-flex items-center gap-2 rounded-full border border-notice/20 bg-notice/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-notice">
+            <span className="flex h-2 w-2 rounded-full bg-notice animate-ping" />
+            <span>Special Promotion - Up to 30% Off</span>
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-primary sm:text-5xl md:text-6xl leading-tight">
+            Premium Electronics & <span className="text-notice">Smart Gadgets</span>
+          </h1>
+          <p className="text-lg text-primary/80 max-w-lg leading-relaxed">
+            Upgrade your tech with nationwide Cash on Delivery, ultra-fast 1-3 days shipping, and the peace of mind to inspect your package before paying.
+          </p>
+          <div className="flex flex-wrap gap-4 w-full sm:w-auto">
+            <Button to="/collections/all" variant="primary" className="shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+              Shop Now
+            </Button>
+            <Button to="/collections" variant="secondary" className="hover:bg-primary/5 transition-all duration-300">
+              Browse Collections
+            </Button>
+          </div>
+          {/* Trust badges */}
+          <div className="mt-6 pt-6 border-t border-primary/10 w-full grid grid-cols-3 gap-4 text-xs font-semibold text-primary/70">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">💵</span>
+              <span>Nationwide COD</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🚚</span>
+              <span>1-3 Day Delivery</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🔓</span>
+              <span>Open Box Check</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Visual Column */}
+        <div className="lg:col-span-6 relative w-full group">
+          <div className="absolute inset-0 bg-gradient-to-tr from-notice/10 to-transparent rounded-[2rem] blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500 -z-10" />
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-primary/10 bg-contrast/95 p-3 shadow-2xl transition duration-500 hover:scale-[1.01]">
+            <Image
+              data={{
+                url: 'https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973',
+                altText: 'CyberTeleshop Premium Electronic Sales Banner',
+                width: 2000,
+                height: 694,
+              }}
+              className="w-full h-auto object-cover rounded-[2rem] aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] block"
+              sizes="(max-width: 32em) 100vw, (max-width: 48em) 90vw, 45vw"
+              loading="eager"
+            />
+            {/* Elegant glassmorphic overlay label for premium feel */}
+            <div className="absolute bottom-8 left-8 right-8 backdrop-blur-md bg-black/45 border border-white/10 rounded-2xl p-4 text-white flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div>
+                <p className="text-xs uppercase tracking-wider opacity-80">Latest Collection</p>
+                <p className="font-semibold text-sm">Smartphones, Watch & Audio Gadgets</p>
+              </div>
+              <span className="text-xs bg-white text-black font-semibold px-2.5 py-1 rounded-full uppercase">30% OFF</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -194,7 +259,7 @@ function CategorySlider({
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <Heading size="heading">Shop by category</Heading>
-            <Text className="mt-3 max-w-2xl text-primary/80">
+            <Text as="p" className="mt-3 max-w-2xl text-primary/80">
               Discover curated categories with beautiful imagery for every product need.
             </Text>
           </div>
@@ -205,7 +270,7 @@ function CategorySlider({
 
         <nav
           aria-label="Category navigation"
-          className="mt-6 flex items-center gap-3 overflow-x-auto pb-4 text-sm font-semibold text-primary"
+          className="mt-6 flex items-center gap-3 overflow-x-auto pb-4 text-sm font-semibold text-primary hiddenScroll"
         >
           {items.map((collection) => (
             <Link
@@ -226,10 +291,12 @@ function CategorySlider({
               className="group block overflow-hidden rounded-[2rem] border border-primary/10 bg-contrast/95 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="relative overflow-hidden bg-primary/5">
-                <img
-                  src={collection.image?.url || ''}
+                <Image
+                  data={collection.image!}
                   alt={collection.image?.altText || collection.title}
                   className="h-64 w-full object-cover transition duration-300 group-hover:scale-105"
+                  sizes="(max-width: 32em) 100vw, (max-width: 48em) 50vw, (max-width: 64em) 33vw, 16vw"
+                  aspectRatio="1/1"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-4 py-4 text-white">
                   <Heading size="copy" className="text-copy text-lg font-semibold">
@@ -272,11 +339,11 @@ function FeatureBlocks() {
 
 function ComparisonCard({title, description}: {title: string; description: string}) {
   return (
-    <div className="rounded-[2rem] border border-primary/10 bg-contrast/95 p-8 shadow-sm">
+    <div className="rounded-[2rem] border border-primary/10 bg-contrast/95 p-8 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
       <Heading size="lead" className="text-copy">
         {title}
       </Heading>
-      <Text className="mt-3 text-primary/80">{description}</Text>
+      <Text as="p" className="mt-3 text-primary/80">{description}</Text>
     </div>
   );
 }
@@ -302,7 +369,7 @@ function WhyChooseSection() {
             <FeatureRow label="🔄 Money-Back Guarantee" detail="15 days refund policy for peace of mind." />
             <FeatureRow label="🔓 Allow to open" detail="Inspect your order before you pay." />
           </div>
-          <Text className="text-sm text-primary/70">
+          <Text as="p" className="text-sm text-primary/70">
             <a
               href="https://www.cyberteleshop.com/privacy.html"
               target="_blank"
@@ -315,7 +382,7 @@ function WhyChooseSection() {
         </div>
 
         <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 shadow-sm">
-          <Text size="lead" className="text-primary/80">
+          <Text as="p" size="lead" className="text-primary/80">
             Our store combines speed, transparency, and trusted buyer protection so your customers feel confident each step of the way.
           </Text>
           <div className="mt-8 grid gap-4">
@@ -336,7 +403,7 @@ function FeatureRow({label, detail}: {label: string; detail: string}) {
       <Heading size="copy" className="text-copy">
         {label}
       </Heading>
-      <Text className="mt-2 text-primary/80">{detail}</Text>
+      <Text as="p" className="mt-2 text-primary/80">{detail}</Text>
     </div>
   );
 }
@@ -344,8 +411,8 @@ function FeatureRow({label, detail}: {label: string; detail: string}) {
 function StatLabel({label, value}: {label: string; value: string}) {
   return (
     <div className="rounded-3xl bg-contrast/95 p-5">
-      <Text className="font-semibold text-primary">{label}</Text>
-      <Text className="mt-2 text-primary/80">{value}</Text>
+      <Text as="p" className="font-semibold text-primary">{label}</Text>
+      <Text as="p" className="mt-2 text-primary/80">{value}</Text>
     </div>
   );
 }
