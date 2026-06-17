@@ -38,11 +38,22 @@ type LayoutProps = {
   };
 };
 
+function AnnouncementBar() {
+  return (
+    <div className="bg-[#D33E13] text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-2.5 px-4 text-center select-none flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap shadow-sm">
+      <span className="inline-block animate-pulse">⚡</span>
+      <span>FREE SHIPPING ON ORDERS OVER Rs. 3,000 | CASH ON DELIVERY NATIONWIDE</span>
+      <span className="inline-block animate-pulse">⚡</span>
+    </div>
+  );
+}
+
 export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
   return (
     <>
       <div className="flex flex-col min-h-screen">
+        <AnnouncementBar />
         <div className="">
           <a href="#mainContent" className="sr-only">
             Skip to content
@@ -188,49 +199,48 @@ function MobileHeader({
   openMenu: () => void;
 }) {
   const params = useParams();
+  const {y} = useWindowScroll();
+  const scrolled = y > 20;
 
   return (
     <header
       role="banner"
-      className="bg-contrast text-primary flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full gap-3 px-4 md:px-6 border-b border-primary/10"
+      className={`sticky top-0 z-40 w-full transition-all duration-300 border-b flex items-center h-14 justify-between gap-3 px-4 ${
+        scrolled
+          ? 'bg-contrast/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-sm border-primary/5'
+          : 'bg-contrast dark:bg-neutral-900 border-transparent'
+      }`}
     >
       <button
         onClick={openMenu}
-        className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
+        className="flex items-center justify-center h-9 w-9 rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
         aria-label="Open menu"
       >
-        <IconMenu />
+        <IconMenu className="w-5 h-5" />
       </button>
 
       <Link to="/" prefetch="intent" className="flex-1 flex items-center justify-center">
         <img
           src={logoSrc}
           alt={title}
-          className="h-8 w-auto object-contain md:h-10"
+          className="h-8 w-auto object-contain transition-transform duration-200 hover:scale-105"
           loading="eager"
         />
       </Link>
 
-      <div className="flex items-center gap-2">
-        <button
-          onClick={openCart}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
-          aria-label="Open cart"
-        >
-          <IconBag />
-          <span className="sr-only">Cart</span>
-        </button>
-
+      <div className="flex items-center gap-1.5">
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
+          className="relative flex h-9 w-9 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
           role="search"
         >
           <button type="submit" className="flex items-center justify-center h-full w-full">
-            <IconSearch />
+            <IconSearch className="w-4 h-4" />
           </button>
         </Form>
+
+        <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
   );
@@ -251,71 +261,71 @@ function DesktopHeader({
 }) {
   const params = useParams();
   const {y} = useWindowScroll();
+  const scrolled = y > 20;
 
   return (
     <header
       role="banner"
-      className={`bg-contrast text-primary ${!isHome && y > 50 ? 'shadow-lightHeader' : ''} hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full gap-8 px-8 xl:px-14 border-b border-primary/10`}
+      className={`sticky top-0 z-40 w-full transition-all duration-300 border-b hidden lg:block ${
+        scrolled
+          ? 'bg-contrast/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-sm border-primary/5 py-3'
+          : 'bg-contrast dark:bg-neutral-900 border-transparent py-4'
+      }`}
     >
-      <div className="flex flex-1 items-center gap-8">
-        <Link
-          className="inline-flex items-center gap-4"
-          to="/"
-          prefetch="intent"
-        >
-          <img
-            src={logoSrc}
-            alt={title}
-            className="h-10 w-auto object-contain"
-            loading="eager"
-          />
-        </Link>
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 flex items-center justify-between gap-8">
+        <div className="flex items-center gap-10">
+          <Link
+            className="flex items-center transition duration-200 hover:scale-102"
+            to="/"
+            prefetch="intent"
+          >
+            <img
+              src={logoSrc}
+              alt={title}
+              className="h-9 w-auto object-contain"
+              loading="eager"
+            />
+          </Link>
 
-        <nav className="hidden xl:flex items-center gap-8 text-sm uppercase tracking-[0.22em] text-primary/70">
-          {(menu?.items || []).map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              target={item.target}
-              prefetch="intent"
-              className={({isActive}) =>
-                `transition ${
-                  isActive ? 'text-notice' : 'hover:text-primary'
-                }`
-              }
-            >
-              {item.title}
-            </Link>
-          ))}
-        </nav>
-      </div>
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-semibold uppercase tracking-[0.2em] text-primary/70">
+            {(menu?.items || []).map((item) => (
+              <Link
+                key={item.id}
+                to={item.to}
+                target={item.target}
+                prefetch="intent"
+                className={({isActive}) =>
+                  `relative py-2 transition duration-200 hover:text-primary after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#D33E13] after:transition-all after:duration-300 hover:after:w-full ${
+                    isActive ? 'text-[#D33E13] after:w-full font-bold' : ''
+                  }`
+                }
+              >
+                {item.title}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-      <div className="flex items-center gap-3">
-        <Form
-          method="get"
-          action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden lg:flex items-center gap-2 rounded-full bg-primary/5 px-3 py-2"
-        >
-          <IconSearch className="text-primary/70" />
-          <Input
-            className="bg-transparent border-0 p-0 text-sm text-primary placeholder:text-primary/60 focus:ring-0"
-            type="search"
-            variant="minisearch"
-            placeholder="Search"
-            name="q"
-          />
-        </Form>
+        <div className="flex items-center gap-4">
+          <Form
+            method="get"
+            action={params.locale ? `/${params.locale}/search` : '/search'}
+            className="flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 hover:bg-primary/10 focus-within:border-[#D33E13] focus-within:ring-1 focus-within:ring-[#D33E13] px-4 py-1.5 transition-all duration-200"
+          >
+            <IconSearch className="text-primary/70 w-4 h-4" />
+            <Input
+              className="bg-transparent border-0 p-0 text-sm text-primary placeholder:text-primary/50 focus:ring-0 w-32 xl:w-44 outline-none"
+              type="search"
+              variant="minisearch"
+              placeholder="Search..."
+              name="q"
+            />
+          </Form>
 
-        <AccountLink className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10" />
+          <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary hover:text-[#D33E13] transition hover:bg-primary/10 animate-fade-in" />
 
-        <button
-          onClick={openCart}
-          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
-          aria-label="Open cart"
-        >
-          <IconBag />
-        </button>
-
+          <CartCount isHome={isHome} openCart={openCart} />
+        </div>
       </div>
     </header>
   );
@@ -374,33 +384,29 @@ function Badge({
 
   const BadgeCounter = useMemo(
     () => (
-      <>
-        <IconBag />
-        <div
-          className={`${
-            dark
-              ? 'text-primary bg-contrast dark:text-contrast dark:bg-primary'
-              : 'text-contrast bg-primary'
-          } absolute bottom-1 right-1 text-[0.625rem] font-medium subpixel-antialiased h-3 min-w-[0.75rem] flex items-center justify-center leading-none text-center rounded-full w-auto px-[0.125rem] pb-px`}
-        >
-          <span>{count || 0}</span>
-        </div>
-      </>
+      <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10 hover:text-[#D33E13]">
+        <IconBag className="w-5 h-5" />
+        {count > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 text-[9px] font-black bg-[#D33E13] text-white h-5 min-w-[20px] px-1 flex items-center justify-center rounded-full shadow-sm animate-bounce">
+            {count}
+          </span>
+        )}
+      </div>
     ),
-    [count, dark],
+    [count],
   );
 
   return isHydrated ? (
     <button
       onClick={openCart}
-      className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
+      className="relative flex items-center justify-center focus:ring-0"
     >
       {BadgeCounter}
     </button>
   ) : (
     <Link
       to="/cart"
-      className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
+      className="relative flex items-center justify-center focus:ring-0"
     >
       {BadgeCounter}
     </Link>
@@ -490,47 +496,73 @@ function Footer() {
             <Link to="/compare" className="hover:text-white transition-colors duration-200">Compare</Link>
             <Link to="/wishlist" className="hover:text-white transition-colors duration-200">Wishlist</Link>
             <Link to="/pages/track-order" className="hover:text-white transition-colors duration-200">Track My Order</Link>
-            <div className="border-t border-neutral-905 my-1"></div>
+            <div className="border-t border-neutral-900 my-1"></div>
             <Link to="/account" className="hover:text-white transition-colors duration-200 font-semibold text-neutral-300">Orders</Link>
             <Link to="/account/profile" className="hover:text-white transition-colors duration-200 font-semibold text-neutral-300">Profile</Link>
           </nav>
         </div>
 
-        {/* Column 5: Contact Details */}
-        <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
-          <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
-            Contact Us
-          </Heading>
-          <div className="flex flex-col gap-4 text-xs text-neutral-400">
-            <div className="flex gap-2.5 items-start">
-              <span className="text-base leading-none">📍</span>
-              <span className="leading-relaxed">
-                Shop # 4, Green complex, Qainchi ammar sadhu, Ferozpur road, Lahore
-              </span>
+        {/* Column 5: Contact & Newsletter */}
+        <div className="col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+              Contact Us
+            </Heading>
+            <div className="flex flex-col gap-4 text-xs text-neutral-400">
+              <div className="flex gap-2.5 items-start">
+                <span className="text-base leading-none">📍</span>
+                <span className="leading-relaxed">
+                  Shop # 4, Green complex, Qainchi ammar sadhu, Ferozpur road, Lahore
+                </span>
+              </div>
+              <div className="flex gap-2.5 items-center">
+                <span className="text-base leading-none">📞</span>
+                <a href="tel:0300-4252400" className="hover:text-white transition-colors duration-200">
+                  0300-4252400
+                </a>
+              </div>
+              <div className="flex gap-2.5 items-center">
+                <span className="text-base leading-none">✉️</span>
+                <a href="mailto:cyberteleshop@gmail.com" className="hover:text-white transition-colors duration-200 truncate">
+                  cyberteleshop@gmail.com
+                </a>
+              </div>
             </div>
-            <div className="flex gap-2.5 items-center">
-              <span className="text-base leading-none">📞</span>
-              <a href="tel:0300-4252400" className="hover:text-white transition-colors duration-200">
-                0300-4252400
-              </a>
-            </div>
-            <div className="flex gap-2.5 items-center">
-              <span className="text-base leading-none">✉️</span>
-              <a href="mailto:cyberteleshop@gmail.com" className="hover:text-white transition-colors duration-200 truncate">
-                cyberteleshop@gmail.com
-              </a>
-            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 pt-4 border-t border-neutral-900">
+            <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+              Newsletter
+            </Heading>
+            <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-2">
+              <input
+                type="email"
+                placeholder="Your email"
+                className="w-full bg-neutral-900 border border-neutral-800 text-xs text-white placeholder:text-neutral-500 rounded-xl px-4 py-3 outline-none focus:border-[#D33E13] focus:ring-1 focus:ring-[#D33E13] transition-all duration-200"
+              />
+              <button
+                type="submit"
+                className="bg-[#D33E13] text-white text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-[#b0300c] transition duration-200"
+              >
+                Sub
+              </button>
+            </form>
           </div>
         </div>
       </div>
 
       {/* Footer Bottom */}
-      <div className="mx-auto max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-xs text-neutral-500">
+      <div className="mx-auto max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="text-xs text-neutral-500 text-center md:text-left">
           &copy; {new Date().getFullYear()} Cyber Tele Shop. All Rights Reserved. Designed By Hamza Tahir
         </div>
-        <div className="flex items-center gap-4">
-          <CountrySelector />
+
+        {/* Payment Methods */}
+        <div className="flex items-center gap-2.5 text-[10px] font-bold text-neutral-500 tracking-wider flex-wrap justify-center">
+          <span className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800">CASH ON DELIVERY</span>
+          <span className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800">EASYPAISA</span>
+          <span className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800">JAZZCASH</span>
+          <span className="px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800">VISA / MC</span>
         </div>
       </div>
     </footer>
