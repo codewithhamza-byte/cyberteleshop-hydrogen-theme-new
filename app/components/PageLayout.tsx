@@ -1,7 +1,7 @@
 import {useParams, Form, Await, useRouteLoaderData} from '@remix-run/react';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
 import {Disclosure} from '@headlessui/react';
-import {Suspense, useEffect, useMemo} from 'react';
+import {Suspense, useEffect, useMemo, useState} from 'react';
 import {CartForm} from '@shopify/hydrogen';
 
 import {type LayoutQuery} from 'storefrontapi.generated';
@@ -39,10 +39,26 @@ type LayoutProps = {
 };
 
 function AnnouncementBar() {
+  const announcements = [
+    "⚡ FREE SHIPPING ON ORDERS OVER Rs. 3,000 | CASH ON DELIVERY NATIONWIDE ⚡",
+    "✨ GET EXTRA 10% OFF ON YOUR FIRST ORDER - USE CODE: CYBER10 ✨",
+    "📦 100% SATISFACTION GUARANTEED | EASY 7-DAY RETURNS 📦"
+  ];
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % announcements.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="bg-[#D33E13] text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-2.5 px-4 text-center select-none flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap shadow-sm">
+    <div className="bg-[#D33E13] text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-2.5 px-4 text-center select-none flex items-center justify-center gap-2 overflow-hidden shadow-sm h-9">
       <span className="inline-block animate-pulse">⚡</span>
-      <span>FREE SHIPPING ON ORDERS OVER Rs. 3,000 | CASH ON DELIVERY NATIONWIDE</span>
+      <span className="transition-all duration-500 ease-in-out transform">
+        {announcements[current]}
+      </span>
       <span className="inline-block animate-pulse">⚡</span>
     </div>
   );
@@ -240,6 +256,16 @@ function MobileHeader({
           </button>
         </Form>
 
+        <Link
+          to="/wishlist"
+          className="relative flex h-9 w-9 items-center justify-center rounded-full bg-primary/5 text-primary transition hover:bg-primary/10"
+          title="Wishlist"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </Link>
+
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
@@ -268,8 +294,8 @@ function DesktopHeader({
       role="banner"
       className={`sticky top-0 z-40 w-full transition-all duration-300 border-b hidden lg:block ${
         scrolled
-          ? 'bg-contrast/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-sm border-primary/5 py-3'
-          : 'bg-contrast dark:bg-neutral-900 border-transparent py-4'
+          ? 'bg-contrast/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-sm border-primary/5 py-3.5'
+          : 'bg-contrast dark:bg-neutral-950 border-transparent py-5'
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8 flex items-center justify-between gap-8">
@@ -295,8 +321,8 @@ function DesktopHeader({
                 target={item.target}
                 prefetch="intent"
                 className={({isActive}) =>
-                  `relative py-2 transition duration-200 hover:text-primary after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#D33E13] after:transition-all after:duration-300 hover:after:w-full ${
-                    isActive ? 'text-[#D33E13] after:w-full font-bold' : ''
+                  `relative py-2 transition-all duration-200 hover:text-primary after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-[#D33E13] after:transition-all after:duration-300 hover:after:w-full hover:after:left-0 ${
+                    isActive ? 'text-[#D33E13] after:w-full after:left-0 font-bold' : ''
                   }`
                 }
               >
@@ -322,7 +348,17 @@ function DesktopHeader({
             />
           </Form>
 
-          <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary hover:text-[#D33E13] transition hover:bg-primary/10 animate-fade-in" />
+          <Link
+            to="/wishlist"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary hover:text-[#D33E13] hover:bg-primary/10 transition duration-200"
+            title="Wishlist"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </Link>
+
+          <AccountLink className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary hover:text-[#D33E13] transition hover:bg-primary/10" />
 
           <CartCount isHome={isHome} openCart={openCart} />
         </div>
