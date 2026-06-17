@@ -142,7 +142,6 @@ export default function Homepage() {
         </Suspense>
       )}
       <FeatureBlocks />
-      <WhyChooseSection />
 
       {featuredProducts && (
         <Suspense>
@@ -440,74 +439,7 @@ function ComparisonCard({title, description}: {title: string; description: strin
   );
 }
 
-function WhyChooseSection() {
-  return (
-    <Section padding="y" className="bg-contrast">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
-        <div className="flex flex-col justify-center gap-6">
-          <Text
-            color="subtle"
-            size="fine"
-            className="uppercase tracking-[0.24em] text-primary/80"
-          >
-            Why Choose Our Store
-          </Text>
-          <Heading size="heading" className="max-w-xl">
-            Trusted shopping with flexible payment and fast delivery.
-          </Heading>
-          <div className="grid gap-4 text-primary/80">
-            <FeatureRow label="💵 COD" detail="Pay cash on delivery, available nationwide." />
-            <FeatureRow label="🚚 Fast Delivery" detail="1-3 days in major metro cities." />
-            <FeatureRow label="🔄 Money-Back Guarantee" detail="15 days refund policy for peace of mind." />
-            <FeatureRow label="🔓 Allow to open" detail="Inspect your order before you pay." />
-          </div>
-          <Text as="p" className="text-sm text-primary/70">
-            <a
-              href="https://www.cyberteleshop.com/privacy.html"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold text-primary transition hover:text-notice"
-            >
-              Privacy Policy
-            </a>
-          </Text>
-        </div>
 
-        <div className="rounded-[2rem] border border-primary/10 bg-primary/5 p-8 shadow-sm">
-          <Text as="p" size="lead" className="text-primary/80">
-            Our store combines speed, transparency, and trusted buyer protection so your customers feel confident each step of the way.
-          </Text>
-          <div className="mt-8 grid gap-4">
-            <StatLabel label="COD" value="Nationwide availability" />
-            <StatLabel label="Shipping" value="1-3 days in major cities" />
-            <StatLabel label="Returns" value="15-day money-back policy" />
-            <StatLabel label="Inspection" value="Open before payment" />
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-function FeatureRow({label, detail}: {label: string; detail: string}) {
-  return (
-    <div className="rounded-3xl border border-primary/10 bg-contrast/90 p-5">
-      <Heading size="copy" className="text-copy">
-        {label}
-      </Heading>
-      <Text as="p" className="mt-2 text-primary/80">{detail}</Text>
-    </div>
-  );
-}
-
-function StatLabel({label, value}: {label: string; value: string}) {
-  return (
-    <div className="rounded-3xl bg-contrast/95 p-5">
-      <Text as="p" className="font-semibold text-primary">{label}</Text>
-      <Text as="p" className="mt-2 text-primary/80">{value}</Text>
-    </div>
-  );
-}
 
 const HOMEPAGE_SEO_QUERY = `#graphql
   query homepageSeo {

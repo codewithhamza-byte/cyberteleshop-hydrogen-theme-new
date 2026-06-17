@@ -20,7 +20,12 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   const policyName = params.policyHandle.replace(
     /-([a-z])/g,
     (_: unknown, m1: string) => m1.toUpperCase(),
-  ) as 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
+  ) as
+    | 'privacyPolicy'
+    | 'shippingPolicy'
+    | 'termsOfService'
+    | 'refundPolicy'
+    | 'subscriptionPolicy';
 
   const data = await context.storefront.query(POLICY_CONTENT_QUERY, {
     variables: {
@@ -28,6 +33,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
       shippingPolicy: false,
       termsOfService: false,
       refundPolicy: false,
+      subscriptionPolicy: false,
       [policyName]: true,
       language: context.storefront.i18n.language,
     },
@@ -91,12 +97,21 @@ const POLICY_CONTENT_QUERY = `#graphql
     url
   }
 
+  fragment SubscriptionPolicyHandle on ShopPolicyWithDefault {
+    body
+    handle
+    id
+    title
+    url
+  }
+
   query PoliciesHandle(
     $language: LanguageCode
     $privacyPolicy: Boolean!
     $shippingPolicy: Boolean!
     $termsOfService: Boolean!
     $refundPolicy: Boolean!
+    $subscriptionPolicy: Boolean!
   ) @inContext(language: $language) {
     shop {
       privacyPolicy @include(if: $privacyPolicy) {
@@ -110,6 +125,9 @@ const POLICY_CONTENT_QUERY = `#graphql
       }
       refundPolicy @include(if: $refundPolicy) {
         ...PolicyHandle
+      }
+      subscriptionPolicy @include(if: $subscriptionPolicy) {
+        ...SubscriptionPolicyHandle
       }
     }
   }
