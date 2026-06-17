@@ -55,7 +55,7 @@ export function PageLayout({children, layout}: LayoutProps) {
           {children}
         </main>
       </div>
-      {footerMenu && <Footer menu={footerMenu} />}
+      <Footer />
     </>
   );
 }
@@ -407,95 +407,132 @@ function Badge({
   );
 }
 
-function Footer({menu}: {menu?: EnhancedMenu}) {
-  const isHome = useIsHomePath();
-  const itemsCount = menu
-    ? menu?.items?.length + 1 > 4
-      ? 4
-      : menu?.items?.length + 1
-    : [];
-
+function Footer() {
   return (
-    <Section
-      divider={isHome ? 'none' : 'top'}
-      as="footer"
-      role="contentinfo"
-      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
-        bg-contrast text-primary overflow-hidden`}
-    >
-      <FooterMenu menu={menu} />
-      <CountrySelector />
-      <div
-        className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
-      >
-        &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
-        Licensed Open Source project.
+    <footer className="bg-neutral-950 text-neutral-300 border-t border-neutral-900 pt-16 pb-12 px-6 md:px-8 lg:px-12 w-full font-sans">
+      <div className="mx-auto max-w-7xl grid gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border-b border-neutral-900 pb-12">
+        {/* Column 1: Brand details & Social */}
+        <div className="col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
+          <Link to="/" className="inline-block">
+            <Heading size="lead" className="text-xl font-extrabold uppercase tracking-wider text-white">
+              Cyber Tele Shop
+            </Heading>
+          </Link>
+          <p className="text-xs text-neutral-400 leading-relaxed max-w-xs">
+            Your trusted store for car accessories, gadgets, fitness gear, and electronics. Fast delivery nationwide.
+          </p>
+          {/* Social Links */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <a href="https://www.facebook.com/cyberteleshoplhr/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 hover:bg-[#D33E13] flex items-center justify-center text-white transition-colors duration-200" title="Facebook">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/cybertele/?hl=en" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 hover:bg-[#D33E13] flex items-center justify-center text-white transition-colors duration-200" title="Instagram">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@cyberteleshop275" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 hover:bg-[#D33E13] flex items-center justify-center text-white transition-colors duration-200" title="YouTube">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.507a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.507 9.388.507 9.388.507s7.517 0 9.388-.507a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@cyberteleshop3?lang=en" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 hover:bg-[#D33E13] flex items-center justify-center text-white transition-colors duration-200" title="TikTok">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.59 4.23.95.83 2.16 1.37 3.44 1.53v3.87c-1.89-.13-3.71-.85-5.17-2.11-.07 3.6-.03 7.2-.06 10.8-.13 2.68-1.54 5.25-3.97 6.46-2.3 1.15-5.15.92-7.23-.57-2.31-1.63-3.48-4.59-2.95-7.39.46-2.58 2.4-4.78 4.97-5.39v3.91c-1.24.41-2.16 1.57-2.14 2.9.01 1.76 1.7 3.1 3.42 2.76 1.34-.23 2.29-1.42 2.28-2.78v-17.7c0-.28 0-.56-.01-.84z"/></svg>
+            </a>
+            <a href="https://www.pinterest.com/cyberteleshop/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-900 hover:bg-[#D33E13] flex items-center justify-center text-white transition-colors duration-200" title="Pinterest">
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.63 11.16-.1-.95-.2-2.4.04-3.43.22-.93 1.4-5.93 1.4-5.93s-.36-.72-.36-1.77c0-1.66.96-2.9 2.16-2.9 1.02 0 1.51.77 1.51 1.68 0 1.03-.65 2.56-.99 3.99-.28 1.19.6 2.16 1.77 2.16 2.12 0 3.76-2.24 3.76-5.47 0-2.86-2.06-4.86-5-4.86-3.4 0-5.4 2.56-5.4 5.2 0 1.03.4 2.13.9 2.73.1.12.11.23.08.35-.09.37-.3.1.3-.41-.1.1-.11-.2-.14-.3-.4-1.67.75-2.9 2.6-2.9 2.07 0 3.67 2.18 3.67 5.34 0 3.32-2.12 6.02-5.07 6.02-1.71 0-3.32-.88-3.87-1.93l-.93 3.56c-.34 1.3-1.27 2.93-1.9 3.96C9.17 23.77 10.55 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Column 2: Shop by Categories */}
+        <div className="flex flex-col gap-4">
+          <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+            Shop by Categories
+          </Heading>
+          <nav className="flex flex-col gap-2.5 text-xs text-neutral-400">
+            <Link to="/collections/car-accessories" className="hover:text-white transition-colors duration-200">Car Accessories</Link>
+            <Link to="/collections/electronics" className="hover:text-white transition-colors duration-200">Electronics</Link>
+            <Link to="/collections/fitness" className="hover:text-white transition-colors duration-200">Fitness</Link>
+            <Link to="/collections/health-beauty" className="hover:text-white transition-colors duration-200">Health & Beauty</Link>
+            <Link to="/collections/toys" className="hover:text-white transition-colors duration-200">Toys</Link>
+            <Link to="/collections/clothing" className="hover:text-white transition-colors duration-200">Clothing</Link>
+            <Link to="/collections/spy-devices" className="hover:text-white transition-colors duration-200">Spy Devices</Link>
+            <Link to="/collections/treadmill" className="hover:text-white transition-colors duration-200">Treadmill</Link>
+            <Link to="/collections/furniture" className="hover:text-white transition-colors duration-200">Furniture</Link>
+            <Link to="/collections/sports" className="hover:text-white transition-colors duration-200">Sports</Link>
+          </nav>
+        </div>
+
+        {/* Column 3: Quick Links */}
+        <div className="flex flex-col gap-4">
+          <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+            Quick Links
+          </Heading>
+          <nav className="flex flex-col gap-2.5 text-xs text-neutral-400">
+            <Link to="/" className="hover:text-white transition-colors duration-200">Home</Link>
+            <Link to="/collections/electronics" className="hover:text-white transition-colors duration-200">Electronics</Link>
+            <Link to="/collections/fitness" className="hover:text-white transition-colors duration-200">Fitness</Link>
+            <Link to="/collections/health-beauty" className="hover:text-white transition-colors duration-200">Health & Beauty</Link>
+            <Link to="/collections/sports" className="hover:text-white transition-colors duration-200">Sports</Link>
+            <Link to="/collections/steel-racks" className="hover:text-white transition-colors duration-200">Steel Racks</Link>
+            <Link to="/collections/clothing" className="hover:text-white transition-colors duration-200">Clothing</Link>
+          </nav>
+        </div>
+
+        {/* Column 4: Information & Account */}
+        <div className="flex flex-col gap-4">
+          <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+            Information
+          </Heading>
+          <nav className="flex flex-col gap-2.5 text-xs text-neutral-400">
+            <Link to="/pages/contact" className="hover:text-white transition-colors duration-200">Contact Us</Link>
+            <Link to="/policies/privacy-policy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
+            <Link to="/policies/refund-policy" className="hover:text-white transition-colors duration-200">Refund Policy</Link>
+            <Link to="/policies/shipping-policy" className="hover:text-white transition-colors duration-200">Shipping Policy</Link>
+            <Link to="/policies/terms-of-service" className="hover:text-white transition-colors duration-200">Terms of Service</Link>
+            <Link to="/compare" className="hover:text-white transition-colors duration-200">Compare</Link>
+            <Link to="/wishlist" className="hover:text-white transition-colors duration-200">Wishlist</Link>
+            <Link to="/pages/track-order" className="hover:text-white transition-colors duration-200">Track My Order</Link>
+            <div className="border-t border-neutral-905 my-1"></div>
+            <Link to="/account" className="hover:text-white transition-colors duration-200 font-semibold text-neutral-300">Orders</Link>
+            <Link to="/account/profile" className="hover:text-white transition-colors duration-200 font-semibold text-neutral-300">Profile</Link>
+          </nav>
+        </div>
+
+        {/* Column 5: Contact Details */}
+        <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+          <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
+            Contact Us
+          </Heading>
+          <div className="flex flex-col gap-4 text-xs text-neutral-400">
+            <div className="flex gap-2.5 items-start">
+              <span className="text-base leading-none">📍</span>
+              <span className="leading-relaxed">
+                Shop # 4, Green complex, Qainchi ammar sadhu, Ferozpur road, Lahore
+              </span>
+            </div>
+            <div className="flex gap-2.5 items-center">
+              <span className="text-base leading-none">📞</span>
+              <a href="tel:0300-4252400" className="hover:text-white transition-colors duration-200">
+                0300-4252400
+              </a>
+            </div>
+            <div className="flex gap-2.5 items-center">
+              <span className="text-base leading-none">✉️</span>
+              <a href="mailto:cyberteleshop@gmail.com" className="hover:text-white transition-colors duration-200 truncate">
+                cyberteleshop@gmail.com
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    </Section>
-  );
-}
 
-function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
-  if (item.to.startsWith('http')) {
-    return (
-      <a href={item.to} target={item.target} rel="noopener noreferrer">
-        {item.title}
-      </a>
-    );
-  }
-
-  return (
-    <Link to={item.to} target={item.target} prefetch="intent">
-      {item.title}
-    </Link>
-  );
-}
-
-function FooterMenu({menu}: {menu?: EnhancedMenu}) {
-  const styles = {
-    section: 'grid gap-4',
-    nav: 'grid gap-2 pb-6',
-  };
-
-  return (
-    <>
-      {(menu?.items || []).map((item) => (
-        <section key={item.id} className={styles.section}>
-          <Disclosure>
-            {({open}) => (
-              <>
-                <Disclosure.Button className="text-left md:cursor-default">
-                  <Heading className="flex justify-between" size="lead" as="h3">
-                    {item.title}
-                    {item?.items?.length > 0 && (
-                      <span className="md:hidden">
-                        <IconCaret direction={open ? 'up' : 'down'} />
-                      </span>
-                    )}
-                  </Heading>
-                </Disclosure.Button>
-                {item?.items?.length > 0 ? (
-                  <div
-                    className={`${
-                      open ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
-                    } overflow-hidden transition-all duration-300`}
-                  >
-                    <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
-                      <Disclosure.Panel static>
-                        <nav className={styles.nav}>
-                          {item.items.map((subItem: ChildEnhancedMenuItem) => (
-                            <FooterLink key={subItem.id} item={subItem} />
-                          ))}
-                        </nav>
-                      </Disclosure.Panel>
-                    </Suspense>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </Disclosure>
-        </section>
-      ))}
-    </>
+      {/* Footer Bottom */}
+      <div className="mx-auto max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-neutral-500">
+          &copy; {new Date().getFullYear()} Cyber Tele Shop. All Rights Reserved. Designed By Hamza Tahir
+        </div>
+        <div className="flex items-center gap-4">
+          <CountrySelector />
+        </div>
+      </div>
+    </footer>
   );
 }
