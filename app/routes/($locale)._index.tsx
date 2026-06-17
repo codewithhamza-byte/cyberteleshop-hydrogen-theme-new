@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {Suspense, useState} from 'react';
+import {Suspense, useState, useRef} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {getSeoMeta, Image} from '@shopify/hydrogen';
 import {ProductCard} from '~/components/ProductCard';
@@ -205,7 +205,7 @@ function LandingHero() {
             width: 2000,
             height: 694,
           }}
-          className="w-full h-auto object-cover block select-none"
+          className="w-full h-[160px] sm:h-auto object-cover object-[65%] sm:object-center block select-none"
           sizes="100vw"
           loading="eager"
         />
@@ -270,14 +270,14 @@ function CollectionShowcase({data}: {data: any}) {
           </div>
 
           {/* Tabs header */}
-          <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-primary/5 rounded-full border border-primary/10 max-w-4xl">
+          <div className="flex w-full md:w-auto overflow-x-auto md:overflow-x-visible whitespace-nowrap justify-start md:justify-center gap-1.5 md:gap-2 p-1.5 bg-primary/5 rounded-2xl md:rounded-full border border-primary/10 max-w-full md:max-w-4xl scrollbar-none">
             {tabs.map((tab) => {
               const isActive = tab.id === activeTab;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-5 py-2.5 rounded-full text-[10px] md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                  className={`inline-block px-4 py-2 md:px-5 md:py-2.5 rounded-xl md:rounded-full text-[10px] md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     isActive
                       ? 'bg-[#D33E13] text-white shadow-sm scale-102 border border-[#D33E13]'
                       : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
@@ -291,7 +291,7 @@ function CollectionShowcase({data}: {data: any}) {
         </div>
 
         {/* Products Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {currentProducts.slice(0, 8).map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -311,6 +311,18 @@ function CategorySlider({
   ) ?? [];
   if (items.length === 0) return null;
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (containerRef.current) {
+      const scrollAmount = containerRef.current.offsetWidth * 0.8;
+      containerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <Section padding="y" className="bg-contrast">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -321,9 +333,27 @@ function CategorySlider({
               Discover curated categories with beautiful imagery for every product need.
             </Text>
           </div>
-          <Button to="/collections/all" variant="inline">
-            View all categories
-          </Button>
+          <div className="flex items-center gap-4.5 justify-between md:justify-end">
+            <Button to="/collections/all" variant="inline">
+              View all categories
+            </Button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => scroll('left')}
+                aria-label="Scroll category slider left"
+                className="w-9 h-9 rounded-full border border-primary/10 bg-contrast flex items-center justify-center text-primary hover:border-[#D33E13] hover:text-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 cursor-pointer shadow-sm text-sm font-bold"
+              >
+                ←
+              </button>
+              <button
+                onClick={() => scroll('right')}
+                aria-label="Scroll category slider right"
+                className="w-9 h-9 rounded-full border border-primary/10 bg-contrast flex items-center justify-center text-primary hover:border-[#D33E13] hover:text-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 cursor-pointer shadow-sm text-sm font-bold"
+              >
+                →
+              </button>
+            </div>
+          </div>
         </div>
 
         <nav
@@ -341,23 +371,27 @@ function CategorySlider({
           ))}
         </nav>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {/* Categories Slider */}
+        <div
+          ref={containerRef}
+          className="mt-8 flex gap-4 md:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+        >
           {items.map((collection) => (
             <Link
               key={collection.id}
               to={`/collections/${collection.handle}`}
-              className="group block overflow-hidden rounded-[2rem] border border-primary/10 bg-contrast/95 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group block relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-contrast/95 shadow-sm transition duration-300 hover:shadow-xl w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] xl:w-[calc((100%-100px)/6)] flex-shrink-0 snap-start aspect-square"
             >
-              <div className="relative overflow-hidden bg-primary/5">
+              <div className="relative w-full h-full overflow-hidden bg-primary/5">
                 <Image
                   data={collection.image!}
                   alt={collection.image?.altText || collection.title}
-                  className="h-64 w-full object-cover transition duration-300 group-hover:scale-105"
-                  sizes="(max-width: 32em) 100vw, (max-width: 48em) 50vw, (max-width: 64em) 33vw, 16vw"
+                  className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                  sizes="(max-width: 32em) 50vw, (max-width: 48em) 33vw, 16vw"
                   aspectRatio="1/1"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-4 py-4 text-white">
-                  <Heading size="copy" className="text-copy text-lg font-semibold">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end px-3 py-4 text-white">
+                  <Heading size="copy" className="text-xs sm:text-base font-extrabold uppercase tracking-wider text-center w-full truncate">
                     {collection.title}
                   </Heading>
                 </div>
