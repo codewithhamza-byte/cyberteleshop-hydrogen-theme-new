@@ -313,7 +313,7 @@ function CollectionShowcase({data}: {data: any}) {
     tabs.find((tab) => tab.id === activeTab)?.products || [];
 
   return (
-    <Section padding="y" className="bg-contrast">
+    <Section padding="y" className="bg-contrast w-full overflow-x-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex flex-col gap-6 items-center text-center mb-8">
           <div>
@@ -382,7 +382,7 @@ function CategorySlider({
   };
 
   return (
-    <Section padding="y" className="bg-contrast">
+    <Section padding="y" className="bg-contrast w-full overflow-x-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
