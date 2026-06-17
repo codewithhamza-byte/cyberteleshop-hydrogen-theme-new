@@ -17,7 +17,7 @@ import {Grid} from '~/components/Grid';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders} from '~/data/cache';
+import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 
 const PAGE_BY = 8;
 
@@ -35,6 +35,7 @@ export async function loader({
       country: storefront.i18n.country,
       language: storefront.i18n.language,
     },
+    cache: storefront.CacheShort(),
   });
 
   invariant(data, 'No data returned from Shopify API');
@@ -57,11 +58,18 @@ export async function loader({
     },
   });
 
-  return json({
-    products: data.products,
-    collections: data.collections?.nodes || [],
-    seo,
-  });
+  return json(
+    {
+      products: data.products,
+      collections: data.collections?.nodes || [],
+      seo,
+    },
+    {
+      headers: {
+        'Cache-Control': CACHE_SHORT,
+      },
+    },
+  );
 }
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {

@@ -18,7 +18,7 @@ import {Link} from '~/components/Link';
 import {Button} from '~/components/Button';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders} from '~/data/cache';
+import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 
 const PAGINATION_SIZE = 4;
 
@@ -35,6 +35,7 @@ export const loader = async ({
       country: storefront.i18n.country,
       language: storefront.i18n.language,
     },
+    cache: storefront.CacheShort(),
   });
 
   const seo = seoPayload.listCollections({
@@ -42,7 +43,14 @@ export const loader = async ({
     url: request.url,
   });
 
-  return json({collections, seo});
+  return json(
+    {collections, seo},
+    {
+      headers: {
+        'Cache-Control': CACHE_SHORT,
+      },
+    },
+  );
 };
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {

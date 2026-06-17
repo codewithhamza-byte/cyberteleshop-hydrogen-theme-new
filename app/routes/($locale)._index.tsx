@@ -45,7 +45,9 @@ export async function loader(args: LoaderFunctionArgs) {
 }
 
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
-  const {shop} = await context.storefront.query(HOMEPAGE_SEO_QUERY);
+  const {shop} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
+    cache: context.storefront.CacheLong(),
+  });
 
   return {
     shop,
@@ -62,6 +64,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         country,
         language,
       },
+      cache: context.storefront.CacheShort(),
     })
     .catch((error) => {
       console.error(error);
@@ -74,6 +77,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         country,
         language,
       },
+      cache: context.storefront.CacheShort(),
     })
     .catch((error) => {
       console.error(error);
@@ -86,6 +90,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         country,
         language,
       },
+      cache: context.storefront.CacheShort(),
     })
     .catch((error) => {
       console.error(error);
@@ -98,6 +103,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         country,
         language,
       },
+      cache: context.storefront.CacheShort(),
     })
     .catch((error) => {
       console.error(error);

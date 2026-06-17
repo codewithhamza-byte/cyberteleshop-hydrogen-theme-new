@@ -36,7 +36,7 @@ import {IconCaret, IconCheck, IconClose} from '~/components/Icon';
 import {getExcerpt} from '~/lib/utils';
 import {seoPayload} from '~/lib/seo.server';
 import type {Storefront} from '~/lib/type';
-import {routeHeaders} from '~/data/cache';
+import {routeHeaders, CACHE_SHORT} from '~/data/cache';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 
 export const headers = routeHeaders;
@@ -48,7 +48,14 @@ export async function loader(args: LoaderFunctionArgs) {
   const deferredData = loadDeferredData(args);
   const criticalData = await loadCriticalData(args);
 
-  return defer({...deferredData, ...criticalData});
+  return defer(
+    {...deferredData, ...criticalData},
+    {
+      headers: {
+        'Cache-Control': CACHE_SHORT,
+      },
+    },
+  );
 }
 
 async function loadCriticalData({
@@ -69,6 +76,7 @@ async function loadCriticalData({
         country: context.storefront.i18n.country,
         language: context.storefront.i18n.language,
       },
+      cache: context.storefront.CacheShort(),
     }),
   ]);
 
@@ -698,14 +706,14 @@ export function ProductForm({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      const list = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
       setIsWishlist(list.includes(product.id));
     }
   }, [product.id]);
 
   const toggleWishlist = () => {
     if (typeof window !== 'undefined') {
-      let list = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      let list = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
       if (list.includes(product.id)) {
         list = list.filter((id: string) => id !== product.id);
         setIsWishlist(false);
@@ -1295,6 +1303,7 @@ async function getRecommendedProducts(
 ) {
   const products = await storefront.query(RECOMMENDED_PRODUCTS_QUERY, {
     variables: {productId, count: 12},
+    cache: storefront.CacheShort(),
   });
 
   invariant(products, 'No data returned from Shopify API');
