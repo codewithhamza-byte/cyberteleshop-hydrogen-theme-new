@@ -18,7 +18,7 @@ import {Link} from '~/components/Link';
 import {Button} from '~/components/Button';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 
 const PAGINATION_SIZE = 4;
 
@@ -47,7 +47,7 @@ export const loader = async ({
     {collections, seo},
     {
       headers: {
-        'Cache-Control': CACHE_SHORT,
+        'Cache-Control': CACHE_AD_LANDING,
       },
     },
   );

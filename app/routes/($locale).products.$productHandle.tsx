@@ -36,7 +36,7 @@ import {IconCaret, IconCheck, IconClose} from '~/components/Icon';
 import {getExcerpt} from '~/lib/utils';
 import {seoPayload} from '~/lib/seo.server';
 import type {Storefront} from '~/lib/type';
-import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 
 export const headers = routeHeaders;
@@ -52,7 +52,7 @@ export async function loader(args: LoaderFunctionArgs) {
     {...deferredData, ...criticalData},
     {
       headers: {
-        'Cache-Control': CACHE_SHORT,
+        'Cache-Control': CACHE_AD_LANDING,
       },
     },
   );

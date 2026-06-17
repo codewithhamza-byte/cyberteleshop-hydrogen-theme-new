@@ -16,3 +16,6 @@ export function routeHeaders({loaderHeaders}: {loaderHeaders: Headers}) {
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());
+
+// Cache strategy optimized for running advertising campaigns (high performance, instant CDN delivery)
+export const CACHE_AD_LANDING = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';

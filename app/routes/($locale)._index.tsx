@@ -15,7 +15,7 @@ import {Heading, Section, Text} from '~/components/Text';
 import {Link} from '~/components/Link';
 import type {HomepageCategoryCollectionsQuery} from 'storefrontapi.generated';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 
 export const headers = routeHeaders;
@@ -38,7 +38,7 @@ export async function loader(args: LoaderFunctionArgs) {
     {...deferredData, ...criticalData},
     {
       headers: {
-        'Cache-Control': CACHE_SHORT,
+        'Cache-Control': CACHE_AD_LANDING,
       },
     },
   );

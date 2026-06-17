@@ -17,7 +17,7 @@ import {Grid} from '~/components/Grid';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getImageLoadingPriority} from '~/lib/const';
 import {seoPayload} from '~/lib/seo.server';
-import {routeHeaders, CACHE_SHORT} from '~/data/cache';
+import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 
 const PAGE_BY = 8;
 
@@ -66,7 +66,7 @@ export async function loader({
     },
     {
       headers: {
-        'Cache-Control': CACHE_SHORT,
+        'Cache-Control': CACHE_AD_LANDING,
       },
     },
   );
