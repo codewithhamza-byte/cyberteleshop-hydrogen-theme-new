@@ -8,7 +8,6 @@ import {
 import {useLoaderData, Await} from '@remix-run/react';
 import {
   getSeoMeta,
-  Money,
   getSelectedProductOptions,
   Analytics,
   useOptimisticVariant,
@@ -17,6 +16,7 @@ import {
   getProductOptions,
   type MappedProductOptions,
 } from '@shopify/hydrogen';
+import {Money} from '~/components/Money';
 import invariant from 'tiny-invariant';
 import clsx from 'clsx';
 import type {

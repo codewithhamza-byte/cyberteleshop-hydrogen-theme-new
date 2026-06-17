@@ -5,11 +5,11 @@ import {
   flattenConnection,
   CartForm,
   Image,
-  Money,
   useOptimisticData,
   OptimisticInput,
   type CartReturn,
 } from '@shopify/hydrogen';
+import {Money} from '~/components/Money';
 import type {
   Cart as CartType,
   CartCost,
@@ -56,7 +56,7 @@ export function CartDetails({
   const cartHasItems = !!cart && cart.totalQuantity > 0;
   const container = {
     drawer: 'grid grid-cols-1 h-screen-no-nav grid-rows-[1fr_auto]',
-    page: 'w-full pb-12 grid md:grid-cols-2 md:items-start gap-8 md:gap-8 lg:gap-12',
+    page: 'w-full pb-12 grid lg:grid-cols-12 items-start gap-8 lg:gap-12',
   };
 
   return (
@@ -164,7 +164,7 @@ function CartLines({
   const className = clsx([
     y > 0 ? 'border-t' : '',
     layout === 'page'
-      ? 'flex-grow md:translate-y-4'
+      ? 'lg:col-span-8 flex-grow'
       : 'px-6 pb-6 sm-max:pt-2 overflow-auto transition md:px-12',
   ]);
 
@@ -209,7 +209,7 @@ function CartSummary({
 }) {
   const summary = {
     drawer: 'grid gap-4 p-6 border-t md:px-12',
-    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/10 rounded w-full',
+    page: 'lg:col-span-4 sticky top-28 grid gap-6 p-6 md:p-8 bg-gray-50/70 border border-gray-100/50 rounded-3xl w-full',
   };
 
   return (

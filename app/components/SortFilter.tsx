@@ -271,7 +271,7 @@ function PriceRangeFilter({max, min}: {max?: number; min?: number}) {
           className="text-black"
           type="number"
           value={minPrice ?? ''}
-          placeholder={'$'}
+          placeholder={'Rs'}
           onChange={onChangeMin}
         />
       </label>
@@ -282,7 +282,7 @@ function PriceRangeFilter({max, min}: {max?: number; min?: number}) {
           className="text-black"
           type="number"
           value={maxPrice ?? ''}
-          placeholder={'$'}
+          placeholder={'Rs'}
           onChange={onChangeMax}
         />
       </label>

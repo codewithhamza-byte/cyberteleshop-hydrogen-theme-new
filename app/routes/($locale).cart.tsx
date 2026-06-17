@@ -137,7 +137,7 @@ export default function CartRoute() {
                 <span>🚚</span>
                 {amountLeft > 0 ? (
                   <>
-                    Add <span className="text-[#D33E13] font-black">{currencyCode === 'PKR' ? `Rs. ${Math.round(amountLeft).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : `$${amountLeft.toFixed(2)}`}</span> more for <span className="text-green-600">Free Shipping</span>!
+                    Add <span className="text-[#D33E13] font-black">Rs. {Math.round(amountLeft).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span> more for <span className="text-green-600">Free Shipping</span>!
                   </>
                 ) : (
                   <span className="text-green-600">Congratulations! You've unlocked Free Shipping on this order!</span>
@@ -151,7 +151,7 @@ export default function CartRoute() {
               </div>
             </div>
             <div className="text-xs text-gray-450 font-bold uppercase tracking-wider md:text-right">
-              Shipping Threshold: {currencyCode === 'PKR' ? 'Rs. 5,000' : '$150'}
+              Shipping Threshold: Rs. 5,000
             </div>
           </div>
         )}

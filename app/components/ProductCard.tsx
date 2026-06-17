@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import {flattenConnection, Image, Money, useMoney} from '@shopify/hydrogen';
+import {flattenConnection, Image, useMoney} from '@shopify/hydrogen';
+import {Money} from '~/components/Money';
 import type {MoneyV2, Product} from '@shopify/hydrogen/storefront-api-types';
 
 import type {ProductCardFragment} from 'storefrontapi.generated';
@@ -95,26 +96,33 @@ export function ProductCard({
         </Link>
 
         {/* Product Details Section */}
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2">
           {/* Title & Price */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-1.5">
             <Link
               onClick={onClick}
               to={`/products/${product.handle}`}
               prefetch="viewport"
-              className="flex-grow min-w-0"
+              className="w-full"
             >
-              <h3 className="font-bold text-lg text-primary overflow-hidden text-ellipsis whitespace-nowrap hover:text-notice transition">
+              <h3 className="font-extrabold text-sm sm:text-base md:text-lg text-primary line-clamp-2 hover:text-[#D33E13] transition-colors min-h-[2.2rem] sm:min-h-[2.5rem]">
                 {product.title}
               </h3>
             </Link>
-            <div className={clsx("px-3.5 py-1.5 rounded-full text-white text-xs font-bold whitespace-nowrap shadow-sm flex items-center justify-center min-w-[70px]", cardColor.bg)}>
-              <Money withoutTrailingZeros data={price!} />
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={clsx("font-black text-xs sm:text-sm md:text-base", cardColor.text)}>
+                <Money withoutTrailingZeros data={price!} />
+              </span>
+              {compareAtPrice && isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
+                <span className="text-[10px] sm:text-xs text-primary/45 line-through font-medium">
+                  <Money withoutTrailingZeros data={compareAtPrice as MoneyV2} />
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          <p className="text-xs text-primary/60 line-clamp-2 leading-relaxed min-h-[2.5rem]">
+          {/* Description (Hidden on mobile for card compactness) */}
+          <p className="hidden sm:block text-xs text-primary/60 line-clamp-2 leading-relaxed min-h-[2.5rem]">
             {shortDescription}
           </p>
 
@@ -122,7 +130,7 @@ export function ProductCard({
       </div>
 
       {/* Action Button Section */}
-      <div className="pt-2">
+      <div className="pt-1">
         {firstVariant.availableForSale ? (
           <AddToCartButton
             lines={[
@@ -133,12 +141,12 @@ export function ProductCard({
             ]}
             variant="secondary"
             className={clsx(
-              "!py-3 px-6 rounded-full text-white font-bold text-center text-sm w-full flex items-center justify-center gap-2 transition duration-300 hover:scale-[1.02] shadow-sm cursor-pointer",
+              "!py-2 sm:!py-3 px-4 sm:px-6 rounded-full text-white font-bold text-center text-xs sm:text-sm w-full flex items-center justify-center gap-1.5 transition duration-300 hover:scale-[1.02] shadow-sm cursor-pointer",
               cardColor.bg,
               "!border-none"
             )}
           >
-            <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-1.5">
               <span>🛒</span>
               <span>Add To Cart</span>
             </span>
@@ -146,7 +154,7 @@ export function ProductCard({
         ) : (
           <Button
             variant="secondary"
-            className="!py-3 px-6 rounded-full bg-primary/10 text-primary/40 font-bold text-center text-sm w-full flex items-center justify-center gap-2 !border-none cursor-not-allowed"
+            className="!py-2 sm:!py-3 px-4 sm:px-6 rounded-full bg-primary/10 text-primary/40 font-bold text-center text-xs sm:text-sm w-full flex items-center justify-center gap-1.5 !border-none cursor-not-allowed"
             disabled
           >
             <span>Sold out</span>

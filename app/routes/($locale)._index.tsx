@@ -71,19 +71,6 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
-  const featuredCollections = context.storefront
-    .query(FEATURED_COLLECTIONS_QUERY, {
-      variables: {
-        country,
-        language,
-      },
-      cache: context.storefront.CacheShort(),
-    })
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-
   const categoryCollections = context.storefront
     .query(CATEGORY_COLLECTIONS_QUERY, {
       variables: {
@@ -112,7 +99,6 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 
   return {
     featuredProducts,
-    featuredCollections,
     categoryCollections,
     showcaseCollections,
   };
@@ -125,7 +111,6 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 export default function Homepage() {
   const {
     featuredProducts,
-    featuredCollections,
     categoryCollections,
     showcaseCollections,
   } = useLoaderData<typeof loader>();
@@ -173,29 +158,95 @@ export default function Homepage() {
         </Suspense>
       )}
 
-      {featuredCollections && (
-        <Suspense>
-          <Await resolve={featuredCollections}>
-            {(response) => {
-              if (
-                !response ||
-                !response.collections ||
-                !response.collections.nodes
-              ) {
-                return null;
-              }
-
-              return (
-                <FeaturedCollections
-                  collections={response.collections}
-                  title="Shop by Collection"
-                />
-              );
-            }}
-          </Await>
-        </Suspense>
-      )}
+      <SmartTechPromo />
     </>
+  );
+}
+
+function SmartTechPromo() {
+  return (
+    <Section padding="y" className="bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-hidden rounded-[2.5rem] my-12 mx-4 md:mx-8 lg:mx-16 border border-gray-800 shadow-2xl relative">
+      {/* Decorative gradient background glows */}
+      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 rounded-full bg-[#D33E13]/10 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 rounded-full bg-orange-600/10 blur-[100px] pointer-events-none" />
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+        <div className="grid gap-8 lg:gap-12 lg:grid-cols-12 items-center">
+          
+          {/* Left Column: Promotion Copy */}
+          <div className="lg:col-span-5 flex flex-col items-start text-left">
+            <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-[#D33E13] border border-[#D33E13]/30 px-3 py-1 rounded-full bg-[#D33E13]/5 mb-6">
+              Limited Time Event
+            </span>
+            <Heading as="h2" className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-none text-white mb-6 uppercase">
+              Next-Gen <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-[#D33E13]">
+                Smart Tech
+              </span>
+            </Heading>
+            <p className="text-sm md:text-base text-gray-300 mb-8 leading-relaxed font-medium">
+              Elevate your lifestyle with our curated range of smart gadgets, premium sound setups, and elite gaming peripherals. Checked and verified for absolute performance before delivery.
+            </p>
+            <Link 
+              to="/collections/all"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#D33E13] hover:bg-[#b8330d] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-200 shadow-lg shadow-[#D33E13]/20 hover:-translate-y-0.5"
+            >
+              Shop the Sale <span>&rarr;</span>
+            </Link>
+          </div>
+
+          {/* Right Column: Dynamic Cards Grid */}
+          <div className="lg:col-span-7 grid gap-4 grid-cols-1 sm:grid-cols-2">
+            
+            {/* Card 1 */}
+            <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+              <span className="text-2xl mb-4 block">🎧</span>
+              <Heading as="h4" className="text-base font-extrabold text-white mb-2 group-hover:text-[#D33E13] transition-colors">
+                Premium Audio
+              </Heading>
+              <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                Noise-cancelling headsets and surround-sound systems for crystal clarity.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+              <span className="text-2xl mb-4 block">⌚</span>
+              <Heading as="h4" className="text-base font-extrabold text-white mb-2 group-hover:text-[#D33E13] transition-colors">
+                Wearable Gadgets
+              </Heading>
+              <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                Smartwatches featuring health tracking, GPS navigation, and long battery life.
+              </p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+              <span className="text-2xl mb-4 block">🕹️</span>
+              <Heading as="h4" className="text-base font-extrabold text-white mb-2 group-hover:text-[#D33E13] transition-colors">
+                Gaming Gear
+              </Heading>
+              <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                RGB controllers, keypads, and mechanical mice optimized for elite response speeds.
+              </p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+              <span className="text-2xl mb-4 block">🔌</span>
+              <Heading as="h4" className="text-base font-extrabold text-white mb-2 group-hover:text-[#D33E13] transition-colors">
+                Smart Utilities
+              </Heading>
+              <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                Wireless fast-charging stands, high-output powerbanks, and auto adapters.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </Section>
   );
 }
 
@@ -397,7 +448,7 @@ function CategorySlider({
 function FeatureBlocks() {
   return (
     <Section padding="y" divider="top" className="bg-primary/5">
-      <div className="mx-auto grid max-w-7xl gap-6 px-6 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 sm:px-6 grid-cols-2 lg:grid-cols-4 lg:px-8">
         <ComparisonCard
           title="💵 COD"
           description="Available nationwide"
@@ -407,7 +458,7 @@ function FeatureBlocks() {
           description="1-3 Days in major cities"
         />
         <ComparisonCard
-          title="🔄 Money-Back Guarantee"
+          title="🔄 Money-Back"
           description="15 days refund policy"
         />
         <ComparisonCard
@@ -421,11 +472,11 @@ function FeatureBlocks() {
 
 function ComparisonCard({title, description}: {title: string; description: string}) {
   return (
-    <div className="rounded-[2rem] border border-primary/10 bg-contrast/95 p-8 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-      <Heading size="lead" className="text-copy">
+    <div className="rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-contrast/95 p-4 sm:p-6 md:p-8 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+      <Heading size="lead" className="text-copy text-sm sm:text-base md:text-lg">
         {title}
       </Heading>
-      <Text as="p" className="mt-3 text-primary/80">{description}</Text>
+      <Text as="p" className="mt-2 text-primary/80 text-[10px] sm:text-xs md:text-sm">{description}</Text>
     </div>
   );
 }

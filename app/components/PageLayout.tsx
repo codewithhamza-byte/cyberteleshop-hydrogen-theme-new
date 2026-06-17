@@ -2,7 +2,8 @@ import {useParams, Form, Await, useRouteLoaderData} from '@remix-run/react';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
 import {Disclosure} from '@headlessui/react';
 import {Suspense, useEffect, useMemo, useState, useRef} from 'react';
-import {CartForm, Money} from '@shopify/hydrogen';
+import {CartForm} from '@shopify/hydrogen';
+import {Money} from '~/components/Money';
 
 import {type LayoutQuery} from 'storefrontapi.generated';
 import {Text, Heading, Section} from '~/components/Text';
@@ -785,7 +786,7 @@ function DesktopHeader({
 
           <div className="flex-shrink-0">
             <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-sky-50 text-sky-700 text-[10px] font-extrabold uppercase tracking-wider border border-sky-100/50">
-              Free shipping for all orders of $1,300
+              Free shipping for all orders of Rs. 5,000
             </span>
           </div>
         </div>
