@@ -165,7 +165,7 @@ export default function Homepage() {
 
 function SmartTechPromo() {
   return (
-    <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-hidden rounded-[2.5rem] my-12 mx-4 md:mx-8 lg:mx-16 border border-gray-800 shadow-2xl relative py-12 md:py-16">
+    <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-hidden rounded-[1.75rem] md:rounded-[2.5rem] my-12 mx-4 md:mx-8 lg:mx-16 border border-gray-800 shadow-2xl relative py-12 md:py-16">
       {/* Decorative gradient background glows */}
       <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 rounded-full bg-[#D33E13]/10 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 rounded-full bg-orange-600/10 blur-[100px] pointer-events-none" />
@@ -326,7 +326,7 @@ function CollectionShowcase({data}: {data: any}) {
           </div>
 
           {/* Tabs header */}
-          <div className="flex w-full md:w-auto overflow-x-auto md:overflow-x-visible whitespace-nowrap justify-start md:justify-center gap-1.5 md:gap-2 p-1.5 bg-primary/5 rounded-2xl md:rounded-full border border-primary/10 max-w-full md:max-w-4xl scrollbar-none">
+          <div className="flex w-full md:w-auto overflow-x-auto md:overflow-x-visible whitespace-nowrap justify-start md:justify-center gap-1.5 md:gap-2 p-1.5 bg-primary/5 rounded-2xl md:rounded-full border border-primary/10 max-w-full md:max-w-4xl hiddenScroll">
             {tabs.map((tab) => {
               const isActive = tab.id === activeTab;
               return (
