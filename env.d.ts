@@ -30,7 +30,6 @@ declare global {
     PUBLIC_CHECKOUT_DOMAIN: string;
     SHOP_ID: string;
     PUBLIC_META_PIXEL_ID: string;
-    PUBLIC_GA4_MEASUREMENT_ID: string;
   }
 }
 

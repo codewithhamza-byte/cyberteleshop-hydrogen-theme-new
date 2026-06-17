@@ -4,12 +4,10 @@ import {useLocation} from '@remix-run/react';
 
 interface AnalyticsTrackerProps {
   metaPixelId?: string;
-  gaMeasurementId?: string;
 }
 
 export function AnalyticsTracker({
   metaPixelId,
-  gaMeasurementId,
 }: AnalyticsTrackerProps) {
   const {subscribe} = useAnalytics();
   const location = useLocation();
@@ -20,28 +18,7 @@ export function AnalyticsTracker({
     if (initialized.current) return;
     initialized.current = true;
 
-    // 1. Initialize Google Analytics 4 (GA4)
-    if (gaMeasurementId) {
-      console.log(`[Analytics] Initializing GA4 with ID: ${gaMeasurementId}`);
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`;
-      document.head.appendChild(script);
-
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      const gtag = function () {
-        (window as any).dataLayer.push(arguments);
-      };
-      (window as any).gtag = gtag;
-      (gtag as any)('js', new Date());
-      (gtag as any)('config', gaMeasurementId, {
-        page_path: window.location.pathname,
-      });
-    } else {
-      console.log('[Analytics] GA4 measurement ID not configured. In developer mode.');
-    }
-
-    // 2. Initialize Meta Pixel
+    // Initialize Meta Pixel
     if (metaPixelId) {
       console.log(`[Analytics] Initializing Meta Pixel with ID: ${metaPixelId}`);
       const fbInstance = (window as any).fbq;
@@ -84,9 +61,9 @@ export function AnalyticsTracker({
     } else {
       console.log('[Analytics] Meta Pixel ID not configured. In developer mode.');
     }
-  }, [gaMeasurementId, metaPixelId]);
+  }, [metaPixelId]);
 
-  // Subscribe to Shopify standard events and forward to Gtag / FB Pixel
+  // Subscribe to Shopify standard events and forward to FB Pixel
   useEffect(() => {
     const fireEvent = (name: string, payload: any) => {
       console.log(`[Analytics Event Triggered]: ${name}`, payload);
@@ -124,54 +101,6 @@ export function AnalyticsTracker({
           }
         } catch (err) {
           console.error('[Analytics] Error tracking to Meta Pixel:', err);
-        }
-      }
-
-      // Google Analytics 4 (GA4)
-      if ((window as any).gtag) {
-        try {
-          if (name === 'page_viewed') {
-            (window as any).gtag('event', 'page_view', {
-              page_path: payload.pathname || window.location.pathname,
-              page_title: document.title,
-            });
-          } else if (name === 'product_viewed') {
-            const product = payload.products?.[0];
-            (window as any).gtag('event', 'view_item', {
-              currency: product?.currency || 'PKR',
-              value: Number(product?.price || 0),
-              items: [
-                {
-                  item_id: product?.id,
-                  item_name: product?.title,
-                  price: Number(product?.price || 0),
-                  quantity: 1,
-                },
-              ],
-            });
-          } else if (name === 'cart_updated') {
-            const lastUpdatedLine = payload.prevCart?.lines?.nodes?.[0];
-            if (lastUpdatedLine) {
-              (window as any).gtag('event', 'add_to_cart', {
-                currency: lastUpdatedLine.cost?.totalAmount?.currencyCode || 'PKR',
-                value: Number(lastUpdatedLine.cost?.totalAmount?.amount || 0),
-                items: [
-                  {
-                    item_id: lastUpdatedLine.merchandise?.product?.id,
-                    item_name: lastUpdatedLine.merchandise?.product?.title,
-                    price: Number(lastUpdatedLine.merchandise?.price?.amount || 0),
-                    quantity: lastUpdatedLine.quantity,
-                  },
-                ],
-              });
-            }
-          } else if (name === 'search_viewed') {
-            (window as any).gtag('event', 'search', {
-              search_term: payload.searchTerm,
-            });
-          }
-        } catch (err) {
-          console.error('[Analytics] Error tracking to GA4:', err);
         }
       }
     };

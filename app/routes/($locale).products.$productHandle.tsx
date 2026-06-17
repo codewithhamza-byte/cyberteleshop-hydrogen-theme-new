@@ -739,19 +739,29 @@ export function ProductForm({
         )}
 
         {/* Render Option Swatches / Option Buttons */}
-        {productOptions.map((option, optionIndex) => {
-          // Check if option is standard or has many options
-          return (
-            <div
-              key={option.name}
-              className="product-options flex flex-col flex-wrap mb-2 gap-y-2 last:mb-0"
-            >
-              <Heading as="legend" className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-                {option.name}
-              </Heading>
-              <div className="flex flex-wrap items-baseline gap-2.5">
-                {option.optionValues.length > 7 ? (
-                  <div className="relative w-full">
+        {productOptions
+          .filter(
+            (option) =>
+              !(
+                option.name === 'Title' &&
+                option.optionValues.length === 1 &&
+                option.optionValues[0].name === 'Default Title'
+              ),
+          )
+          .map((option) => {
+            const optionIndex = productOptions.findIndex((o) => o.name === option.name);
+            // Check if option is standard or has many options
+            return (
+              <div
+                key={option.name}
+                className="product-options flex flex-col flex-wrap mb-2 gap-y-2 last:mb-0"
+              >
+                <Heading as="legend" className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                  {option.name}
+                </Heading>
+                <div className="flex flex-wrap items-baseline gap-2.5">
+                  {option.optionValues.length > 7 ? (
+                    <div className="relative w-full">
                     <Listbox>
                       {({open}) => (
                         <>

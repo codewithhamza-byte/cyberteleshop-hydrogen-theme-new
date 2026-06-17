@@ -121,7 +121,6 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     selectedLocale: storefront.i18n,
     env: {
       PUBLIC_META_PIXEL_ID: env.PUBLIC_META_PIXEL_ID,
-      PUBLIC_GA4_MEASUREMENT_ID: env.PUBLIC_GA4_MEASUREMENT_ID,
     },
   };
 }
@@ -168,7 +167,6 @@ function Layout({children}: {children?: React.ReactNode}) {
           >
             <AnalyticsTracker
               metaPixelId={data.env?.PUBLIC_META_PIXEL_ID}
-              gaMeasurementId={data.env?.PUBLIC_GA4_MEASUREMENT_ID}
             />
             <PageLayout
               key={`${locale.language}-${locale.country}`}

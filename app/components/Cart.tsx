@@ -283,11 +283,13 @@ function CartLineItem({line}: {line: CartLine}) {
           </Heading>
 
           <div className="grid pb-2">
-            {(merchandise?.selectedOptions || []).map((option) => (
-              <Text color="subtle" key={option.name}>
-                {option.name}: {option.value}
-              </Text>
-            ))}
+            {(merchandise?.selectedOptions || [])
+              .filter((option) => option.value !== 'Default Title')
+              .map((option) => (
+                <Text color="subtle" key={option.name}>
+                  {option.name}: {option.value}
+                </Text>
+              ))}
           </div>
 
           <div className="flex items-center gap-2">
@@ -412,7 +414,7 @@ function CartLinePrice({
   priceType?: 'regular' | 'compareAt';
   [key: string]: any;
 }) {
-  if (!line?.cost?.amountPerQuantity || !line?.cost?.totalAmount) return null;
+  if (!line?.cost) return null;
 
   const moneyV2 =
     priceType === 'regular'
