@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react';
 import clsx from 'clsx';
 import {flattenConnection, Image, useMoney} from '@shopify/hydrogen';
 import {Money} from '~/components/Money';
@@ -26,6 +27,11 @@ export function ProductCard({
   onClick?: () => void;
   quickAdd?: boolean;
 }) {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   let cardLabel;
 
   const cardProduct: Product = product?.variants
@@ -42,7 +48,7 @@ export function ProductCard({
     cardLabel = label;
   } else if (isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2)) {
     cardLabel = 'Sale';
-  } else if (isNewArrival(product.publishedAt)) {
+  } else if (isMounted && isNewArrival(product.publishedAt)) {
     cardLabel = 'New';
   }
 
