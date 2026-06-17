@@ -24,7 +24,7 @@ export function ProductSwimlane({
           <ProductCard
             product={product}
             key={product.id}
-            className="snap-start w-[70vw] sm:w-[45vw] md:w-80"
+            className="snap-start w-[calc((100vw-64px)/2)] sm:w-[calc((100vw-64px)/2)] md:w-80"
           />
         ))}
       </div>

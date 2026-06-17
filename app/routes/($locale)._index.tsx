@@ -346,10 +346,10 @@ function CollectionShowcase({data}: {data: any}) {
           </div>
         </div>
 
-        {/* Products Grid / Slider */}
-        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hiddenScroll pb-4 md:grid md:grid-cols-4 md:gap-6 md:pb-0">
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 md:gap-6 pb-0">
           {currentProducts.slice(0, 8).map((product: any) => (
-            <div key={product.id} className="w-[70vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-start">
+            <div key={product.id} className="w-full">
               <ProductCard product={product} />
             </div>
           ))}
@@ -423,7 +423,7 @@ function CategorySlider({
             <Link
               key={collection.id}
               to={`/collections/${collection.handle}`}
-              className="group block w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] xl:w-[calc((100%-100px)/6)] flex-shrink-0 snap-start"
+              className="group block w-[calc((100%-32px)/3)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] xl:w-[calc((100%-100px)/6)] flex-shrink-0 snap-start"
             >
               <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-primary/5 aspect-square">
                 <Image
