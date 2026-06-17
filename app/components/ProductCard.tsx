@@ -55,10 +55,7 @@ export function ProductCard({
   const charCodeSum = (product.id || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const cardColor = colors[charCodeSum % colors.length];
 
-  // Fallback for tags and description
-  const tagsToShow = product.tags && product.tags.length > 0
-    ? product.tags.slice(0, 2)
-    : ['Premium', 'Gadgets'];
+  // Fallback for description
 
   const shortDescription = product.description
     ? (product.description.length > 95 ? product.description.substring(0, 95) + '...' : product.description)
@@ -121,14 +118,6 @@ export function ProductCard({
             {shortDescription}
           </p>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 pt-1">
-            {tagsToShow.map((tag) => (
-              <span key={tag} className={clsx("px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider", cardColor.lightBg, cardColor.text)}>
-                {tag}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
 
