@@ -3,9 +3,10 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {Suspense} from 'react';
+import {Suspense, useState} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {getSeoMeta, Image} from '@shopify/hydrogen';
+import {ProductCard} from '~/components/ProductCard';
 
 import {Button} from '~/components/Button';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
@@ -91,10 +92,23 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
+  const showcaseCollections = context.storefront
+    .query(COLLECTIONS_SHOWCASE_QUERY, {
+      variables: {
+        country,
+        language,
+      },
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+
   return {
     featuredProducts,
     featuredCollections,
     categoryCollections,
+    showcaseCollections,
   };
 }
 
@@ -107,11 +121,19 @@ export default function Homepage() {
     featuredProducts,
     featuredCollections,
     categoryCollections,
+    showcaseCollections,
   } = useLoaderData<typeof loader>();
 
   return (
     <>
       <LandingHero />
+      {showcaseCollections && (
+        <Suspense>
+          <Await resolve={showcaseCollections}>
+            {(response) => <CollectionShowcase data={response} />}
+          </Await>
+        </Suspense>
+      )}
       {categoryCollections && (
         <Suspense>
           <Await resolve={categoryCollections}>
@@ -174,72 +196,108 @@ export default function Homepage() {
 
 function LandingHero() {
   return (
-    <section className="relative w-full bg-contrast py-12 md:py-20 lg:py-24 overflow-hidden border-b border-primary/5">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 grid gap-12 lg:grid-cols-12 items-center">
-        {/* Left Content Column */}
-        <div className="lg:col-span-6 flex flex-col items-start gap-6 text-left">
-          <div className="inline-flex items-center gap-2 rounded-full border border-notice/20 bg-notice/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-notice">
-            <span className="flex h-2 w-2 rounded-full bg-notice animate-ping" />
-            <span>Special Promotion - Up to 30% Off</span>
+    <section className="w-full bg-contrast overflow-hidden border-b border-primary/5">
+      <Link to="/collections/all" className="block relative group w-full">
+        <Image
+          data={{
+            url: 'https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973',
+            altText: 'CyberTeleshop Premium Electronic Sales Banner',
+            width: 2000,
+            height: 694,
+          }}
+          className="w-full h-auto object-cover block select-none"
+          sizes="100vw"
+          loading="eager"
+        />
+        {/* Subtle hover overlay to invite action */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition duration-300" />
+      </Link>
+    </section>
+  );
+}
+
+function CollectionShowcase({data}: {data: any}) {
+  const tabs = [
+    {
+      id: 'hot-deals',
+      label: '🔥 Hot Deals',
+      products: data?.hotDeals?.products?.nodes || [],
+    },
+    {
+      id: 'new-arrivals',
+      label: '✨ New Arrivals',
+      products: data?.newArrivals?.products?.nodes || [],
+    },
+    {
+      id: 'best-selling',
+      label: '🏆 Best Selling',
+      products: data?.bestSelling?.products?.nodes || [],
+    },
+    {
+      id: 'limited-offer',
+      label: '⚡ Limited Offer',
+      products: data?.limitedOffer?.products?.nodes || [],
+    },
+    {
+      id: 'trending-products',
+      label: '📈 Trending',
+      products: data?.trending?.products?.nodes || [],
+    },
+    {
+      id: 'best-rated',
+      label: '⭐ Best Rated',
+      products: data?.bestRated?.products?.nodes || [],
+    },
+  ].filter((tab) => tab.products.length > 0);
+
+  if (tabs.length === 0) return null;
+
+  const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const currentProducts =
+    tabs.find((tab) => tab.id === activeTab)?.products || [];
+
+  return (
+    <Section padding="y" className="bg-contrast">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex flex-col gap-6 items-center text-center mb-8">
+          <div>
+            <Heading size="heading" className="text-3xl font-extrabold tracking-tight uppercase">
+              Featured Collections
+            </Heading>
+            <Text as="p" className="mt-2 text-primary/80 max-w-xl">
+              Quickly browse and discover hot products from our top active collections.
+            </Text>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-primary sm:text-5xl md:text-6xl leading-tight">
-            Premium Electronics & <span className="text-notice">Smart Gadgets</span>
-          </h1>
-          <p className="text-lg text-primary/80 max-w-lg leading-relaxed">
-            Upgrade your tech with nationwide Cash on Delivery, ultra-fast 1-3 days shipping, and the peace of mind to inspect your package before paying.
-          </p>
-          <div className="flex flex-wrap gap-4 w-full sm:w-auto">
-            <Button to="/collections/all" variant="primary" className="shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-              Shop Now
-            </Button>
-            <Button to="/collections" variant="secondary" className="hover:bg-primary/5 transition-all duration-300">
-              Browse Collections
-            </Button>
-          </div>
-          {/* Trust badges */}
-          <div className="mt-6 pt-6 border-t border-primary/10 w-full grid grid-cols-3 gap-4 text-xs font-semibold text-primary/70">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">💵</span>
-              <span>Nationwide COD</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🚚</span>
-              <span>1-3 Day Delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🔓</span>
-              <span>Open Box Check</span>
-            </div>
+
+          {/* Tabs header */}
+          <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-primary/5 rounded-full border border-primary/10 max-w-4xl">
+            {tabs.map((tab) => {
+              const isActive = tab.id === activeTab;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-5 py-2.5 rounded-full text-[10px] md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#D33E13] text-white shadow-sm scale-102 border border-[#D33E13]'
+                      : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Right Visual Column */}
-        <div className="lg:col-span-6 relative w-full group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-notice/10 to-transparent rounded-[2rem] blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500 -z-10" />
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-primary/10 bg-contrast/95 p-3 shadow-2xl transition duration-500 hover:scale-[1.01]">
-            <Image
-              data={{
-                url: 'https://www.cyberteleshop.com/cdn/shop/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973',
-                altText: 'CyberTeleshop Premium Electronic Sales Banner',
-                width: 2000,
-                height: 694,
-              }}
-              className="w-full h-auto object-cover rounded-[2rem] aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] block"
-              sizes="(max-width: 32em) 100vw, (max-width: 48em) 90vw, 45vw"
-              loading="eager"
-            />
-            {/* Elegant glassmorphic overlay label for premium feel */}
-            <div className="absolute bottom-8 left-8 right-8 backdrop-blur-md bg-black/45 border border-white/10 rounded-2xl p-4 text-white flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div>
-                <p className="text-xs uppercase tracking-wider opacity-80">Latest Collection</p>
-                <p className="font-semibold text-sm">Smartphones, Watch & Audio Gadgets</p>
-              </div>
-              <span className="text-xs bg-white text-black font-semibold px-2.5 py-1 rounded-full uppercase">30% OFF</span>
-            </div>
-          </div>
+        {/* Products Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {currentProducts.slice(0, 8).map((product: any) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
 
@@ -478,3 +536,65 @@ export const FEATURED_COLLECTIONS_QUERY = `#graphql
     }
   }
 ` as const;
+
+export const COLLECTIONS_SHOWCASE_QUERY = `#graphql
+  query collectionsShowcase($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    hotDeals: collection(handle: "hot-deals") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    newArrivals: collection(handle: "new-arrivals") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    bestSelling: collection(handle: "best-selling") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    limitedOffer: collection(handle: "limited-offer") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    trending: collection(handle: "trending-products") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    bestRated: collection(handle: "best-rated") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+  }
+  ${PRODUCT_CARD_FRAGMENT}
+` as const;
+
