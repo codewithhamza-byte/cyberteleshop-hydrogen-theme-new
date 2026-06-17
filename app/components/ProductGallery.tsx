@@ -65,6 +65,8 @@ export function ProductGallery({
                 <img
                   src={imageUrl}
                   alt={altText}
+                  width={80}
+                  height={80}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -141,7 +143,10 @@ export function ProductGallery({
                 <img
                   src={imageUrl}
                   alt={altText}
+                  width={64}
+                  height={64}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center text-xs text-gray-400">
@@ -222,6 +227,7 @@ function ActiveMediaRenderer({
       <Image
         data={media.image}
         loading="eager"
+        sizes="(max-width: 48em) 100vw, 50vw"
         className={clsx(
           'object-contain transition-all duration-300 w-full h-full fadeIn',
           lightbox ? 'max-h-[85vh]' : 'aspect-square max-h-[600px]',

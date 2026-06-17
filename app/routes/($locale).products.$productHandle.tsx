@@ -174,6 +174,16 @@ export default function Product() {
 
   const isOutOfStock = !selectedVariant?.availableForSale;
 
+  const [whatsappUrl, setWhatsappUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const variantText = selectedVariant?.title !== 'Default Title' ? ` (${selectedVariant?.title})` : '';
+      const text = `Hi CyberTeleshop, I'd like to order:\n\n*Product:* ${title}${variantText}\n*Price:* ${selectedVariant?.price?.amount} ${selectedVariant?.price?.currencyCode}\n*URL:* ${window.location.href}`;
+      setWhatsappUrl(`https://wa.me/923146257174?text=${encodeURIComponent(text)}`);
+    }
+  }, [title, selectedVariant?.title, selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode]);
+
   return (
     <>
       <Section className="px-4 md:px-8 lg:px-16 py-6 max-w-7xl mx-auto">
@@ -251,11 +261,26 @@ export default function Product() {
                 <Heading as="h1" className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
                   {title}
                 </Heading>
-                {vendor && (
-                  <Text className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
-                    {vendor}
-                  </Text>
-                )}
+                <div className="flex flex-wrap items-center gap-3.5 mt-1">
+                  {vendor && (
+                    <Text className="text-xs font-bold text-gray-400 tracking-wider uppercase bg-gray-100 px-2 py-0.5 rounded">
+                      {vendor}
+                    </Text>
+                  )}
+                  <button
+                    onClick={() => {
+                      setActiveTab('reviews');
+                      const element = document.getElementById('product-tabs');
+                      if (element) {
+                        element.scrollIntoView({behavior: 'smooth', block: 'start'});
+                      }
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-bold text-gray-550 hover:text-[#D33E13] transition-colors focus:outline-none"
+                  >
+                    <div className="flex text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                    <span>4.9 (12 reviews)</span>
+                  </button>
+                </div>
               </div>
 
               {/* Price display */}
@@ -269,7 +294,7 @@ export default function Product() {
                       <span className="text-lg text-gray-400 line-through">
                         <Money data={selectedVariant.compareAtPrice} withoutTrailingZeros />
                       </span>
-                      <span className="bg-green-100 text-green-800 text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                      <span className="bg-[#D33E13]/10 text-[#D33E13] text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#D33E13]/25 shadow-sm">
                         Save {Math.round(((Number(selectedVariant.compareAtPrice.amount) - Number(selectedVariant.price.amount)) / Number(selectedVariant.compareAtPrice.amount)) * 100)}%
                       </span>
                     </>
@@ -277,10 +302,10 @@ export default function Product() {
               </div>
 
               {/* Social Proof viewing count */}
-              <div className="flex items-center gap-2.5 text-gray-600 text-xs md:text-sm bg-gray-50 border border-gray-100/50 rounded-xl p-3.5 w-fit">
-                <span className="text-lg">👁️</span>
+              <div className="flex items-center gap-2.5 text-gray-600 text-xs bg-gray-50 border border-gray-150 rounded-xl px-4 py-2.5 w-fit font-semibold shadow-sm">
+                <span className="text-base animate-pulse">👁️</span>
                 <span>
-                  <strong className="text-gray-900 font-bold">{viewersCount} people</strong> are viewing this right now
+                  <strong className="text-[#D33E13] font-extrabold">{viewersCount} customers</strong> are viewing this right now
                 </span>
               </div>
 
@@ -384,7 +409,7 @@ export default function Product() {
         </div>
 
         {/* Bottom Tabbed Content Area */}
-        <div className="mt-16 border-t border-gray-100 pt-10">
+        <div id="product-tabs" className="mt-16 border-t border-gray-100 pt-10">
           <div className="flex flex-wrap gap-2 justify-center mb-8 border-b border-gray-100 pb-4">
             {(['description', 'reviews', 'shipping', 'returns'] as const).map((tab) => {
               const labels = {
@@ -639,17 +664,21 @@ export default function Product() {
 
       {/* Sticky Bottom Add to Cart Bar */}
       {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-150 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] py-3.5 px-4 md:px-8 z-[90] flex items-center justify-between animate-slideUp">
+        <div className="fixed bottom-0 left-0 right-0 md:bottom-6 md:right-6 md:left-auto md:w-full md:max-w-md bg-white/95 dark:bg-black/95 backdrop-blur-md border-t md:border border-gray-150 md:border-gray-200/50 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] py-3.5 px-4 md:px-5 z-[90] flex items-center justify-between md:rounded-2xl gap-3 animate-slideUp">
           <div className="flex items-center gap-3">
             {media.nodes[0]?.previewImage?.url && (
               <img
                 src={media.nodes[0].previewImage.url}
                 alt={title}
+                width={48}
+                height={48}
                 className="w-12 h-12 object-cover rounded-lg border border-gray-100 hidden sm:block"
               />
             )}
             <div>
-              <h4 className="font-extrabold text-xs md:text-sm text-gray-900 line-clamp-1">{title}</h4>
+              <h4 className="font-extrabold text-xs md:text-sm text-gray-900 line-clamp-1 max-w-[150px] md:max-w-[200px]">
+                {title}
+              </h4>
               <div className="flex items-center gap-2">
                 <span className="text-xs md:text-sm font-extrabold text-[#D33E13]">
                   <Money data={selectedVariant.price} withoutTrailingZeros />
@@ -665,12 +694,23 @@ export default function Product() {
           </div>
           <div className="flex items-center gap-2">
             {!isOutOfStock ? (
-              <AddToCartButton
-                lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
-                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-4 md:px-5 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
-              >
-                Add to Cart
-              </AddToCartButton>
+              <>
+                <AddToCartButton
+                  lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
+                  className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-4 rounded-xl text-xs shadow-md shadow-[#D33E13]/10"
+                >
+                  Add
+                </AddToCartButton>
+                <a
+                  href={whatsappUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-3.5 rounded-xl text-xs shadow-md flex items-center gap-1"
+                >
+                  <WhatsAppIcon className="w-4 h-4 fill-white" />
+                  Order
+                </a>
+              </>
             ) : (
               <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl">Sold Out</span>
             )}
@@ -711,6 +751,16 @@ export function ProductForm({
     }
   }, [product.id]);
 
+  const [whatsappUrl, setWhatsappUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const variantText = selectedVariant?.title !== 'Default Title' ? ` (${selectedVariant?.title})` : '';
+      const text = `Hi CyberTeleshop, I'd like to order:\n\n*Product:* ${product.title}${variantText}\n*Price:* ${selectedVariant?.price?.amount} ${selectedVariant?.price?.currencyCode}\n*Quantity:* ${quantity}\n*URL:* ${window.location.href}`;
+      setWhatsappUrl(`https://wa.me/923146257174?text=${encodeURIComponent(text)}`);
+    }
+  }, [product.title, selectedVariant?.title, selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode, quantity]);
+
   const toggleWishlist = () => {
     if (typeof window !== 'undefined') {
       let list = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
@@ -750,6 +800,7 @@ export function ProductForm({
           )
           .map((option) => {
             const optionIndex = productOptions.findIndex((o) => o.name === option.name);
+            const isColorOption = option.name.toLowerCase() === 'color' || option.name.toLowerCase() === 'colour';
             // Check if option is standard or has many options
             return (
               <div
@@ -844,16 +895,27 @@ export function ProductForm({
                         prefetch="intent"
                         replace
                         className={clsx(
-                          'px-4 py-2 border rounded-xl font-bold text-xs md:text-sm cursor-pointer transition-all duration-200 text-center min-w-[3.5rem] inline-block shadow-sm',
+                          'cursor-pointer transition-all duration-200 text-center inline-block',
+                          isColorOption
+                            ? 'p-0.5 border-2 rounded-full shadow-sm hover:scale-105 active:scale-95'
+                            : 'px-4 py-2 border rounded-xl font-bold text-xs md:text-sm shadow-sm hover:border-gray-400 active:scale-95',
                           selected
-                            ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13] scale-102'
-                            : 'border-gray-200 hover:border-gray-400 bg-white text-gray-700',
+                            ? isColorOption
+                              ? 'border-[#D33E13] scale-110 shadow-md'
+                              : 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13] scale-102 font-extrabold'
+                            : isColorOption
+                              ? 'border-gray-200 hover:border-gray-400 bg-white'
+                              : 'border-gray-200 bg-white text-gray-700',
                           available
                             ? 'opacity-100'
                             : 'opacity-40 cursor-not-allowed line-through',
                         )}
                       >
-                        <ProductOptionSwatch swatch={swatch} name={name} />
+                        {isColorOption ? (
+                          <ProductOptionSwatch swatch={swatch} name={name} />
+                        ) : (
+                          <span>{name}</span>
+                        )}
                       </Link>
                     ),
                   )
@@ -931,21 +993,32 @@ export function ProductForm({
               </button>
             </div>
 
-            {/* Row 2: Buy It Now Checkout CTA */}
+            {/* Row 2: Buy It Now Checkout CTA & WhatsApp direct checkout */}
             {!isOutOfStock && (
               <>
-                <button
-                  onClick={() => {
-                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
-                      'gid://shopify/ProductVariant/',
-                      '',
-                    )}:${quantity}`;
-                    window.location.href = checkoutUrl;
-                  }}
-                  className="w-full bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
-                >
-                  Buy it now
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 mt-1">
+                  <button
+                    onClick={() => {
+                      const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                        'gid://shopify/ProductVariant/',
+                        '',
+                      )}:${quantity}`;
+                      window.location.href = checkoutUrl;
+                    }}
+                    className="flex-1 bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-sm md:text-base tracking-wide uppercase active:scale-[0.98]"
+                  >
+                    Buy it now
+                  </button>
+                  <a
+                    href={whatsappUrl || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center gap-2 text-sm md:text-base tracking-wide uppercase active:scale-[0.98]"
+                  >
+                    <WhatsAppIcon className="w-5 h-5 fill-white" />
+                    Order on WhatsApp
+                  </a>
+                </div>
 
                 {/* Secure Checkout Badges */}
                 <div className="flex flex-col items-center gap-2 mt-4 py-2 border-t border-gray-100">
@@ -1091,6 +1164,14 @@ function ChevronRightIcon(props: React.ComponentProps<'svg'>) {
       {...props}
     >
       <path d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M12.012 2C6.48 2 2.004 6.48 2.004 12.012c0 2.22.732 4.272 1.968 5.928L2.004 22l4.248-1.92c1.62.96 3.492 1.512 5.508 1.512 5.532 0 10.008-4.476 10.008-10.008C21.768 6.48 17.52 2 12.012 2zm5.796 14.316c-.24.684-1.212 1.26-1.668 1.344-.456.096-.9-.096-2.916-.9-2.58-1.032-4.224-3.66-4.356-3.84-.132-.18-1.056-1.404-1.056-2.676 0-1.272.66-1.896.9-2.148.24-.252.528-.312.708-.312.18 0 .36 0 .516.012.168.012.396-.06.612.456.228.54.78 1.908.852 2.052.072.144.12.312.024.504-.096.192-.144.312-.288.48-.144.168-.312.384-.444.516-.156.156-.324.324-.132.66.192.324.852 1.404 1.824 2.268.972.864 1.788 1.14 2.088 1.284.3.144.48.12.66-.084.18-.204.78-.9 1-.192.216.3.708 1.008 1.416 1.344.708.348 1.188.18 1.368.108.18-.084.816-.336 1.056-.996z"/>
     </svg>
   );
 }
