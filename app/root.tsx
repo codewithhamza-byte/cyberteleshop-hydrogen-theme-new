@@ -28,6 +28,7 @@ import invariant from 'tiny-invariant';
 import {PageLayout} from '~/components/PageLayout';
 import {GenericError} from '~/components/GenericError';
 import {NotFound} from '~/components/NotFound';
+import {AnalyticsTracker} from '~/components/AnalyticsTracker';
 import favicon from '~/assets/favicon.svg';
 import {seoPayload} from '~/lib/seo.server';
 import styles from '~/styles/app.css?url';
@@ -118,6 +119,10 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
       withPrivacyBanner: true,
     },
     selectedLocale: storefront.i18n,
+    env: {
+      PUBLIC_META_PIXEL_ID: env.PUBLIC_META_PIXEL_ID,
+      PUBLIC_GA4_MEASUREMENT_ID: env.PUBLIC_GA4_MEASUREMENT_ID,
+    },
   };
 }
 
@@ -161,6 +166,10 @@ function Layout({children}: {children?: React.ReactNode}) {
             shop={data.shop}
             consent={data.consent}
           >
+            <AnalyticsTracker
+              metaPixelId={data.env?.PUBLIC_META_PIXEL_ID}
+              gaMeasurementId={data.env?.PUBLIC_GA4_MEASUREMENT_ID}
+            />
             <PageLayout
               key={`${locale.language}-${locale.country}`}
               layout={data.layout}
