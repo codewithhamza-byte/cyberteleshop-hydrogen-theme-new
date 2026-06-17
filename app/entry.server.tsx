@@ -41,7 +41,30 @@ export default async function handleRequest(
       'https://www.cyberteleshop.com',
       'https://cdn.shopify.com',
       'https://www.facebook.com',
+      'https://*.shopifycdn.com',
       'data:',
+      '*',
+    ],
+    frameSrc: [
+      'self',
+      'https://www.youtube.com',
+      'https://youtube.com',
+      'https://youtu.be',
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+    ],
+    childSrc: [
+      'self',
+      'https://www.youtube.com',
+      'https://youtube.com',
+      'https://youtu.be',
+    ],
+    mediaSrc: [
+      'self',
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://*.shopifycdn.com',
+      '*',
     ],
   });
 

@@ -137,7 +137,7 @@ export default function CartRoute() {
                 <span>🚚</span>
                 {amountLeft > 0 ? (
                   <>
-                    Add <span className="text-[#D33E13] font-black">{currencyCode === 'PKR' ? `Rs. ${amountLeft.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}` : `$${amountLeft.toFixed(2)}`}</span> more for <span className="text-green-600">Free Shipping</span>!
+                    Add <span className="text-[#D33E13] font-black">{currencyCode === 'PKR' ? `Rs. ${Math.round(amountLeft).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : `$${amountLeft.toFixed(2)}`}</span> more for <span className="text-green-600">Free Shipping</span>!
                   </>
                 ) : (
                   <span className="text-green-600">Congratulations! You've unlocked Free Shipping on this order!</span>
