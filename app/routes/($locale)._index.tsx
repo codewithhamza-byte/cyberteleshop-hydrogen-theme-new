@@ -487,7 +487,7 @@ const HOMEPAGE_SEO_QUERY = `#graphql
 export const CATEGORY_COLLECTIONS_QUERY = `#graphql
   query homepageCategoryCollections($country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
-    collections(first: 6, sortKey: UPDATED_AT) {
+    collections(first: 100, sortKey: UPDATED_AT) {
       nodes {
         id
         title
