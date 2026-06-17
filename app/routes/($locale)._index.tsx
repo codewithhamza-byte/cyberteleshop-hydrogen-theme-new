@@ -346,10 +346,12 @@ function CollectionShowcase({data}: {data: any}) {
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
+        {/* Products Grid / Slider */}
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory hiddenScroll pb-4 md:grid md:grid-cols-4 md:gap-6 md:pb-0">
           {currentProducts.slice(0, 8).map((product: any) => (
-            <ProductCard key={product.id} product={product} />
+            <div key={product.id} className="w-[70vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-start">
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       </div>

@@ -63,17 +63,17 @@ export function ProductCard({
     : 'High-quality electronics and accessories engineered to elevate your daily tech experience.';
 
   return (
-    <div className={clsx("flex flex-col h-full justify-between gap-5 rounded-[2.5rem] border border-primary/5 bg-contrast p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5", className)}>
-      <div className="flex flex-col gap-4">
+    <div className={clsx("flex flex-col h-full justify-between gap-3 sm:gap-5 rounded-[1.75rem] sm:rounded-[2.5rem] border border-primary/5 bg-contrast p-3.5 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5", className)}>
+      <div className="flex flex-col gap-3 sm:gap-4">
         {/* Product Image Section */}
         <Link
           onClick={onClick}
           to={`/products/${product.handle}`}
           prefetch="viewport"
-          className="relative block w-full aspect-square overflow-hidden rounded-[2rem] bg-primary/5 group"
+          className="relative block w-full aspect-square overflow-hidden rounded-[1.25rem] sm:rounded-[2rem] bg-primary/5 group"
         >
           {/* Category overlay */}
-          <div className="absolute top-0 left-0 bg-contrast rounded-br-2xl pr-4 pb-2 pt-3 pl-5 text-[10px] font-bold tracking-wider text-primary/70 uppercase shadow-sm z-10">
+          <div className="absolute top-0 left-0 bg-contrast rounded-br-2xl pr-3 pb-1.5 pt-2.5 pl-4 text-[8px] sm:text-[10px] font-bold tracking-wider text-primary/70 uppercase shadow-sm z-10">
             {product.productType || 'Electronics'}
           </div>
 
@@ -89,27 +89,27 @@ export function ProductCard({
           )}
 
           {cardLabel && (
-            <span className={clsx("absolute top-3 right-3 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider text-white z-10", cardColor.bg)}>
+            <span className={clsx("absolute top-3 right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-white z-10", cardColor.bg)}>
               {cardLabel}
             </span>
           )}
         </Link>
 
         {/* Product Details Section */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5 sm:gap-2">
           {/* Title & Price */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1 sm:gap-1.5">
             <Link
               onClick={onClick}
               to={`/products/${product.handle}`}
               prefetch="viewport"
               className="w-full"
             >
-              <h3 className="font-extrabold text-sm sm:text-base md:text-lg text-primary line-clamp-2 hover:text-[#D33E13] transition-colors min-h-[2.2rem] sm:min-h-[2.5rem]">
+              <h3 className="font-extrabold text-xs sm:text-base md:text-lg text-primary line-clamp-2 hover:text-[#D33E13] transition-colors min-h-[2rem] sm:min-h-[2.5rem]">
                 {product.title}
               </h3>
             </Link>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <span className={clsx("font-black text-xs sm:text-sm md:text-base", cardColor.text)}>
                 <Money withoutTrailingZeros data={price!} />
               </span>
