@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {useLoaderData} from '@remix-run/react';
+import {useLoaderData, Link} from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import {
   Pagination,
@@ -59,6 +59,7 @@ export async function loader({
 
   return json({
     products: data.products,
+    collections: data.collections?.nodes || [],
     seo,
   });
 }
@@ -68,12 +69,54 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 };
 
 export default function AllProducts() {
-  const {products} = useLoaderData<typeof loader>();
+  const {products, collections} = useLoaderData<typeof loader>();
 
   return (
     <>
-      <PageHeader heading="All Products" variant="allCollections" />
-      <Section>
+      {/* Premium Hero Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
+
+        <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-300/80 mb-3.5 font-bold uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#D33E13] transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white font-extrabold">Shop</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-3">
+            All Products
+          </h1>
+
+          <p className="max-w-2xl text-xs md:text-sm text-gray-200/90 leading-relaxed font-medium">
+            Discover our premium collections, handpicked items, and brand new additions designed for performance.
+          </p>
+
+          {/* Quick Switcher capsule row */}
+          {collections && collections.length > 0 && (
+            <div className="mt-8 flex flex-wrap justify-center gap-2.5 max-w-4xl">
+              <Link
+                to="/products"
+                className="px-4.5 py-2 rounded-full text-xs font-extrabold transition-all duration-200 shadow-sm border bg-[#D33E13] border-[#D33E13] text-white scale-105"
+              >
+                All Products
+              </Link>
+              {collections.map((c: any) => (
+                <Link
+                  key={c.handle}
+                  to={`/collections/${c.handle}`}
+                  className="px-4.5 py-2 rounded-full text-xs font-extrabold transition-all duration-200 shadow-sm border bg-white/10 hover:bg-white/20 text-white border-white/10"
+                >
+                  {c.title}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <Section className="max-w-7xl mx-auto px-4 md:px-8 pb-16">
         <Pagination connection={products}>
           {({nodes, isLoading, NextLink, PreviousLink}) => {
             const itemsMarkup = nodes.map((product, i) => (
@@ -84,17 +127,29 @@ export default function AllProducts() {
               />
             ));
 
-            return (
+             return (
               <>
-                <div className="flex items-center justify-center mt-6">
-                  <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Previous'}
+                <div className="flex items-center justify-center mb-8">
+                  <PreviousLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-xs font-extrabold text-gray-700 hover:text-[#D33E13] hover:border-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 shadow-sm cursor-pointer">
+                    {isLoading ? (
+                      <span className="w-4 h-4 border-2 border-[#D33E13] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>←</span> Previous Page
+                      </>
+                    )}
                   </PreviousLink>
                 </div>
                 <Grid data-test="product-grid">{itemsMarkup}</Grid>
-                <div className="flex items-center justify-center mt-6">
-                  <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                    {isLoading ? 'Loading...' : 'Next'}
+                <div className="flex items-center justify-center mt-8">
+                  <NextLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#D33E13] hover:bg-[#b0300d] text-xs font-extrabold text-white transition-all duration-200 shadow-md shadow-[#D33E13]/10 hover:shadow-lg cursor-pointer">
+                    {isLoading ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        Next Page <span>→</span>
+                      </>
+                    )}
                   </NextLink>
                 </div>
               </>
@@ -124,6 +179,13 @@ const ALL_PRODUCTS_QUERY = `#graphql
         hasNextPage
         startCursor
         endCursor
+      }
+    }
+    collections(first: 100) {
+      nodes {
+        id
+        title
+        handle
       }
     }
   }

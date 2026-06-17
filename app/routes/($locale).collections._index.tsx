@@ -54,8 +54,29 @@ export default function Collections() {
 
   return (
     <>
-      <PageHeader heading="Collections" />
-      <Section>
+      {/* Premium Hero Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
+
+        <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-300/80 mb-3.5 font-bold uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#D33E13] transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white font-extrabold">Collections</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-3">
+            Our Collections
+          </h1>
+
+          <p className="max-w-2xl text-xs md:text-sm text-gray-200/90 leading-relaxed font-medium">
+            Explore our curated collections of high-performance gear, apparel, and accessories.
+          </p>
+        </div>
+      </div>
+
+      <Section className="max-w-7xl mx-auto px-4 md:px-8 pb-16">
         <Pagination connection={collections}>
           {({nodes, isLoading, PreviousLink, NextLink}) => (
             <>
@@ -100,21 +121,41 @@ function CollectionCard({
     <Link
       prefetch="viewport"
       to={`/collections/${collection.handle}`}
-      className="grid gap-4"
+      className="group relative block aspect-[3/2] w-full overflow-hidden rounded-[2.5rem] bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300"
     >
-      <div className="card-image bg-primary/5 aspect-[3/2]">
-        {collection?.image && (
+      {/* Image Container */}
+      <div className="absolute inset-0 z-0">
+        {collection?.image ? (
           <Image
             data={collection.image}
-            aspectRatio="6/4"
+            aspectRatio="3/2"
             sizes="(max-width: 32em) 100vw, 45vw"
             loading={loading}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#1e293b] to-[#0f172a]" />
         )}
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-950/45 to-transparent transition-opacity duration-300" />
       </div>
-      <Heading as="h3" size="copy">
-        {collection.title}
-      </Heading>
+
+      {/* Info Container */}
+      <div className="absolute inset-0 z-10 flex flex-col justify-end p-6 md:p-8">
+        <div className="transform transition-transform duration-300 group-hover:-translate-y-1">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#D33E13] bg-[#D33E13]/15 border border-[#D33E13]/30 px-3 py-1.5 rounded-full w-fit mb-2 block">
+            Explore
+          </span>
+          <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
+            {collection.title}
+          </h3>
+          {collection.description && (
+            <p className="text-xs text-gray-300 line-clamp-1 mt-1 font-medium max-w-sm">
+              {collection.description}
+            </p>
+          )}
+        </div>
+      </div>
     </Link>
   );
 }

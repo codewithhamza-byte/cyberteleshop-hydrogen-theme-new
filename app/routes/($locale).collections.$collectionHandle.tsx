@@ -4,7 +4,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {useLoaderData, useNavigate} from '@remix-run/react';
+import {useLoaderData, useNavigate, Link} from '@remix-run/react';
 import {useInView} from 'react-intersection-observer';
 import type {
   Filter,
@@ -149,18 +149,67 @@ export default function Collection() {
 
   return (
     <>
-      <PageHeader heading={collection.title}>
-        {collection?.description && (
-          <div className="flex items-baseline justify-between w-full">
-            <div>
-              <Text format width="narrow" as="p" className="inline-block">
-                {collection.description}
-              </Text>
-            </div>
+      {/* Premium Hero Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        {/* Background image overlay */}
+        {collection?.image?.url ? (
+          <div className="absolute inset-0">
+            <img
+              src={collection.image.url}
+              alt={collection.image.altText || collection.title}
+              className="w-full h-full object-cover opacity-25 filter blur-[1px] scale-102"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/75 to-transparent" />
           </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
         )}
-      </PageHeader>
-      <Section>
+
+        <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-300/80 mb-3.5 font-bold uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#D33E13] transition-colors">Home</Link>
+            <span>/</span>
+            <Link to="/collections" className="hover:text-[#D33E13] transition-colors">Collections</Link>
+            <span>/</span>
+            <span className="text-white font-extrabold">{collection.title}</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-3">
+            {collection.title}
+          </h1>
+
+          {collection?.description && (
+            <p className="max-w-2xl text-xs md:text-sm text-gray-200/90 leading-relaxed font-medium">
+              {collection.description}
+            </p>
+          )}
+
+          {/* Quick Switcher capsule row */}
+          {collections && collections.length > 0 && (
+            <div className="mt-8 flex flex-wrap justify-center gap-2.5 max-w-4xl">
+              {collections.map((c: any) => {
+                const isActive = c.handle === collection.handle;
+                return (
+                  <Link
+                    key={c.handle}
+                    to={`/collections/${c.handle}`}
+                    className={`px-4.5 py-2 rounded-full text-xs font-extrabold transition-all duration-200 shadow-sm border ${
+                      isActive
+                        ? 'bg-[#D33E13] border-[#D33E13] text-white scale-105'
+                        : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
+                    }`}
+                  >
+                    {c.title}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <Section className="max-w-7xl mx-auto px-4 md:px-8 pb-16">
         <SortFilter
           filters={collection.products.filters as Filter[]}
           appliedFilters={appliedFilters}
@@ -177,10 +226,16 @@ export default function Collection() {
               state,
             }) => (
               <>
-                <div className="flex items-center justify-center mb-6">
-                  <Button as={PreviousLink} variant="secondary" width="full">
-                    {isLoading ? 'Loading...' : 'Load previous'}
-                  </Button>
+                <div className="flex items-center justify-center mb-8">
+                  <PreviousLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-xs font-extrabold text-gray-700 hover:text-[#D33E13] hover:border-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 shadow-sm cursor-pointer">
+                    {isLoading ? (
+                      <span className="w-4 h-4 border-2 border-[#D33E13] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>←</span> Load Previous
+                      </>
+                    )}
+                  </PreviousLink>
                 </div>
                 <ProductsLoadedOnScroll
                   nodes={nodes}
@@ -189,15 +244,19 @@ export default function Collection() {
                   hasNextPage={hasNextPage}
                   state={state}
                 />
-                <div className="flex items-center justify-center mt-6">
-                  <Button
+                <div className="flex items-center justify-center mt-8">
+                  <NextLink
                     ref={ref}
-                    as={NextLink}
-                    variant="secondary"
-                    width="full"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#D33E13] hover:bg-[#b0300d] text-xs font-extrabold text-white transition-all duration-200 shadow-md shadow-[#D33E13]/10 hover:shadow-lg cursor-pointer"
                   >
-                    {isLoading ? 'Loading...' : 'Load more products'}
-                  </Button>
+                    {isLoading ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        Load More Products <span>→</span>
+                      </>
+                    )}
+                  </NextLink>
                 </div>
               </>
             )}

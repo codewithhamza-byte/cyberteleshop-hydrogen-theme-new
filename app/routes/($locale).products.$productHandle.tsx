@@ -128,11 +128,28 @@ export default function Product() {
   const [askQuestionOpen, setAskQuestionOpen] = useState(false);
   const [viewersCount, setViewersCount] = useState(13);
   const [salesCount, setSalesCount] = useState(10);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const [deliveryDate, setDeliveryDate] = useState('');
 
-  // Dynamic viewer and sales counts to make UI feel alive
+  // Dynamic viewer, sales and scroll listener
   useEffect(() => {
     setViewersCount(Math.floor(Math.random() * 15) + 8);
     setSalesCount(Math.floor(Math.random() * 12) + 6);
+
+    const handleScroll = () => {
+      if (typeof window !== 'undefined') {
+        setShowStickyBar(window.scrollY > 600);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    // Calculate delivery date (today + 3 to 6 days)
+    const date = new Date();
+    date.setDate(date.getDate() + 4);
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'short', day: 'numeric' };
+    setDeliveryDate(date.toLocaleDateString('en-US', options));
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const showToast = (msg: string) => {
@@ -234,15 +251,20 @@ export default function Product() {
               </div>
 
               {/* Price display */}
-              <div className="flex items-baseline gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
                 <span className="text-2xl md:text-3xl font-bold text-gray-900">
                   <Money data={selectedVariant.price} withoutTrailingZeros />
                 </span>
                 {selectedVariant.compareAtPrice &&
                   selectedVariant.price.amount < selectedVariant.compareAtPrice.amount && (
-                    <span className="text-lg text-gray-400 line-through">
-                      <Money data={selectedVariant.compareAtPrice} withoutTrailingZeros />
-                    </span>
+                    <>
+                      <span className="text-lg text-gray-400 line-through">
+                        <Money data={selectedVariant.compareAtPrice} withoutTrailingZeros />
+                      </span>
+                      <span className="bg-green-100 text-green-800 text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                        Save {Math.round(((Number(selectedVariant.compareAtPrice.amount) - Number(selectedVariant.price.amount)) / Number(selectedVariant.compareAtPrice.amount)) * 100)}%
+                      </span>
+                    </>
                   )}
               </div>
 
@@ -288,7 +310,9 @@ export default function Product() {
                 <div className="flex items-start gap-3">
                   <span className="text-xl">📦</span>
                   <div>
-                    <h5 className="font-bold text-gray-900 text-sm">Estimate delivery times: 3-6 days</h5>
+                    <h5 className="font-bold text-gray-900 text-sm">
+                      Estimate delivery: {deliveryDate || '3-6 days'}
+                    </h5>
                     <p className="text-xs text-gray-500 font-medium">Free shipping nationwide on orders above Rs. 5,000</p>
                   </div>
                 </div>
@@ -604,6 +628,47 @@ export default function Product() {
           </div>
         </div>
       )}
+
+      {/* Sticky Bottom Add to Cart Bar */}
+      {showStickyBar && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-150 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] py-3.5 px-4 md:px-8 z-[90] flex items-center justify-between animate-slideUp">
+          <div className="flex items-center gap-3">
+            {media.nodes[0]?.previewImage?.url && (
+              <img
+                src={media.nodes[0].previewImage.url}
+                alt={title}
+                className="w-12 h-12 object-cover rounded-lg border border-gray-100 hidden sm:block"
+              />
+            )}
+            <div>
+              <h4 className="font-extrabold text-xs md:text-sm text-gray-900 line-clamp-1">{title}</h4>
+              <div className="flex items-center gap-2">
+                <span className="text-xs md:text-sm font-extrabold text-[#D33E13]">
+                  <Money data={selectedVariant.price} withoutTrailingZeros />
+                </span>
+                {selectedVariant.compareAtPrice &&
+                  selectedVariant.price.amount < selectedVariant.compareAtPrice.amount && (
+                    <span className="text-[10px] md:text-xs text-gray-400 line-through">
+                      <Money data={selectedVariant.compareAtPrice} withoutTrailingZeros />
+                    </span>
+                  )}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {!isOutOfStock ? (
+              <AddToCartButton
+                lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
+                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-4 md:px-5 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
+              >
+                Add to Cart
+              </AddToCartButton>
+            ) : (
+              <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl">Sold Out</span>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -657,6 +722,14 @@ export function ProductForm({
   return (
     <div className="grid gap-6">
       <div className="grid gap-4">
+        {/* Scarcity notification */}
+        {selectedVariant && selectedVariant.availableForSale && (
+          <div className="flex items-center gap-2 text-amber-700 text-xs font-bold bg-amber-50 border border-amber-100/60 rounded-xl px-3 py-2.5 w-full shadow-sm animate-pulse">
+            <span className="text-sm">⚡</span>
+            <span>Hurry! Only 3 left in stock - order soon.</span>
+          </div>
+        )}
+
         {/* Render Option Swatches / Option Buttons */}
         {productOptions.map((option, optionIndex) => {
           // Check if option is standard or has many options
@@ -838,31 +911,38 @@ export function ProductForm({
                   className={clsx('w-5 h-5', isWishlist ? 'fill-current' : 'fill-none')}
                 />
               </button>
-
-              {/* Compare Button */}
-              <button
-                onClick={() => showToast('Compare function coming soon!')}
-                className="w-[52px] h-[52px] rounded-xl border border-gray-200 hover:border-gray-400 bg-white flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-200 shadow-sm focus:outline-none"
-                title="Compare Product"
-              >
-                <LayersIcon className="w-5 h-5" />
-              </button>
             </div>
 
             {/* Row 2: Buy It Now Checkout CTA */}
             {!isOutOfStock && (
-              <button
-                onClick={() => {
-                  const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
-                    'gid://shopify/ProductVariant/',
-                    '',
-                  )}:${quantity}`;
-                  window.location.href = checkoutUrl;
-                }}
-                className="w-full bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
-              >
-                Buy it now
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                      'gid://shopify/ProductVariant/',
+                      '',
+                    )}:${quantity}`;
+                    window.location.href = checkoutUrl;
+                  }}
+                  className="w-full bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
+                >
+                  Buy it now
+                </button>
+
+                {/* Secure Checkout Badges */}
+                <div className="flex flex-col items-center gap-2 mt-4 py-2 border-t border-gray-100">
+                  <span className="text-[10px] text-gray-400 font-extrabold uppercase tracking-widest">Guaranteed Safe Checkout</span>
+                  <div className="flex justify-center gap-3.5 items-center flex-wrap">
+                    <VisaIcon className="h-4 w-auto opacity-70 hover:opacity-100 transition-opacity" />
+                    <MastercardIcon className="h-4 w-auto opacity-70 hover:opacity-100 transition-opacity" />
+                    <CodIcon />
+                    <div className="flex items-center gap-1 text-gray-450 text-[10px] font-extrabold">
+                      <SecureIcon className="w-3.5 h-3.5" />
+                      <span>SSL SECURED</span>
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -881,20 +961,84 @@ function ProductOptionSwatch({
   const image = swatch?.image?.previewImage?.url;
   const color = swatch?.color;
 
-  if (!image && !color) return <span>{name}</span>;
+  // Custom client-side color swatch resolver to map standard colors automatically
+  const getHexColor = (colorName: string): string | null => {
+    const colors: Record<string, string> = {
+      black: '#000000',
+      white: '#ffffff',
+      red: '#e53e3e',
+      blue: '#3182ce',
+      green: '#38a169',
+      yellow: '#ecc94b',
+      orange: '#dd6b20',
+      purple: '#805ad5',
+      pink: '#d53f8c',
+      gray: '#718096',
+      charcoal: '#333333',
+      ember: '#ff7233',
+      sand: '#e2d5c3',
+      mint: '#a7f3d0',
+      navy: '#1a365d',
+      gold: '#d69e2e',
+      silver: '#cbd5e0',
+      bronze: '#cd7f32',
+    };
+    return colors[colorName.toLowerCase().trim()] || null;
+  };
+
+  const resolvedColor = color || getHexColor(name);
+
+  if (!image && !resolvedColor) return <span>{name}</span>;
 
   return (
     <div
       aria-label={name}
-      className="w-7 h-7 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center mx-auto"
+      className="w-7 h-7 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center mx-auto shadow-inner"
       style={{
-        backgroundColor: color || 'transparent',
+        backgroundColor: resolvedColor || 'transparent',
       }}
     >
       {!!image && (
         <img src={image} alt={name} className="w-full h-full object-cover" />
       )}
     </div>
+  );
+}
+
+// Payment support icons
+function VisaIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M4 10H44V38H4V10Z" fill="#1A1F71"/>
+      <path d="M19.123 29.832L16.297 18.067H13.627L10.957 26.697C10.627 27.687 10.357 28.517 9.537 29.237C8.617 30.017 7.237 30.732 5 30.932V31.5H11.597C12.927 31.5 13.917 30.717 14.247 29.352L15.687 23.367L19.123 29.832ZM31.117 22.032C31.117 20.367 29.837 19.347 27.567 18.237C25.297 17.127 23.757 16.592 23.757 15.627C23.757 14.887 24.597 14.077 26.477 14.077C28.357 14.077 29.417 14.737 30.347 15.167L30.977 12.352C29.977 11.952 28.597 11.5 26.797 11.5C22.617 11.5 19.687 13.517 19.687 16.947C19.687 19.137 21.687 20.247 23.277 21.032C24.867 21.817 25.687 22.377 25.687 23.097C25.687 23.867 24.817 24.717 23.017 24.717C21.217 24.717 20.067 24.117 19.123 23.687L18.497 26.517C19.497 26.982 21.117 27.352 22.917 27.352C27.357 27.352 31.117 25.137 31.117 22.032ZM36.957 18.067H34.407C33.627 18.067 33.017 18.517 32.737 19.182L28.187 29.897H31.527L32.197 28.097H36.217L36.577 29.897H39.527L36.957 18.067ZM33.097 25.597L35.217 19.882L35.827 23.097L33.097 25.597ZM24.457 18.067H22.327L19.237 29.897H22.327L24.457 18.067Z" fill="#F7B600"/>
+    </svg>
+  );
+}
+
+function MastercardIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M4 10H44V38H4V10Z" fill="#3F3F3F"/>
+      <circle cx="20" cy="24" r="10" fill="#FF5F00" fillOpacity="0.9"/>
+      <circle cx="28" cy="24" r="10" fill="#F79E1B" fillOpacity="0.9"/>
+    </svg>
+  );
+}
+
+function CodIcon() {
+  return (
+    <span className="border border-gray-300 rounded px-1.5 py-0.5 text-[9px] font-extrabold text-gray-500 uppercase bg-gray-50 tracking-wider">
+      COD
+    </span>
+  );
+}
+
+function SecureIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
   );
 }
 
@@ -966,25 +1110,6 @@ function HeartIcon(props: React.ComponentProps<'svg'>) {
       {...props}
     >
       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
-function LayersIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <polygon points="12 2 2 7 12 12 22 7 12 2" />
-      <polyline points="2 17 12 22 22 17" />
-      <polyline points="2 12 12 17 22 12" />
     </svg>
   );
 }
