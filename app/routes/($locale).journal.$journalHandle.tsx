@@ -9,6 +9,7 @@ import {getSeoMeta, Image} from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
 
 import {PageHeader, Section} from '~/components/Text';
+import {Link} from '~/components/Link';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
 
@@ -63,25 +64,63 @@ export default function Article() {
 
   return (
     <>
-      <PageHeader heading={title} variant="blogPost">
-        <span>
-          {formattedDate} &middot; {author?.name}
-        </span>
-      </PageHeader>
-      <Section as="article" padding="x">
+      {/* Premium Hero Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
+
+        <div className="relative max-w-4xl mx-auto flex flex-col items-center text-center">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-300/80 mb-3.5 font-bold uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#D33E13] transition-colors">Home</Link>
+            <span>/</span>
+            <Link to="/journal" className="hover:text-[#D33E13] transition-colors">Blog</Link>
+            <span>/</span>
+            <span className="text-white font-extrabold truncate max-w-[150px] sm:max-w-none">{title}</span>
+          </div>
+
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase mb-4 leading-tight">
+            {title}
+          </h1>
+
+          <div className="flex items-center gap-2 text-xs text-gray-300 font-extrabold uppercase tracking-wider">
+            <span>{formattedDate}</span>
+            {author?.name && (
+              <>
+                <span>&middot;</span>
+                <span>By {author.name}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Article Content Area */}
+      <main className="max-w-4xl mx-auto px-6 pb-24">
         {image && (
-          <Image
-            data={image}
-            className="w-full mx-auto mt-8 md:mt-16 max-w-7xl"
-            sizes="90vw"
-            loading="eager"
-          />
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2.5rem] bg-gray-50 mb-10 shadow-md">
+            <Image
+              data={image}
+              className="object-cover w-full h-full"
+              sizes="(max-width: 48em) 90vw, 60vw"
+              loading="eager"
+            />
+          </div>
         )}
+
         <div
           dangerouslySetInnerHTML={{__html: contentHtml}}
-          className="article"
+          className="prose prose-lg dark:prose-invert max-w-none text-primary/80 leading-relaxed space-y-6"
         />
-      </Section>
+
+        <div className="mt-12 pt-8 border-t border-gray-100">
+          <Link
+            to="/journal"
+            className="inline-flex items-center gap-2 px-6 py-3.5 border border-gray-200 hover:border-[#D33E13] hover:text-[#D33E13] hover:bg-[#D33E13]/5 text-gray-700 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-200"
+          >
+            &larr; Back to Articles
+          </Link>
+        </div>
+      </main>
     </>
   );
 }

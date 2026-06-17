@@ -61,8 +61,29 @@ export default function Journals() {
 
   return (
     <>
-      <PageHeader heading={BLOG_HANDLE} />
-      <Section>
+      {/* Premium Hero Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
+
+        <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-300/80 mb-3.5 font-bold uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#D33E13] transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white font-extrabold">Blog</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase mb-3">
+            Articles & Updates
+          </h1>
+
+          <p className="max-w-2xl text-xs md:text-sm text-gray-200/90 leading-relaxed font-medium">
+            Stay updated with the latest in tech, gadgets guides, smart living tips, and electronic reviews.
+          </p>
+        </div>
+      </div>
+
+      <Section className="max-w-7xl mx-auto px-4 md:px-8 pb-16">
         <Grid as="ol" layout="blog">
           {articles.map((article, i) => (
             <ArticleCard
@@ -84,26 +105,47 @@ function ArticleCard({
   loading,
 }: {
   blogHandle: string;
-  article: ArticleFragment;
+  article: any;
   loading?: HTMLImageElement['loading'];
 }) {
   return (
-    <li key={article.id}>
-      <Link to={`/${blogHandle}/${article.handle}`}>
-        {article.image && (
-          <div className="card-image aspect-[3/2]">
+    <li key={article.id} className="group flex flex-col h-full bg-white border border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <Link to={`/${blogHandle}/${article.handle}`} className="flex flex-col h-full">
+        {article.image ? (
+          <div className="relative aspect-[3/2] overflow-hidden bg-gray-50 z-0">
             <Image
               alt={article.image.altText || article.title}
-              className="object-cover w-full"
+              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
               data={article.image}
               aspectRatio="3/2"
               loading={loading}
               sizes="(min-width: 768px) 50vw, 100vw"
             />
           </div>
+        ) : (
+          <div className="aspect-[3/2] bg-gradient-to-br from-[#1e293b] to-[#0f172a] flex items-center justify-center">
+            <span className="text-white/20 text-3xl">📰</span>
+          </div>
         )}
-        <h2 className="mt-4 font-medium">{article.title}</h2>
-        <span className="block mt-1">{article.publishedAt}</span>
+        <div className="flex-grow p-6 md:p-8 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-[10px] text-gray-400 font-extrabold uppercase tracking-wider mb-3">
+              <span>{article.publishedAt}</span>
+              {article.author?.name && (
+                <>
+                  <span>&middot;</span>
+                  <span>By {article.author.name}</span>
+                </>
+              )}
+            </div>
+            <h2 className="text-lg md:text-xl font-black text-gray-900 group-hover:text-[#D33E13] transition-colors leading-snug line-clamp-2 uppercase">
+              {article.title}
+            </h2>
+          </div>
+          <div className="mt-6 flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#D33E13] group-hover:underline">
+            Read Article <span>&rarr;</span>
+          </div>
+        </div>
       </Link>
     </li>
   );

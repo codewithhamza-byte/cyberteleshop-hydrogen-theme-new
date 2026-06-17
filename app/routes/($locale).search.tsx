@@ -85,30 +85,46 @@ export default function Search() {
 
   return (
     <>
-      <PageHeader>
-        <Heading as="h1" size="copy">
-          Search
-        </Heading>
-        <Form method="get" className="relative flex w-full text-heading">
-          <Input
-            defaultValue={searchTerm}
-            name="q"
-            placeholder="Search…"
-            type="search"
-            variant="search"
-          />
-          <button className="absolute right-0 py-2" type="submit">
-            Go
-          </button>
-        </Form>
-      </PageHeader>
+      {/* Premium Hero Search Banner */}
+      <div className="relative w-full overflow-hidden bg-gray-900 py-14 md:py-20 px-4 md:px-8 mb-8 border-b border-gray-100 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/10" />
+
+        <div className="relative max-w-3xl mx-auto flex flex-col items-center text-center">
+          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight uppercase mb-6">
+            Search Results
+          </h1>
+
+          <Form method="get" className="relative flex w-full max-w-md items-center bg-white rounded-full overflow-hidden shadow-lg border border-gray-100 p-1">
+            <input
+              defaultValue={searchTerm}
+              name="q"
+              placeholder="Search products, brands..."
+              type="search"
+              className="flex-grow bg-transparent px-5 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
+            />
+            <button 
+              className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-full transition-colors duration-200" 
+              type="submit"
+            >
+              Search
+            </button>
+          </Form>
+
+          {searchTerm && (
+            <p className="mt-4 text-xs md:text-sm text-gray-300 font-medium">
+              Showing results for &ldquo;<span className="text-white font-bold">{searchTerm}</span>&rdquo;
+            </p>
+          )}
+        </div>
+      </div>
+
       {!searchTerm || noResults ? (
         <NoResults
           noResults={noResults}
           recommendations={noResultRecommendations}
         />
       ) : (
-        <Section>
+        <Section className="max-w-7xl mx-auto px-4 md:px-8 pb-16">
           <Pagination connection={products}>
             {({nodes, isLoading, NextLink, PreviousLink}) => {
               const itemsMarkup = nodes.map((product, i) => (
@@ -121,15 +137,27 @@ export default function Search() {
 
               return (
                 <>
-                  <div className="flex items-center justify-center mt-6">
-                    <PreviousLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                      {isLoading ? 'Loading...' : 'Previous'}
+                  <div className="flex items-center justify-center mb-8">
+                    <PreviousLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-xs font-extrabold text-gray-700 hover:text-[#D33E13] hover:border-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 shadow-sm cursor-pointer">
+                      {isLoading ? (
+                        <span className="w-4 h-4 border-2 border-[#D33E13] border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <span>←</span> Previous Page
+                        </>
+                      )}
                     </PreviousLink>
                   </div>
                   <Grid data-test="product-grid">{itemsMarkup}</Grid>
-                  <div className="flex items-center justify-center mt-6">
-                    <NextLink className="inline-block rounded font-medium text-center py-3 px-6 border border-primary/10 bg-contrast text-primary w-full">
-                      {isLoading ? 'Loading...' : 'Next'}
+                  <div className="flex items-center justify-center mt-8">
+                    <NextLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#D33E13] hover:bg-[#b0300d] text-xs font-extrabold text-white transition-all duration-200 shadow-md shadow-[#D33E13]/10 hover:shadow-lg cursor-pointer">
+                      {isLoading ? (
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          Next Page <span>→</span>
+                        </>
+                      )}
                     </NextLink>
                   </div>
                 </>
