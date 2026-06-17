@@ -12,6 +12,7 @@ import {Link} from '~/components/Link';
 import {routeHeaders} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
 import type {NonNullableFields} from '~/lib/type';
+import {FALLBACK_POLICIES} from '~/lib/fallbackPolicies';
 
 export const headers = routeHeaders;
 
@@ -22,12 +23,12 @@ export async function loader({
   const data = await storefront.query(POLICIES_QUERY);
 
   invariant(data, 'No data returned from Shopify API');
-  const policies = Object.values(
+  let policies = Object.values(
     data.shop as NonNullableFields<typeof data.shop>,
   ).filter(Boolean);
 
   if (policies.length === 0) {
-    throw new Response('Not found', {status: 404});
+    policies = Object.values(FALLBACK_POLICIES);
   }
 
   const seo = seoPayload.policies({policies, url: request.url});

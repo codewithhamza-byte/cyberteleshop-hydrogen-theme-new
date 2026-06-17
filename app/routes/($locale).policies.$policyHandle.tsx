@@ -11,6 +11,7 @@ import {PageHeader, Section} from '~/components/Text';
 import {Button} from '~/components/Button';
 import {routeHeaders} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
+import {FALLBACK_POLICIES} from '~/lib/fallbackPolicies';
 
 export const headers = routeHeaders;
 
@@ -40,10 +41,15 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   });
 
   invariant(data, 'No data returned from Shopify API');
-  const policy = data.shop?.[policyName];
+  let policy = data.shop?.[policyName] as any;
 
   if (!policy) {
-    throw new Response(null, {status: 404});
+    const fallback = FALLBACK_POLICIES[params.policyHandle];
+    if (fallback) {
+      policy = fallback;
+    } else {
+      throw new Response(null, {status: 404});
+    }
   }
 
   const seo = seoPayload.policy({policy, url: request.url});
