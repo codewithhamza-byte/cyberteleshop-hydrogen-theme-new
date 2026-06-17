@@ -34,6 +34,7 @@ import {seoPayload} from '~/lib/seo.server';
 import styles from '~/styles/app.css?url';
 
 import {DEFAULT_LOCALE, parseMenu} from './lib/utils';
+import {useJudgeme} from '@judgeme/shopify-hydrogen';
 
 export type RootLoader = typeof loader;
 
@@ -121,6 +122,9 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     selectedLocale: storefront.i18n,
     env: {
       PUBLIC_META_PIXEL_ID: env.PUBLIC_META_PIXEL_ID,
+      JUDGEME_SHOP_DOMAIN: env.JUDGEME_SHOP_DOMAIN,
+      JUDGEME_PUBLIC_TOKEN: env.JUDGEME_PUBLIC_TOKEN,
+      JUDGEME_CDN_HOST: env.JUDGEME_CDN_HOST,
     },
   };
 }
@@ -147,6 +151,13 @@ function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<typeof loader>('root');
   const locale = data?.selectedLocale ?? DEFAULT_LOCALE;
+
+  useJudgeme({
+    shopDomain: data?.env?.JUDGEME_SHOP_DOMAIN || 'hydrogen-preview.myshopify.com',
+    publicToken: data?.env?.JUDGEME_PUBLIC_TOKEN || 'your-public-token',
+    cdnHost: data?.env?.JUDGEME_CDN_HOST || 'https://cdn.judge.me',
+    delay: 500,
+  });
 
   return (
     <html lang={locale.language}>

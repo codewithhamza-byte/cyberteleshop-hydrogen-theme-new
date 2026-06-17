@@ -38,6 +38,7 @@ import {seoPayload} from '~/lib/seo.server';
 import type {Storefront} from '~/lib/type';
 import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
+import {JudgemePreviewBadge, JudgemeReviewWidget} from '@judgeme/shopify-hydrogen';
 
 export const headers = routeHeaders;
 
@@ -267,10 +268,9 @@ export default function Product() {
                         element.scrollIntoView({behavior: 'smooth', block: 'start'});
                       }
                     }}
-                    className="flex items-center gap-1.5 text-xs font-bold text-gray-550 hover:text-[#D33E13] transition-colors focus:outline-none"
+                    className="flex items-center gap-1.5 text-xs font-bold transition-colors focus:outline-none"
                   >
-                    <div className="flex text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                    <span>4.9 (12 reviews)</span>
+                    <JudgemePreviewBadge id={product.id} template="product" />
                   </button>
                 </div>
               </div>
@@ -439,73 +439,8 @@ export default function Product() {
             )}
 
             {activeTab === 'reviews' && (
-              <div className="flex flex-col gap-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-gray-100 pb-8">
-                  <div className="text-center md:border-r border-gray-100 py-2">
-                    <h4 className="text-5xl font-extrabold text-gray-900">4.9</h4>
-                    <div className="flex justify-center gap-0.5 text-yellow-400 my-2 text-lg">⭐⭐⭐⭐⭐</div>
-                    <p className="text-xs text-gray-500 font-semibold">Based on 12 reviews</p>
-                  </div>
-                  <div className="md:col-span-2 flex flex-col gap-2 max-w-md mx-auto w-full px-4">
-                    {[
-                      {stars: 5, pct: '92%'},
-                      {stars: 4, pct: '8%'},
-                      {stars: 3, pct: '0%'},
-                      {stars: 2, pct: '0%'},
-                      {stars: 1, pct: '0%'},
-                    ].map((row) => (
-                      <div className="flex items-center gap-3" key={row.stars}>
-                        <span className="text-xs font-semibold text-gray-600 w-8">{row.stars} star</span>
-                        <div className="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden">
-                          <div
-                            className="bg-yellow-400 h-full rounded-full"
-                            style={{width: row.pct}}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-gray-500 font-semibold w-8 text-right">{row.pct}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-6 divide-y divide-gray-100">
-                  <div className="pt-2">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Hamza K.</h5>
-                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                      </div>
-                      <span className="text-xs text-gray-400">June 12, 2026</span>
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                      Extremely impressed with the build quality! The rubber dumbbells feel solid and premium in hand. Highly recommend this store for gym equipment. Delivery was exceptionally fast to Lahore.
-                    </p>
-                  </div>
-                  <div className="pt-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Zainab M.</h5>
-                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                      </div>
-                      <span className="text-xs text-gray-400">June 08, 2026</span>
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                      Exactly as pictured. The grip is comfortable and non-slip. Worth every rupee!
-                    </p>
-                  </div>
-                  <div className="pt-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h5 className="font-bold text-gray-900 text-sm md:text-base">Ali R.</h5>
-                        <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                      </div>
-                      <span className="text-xs text-gray-400">May 28, 2026</span>
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                      Excellent value pack. Package arrived well-wrapped with no damage. Outstanding service from Cyberteleshop.
-                    </p>
-                  </div>
-                </div>
+              <div className="flex flex-col gap-4">
+                <JudgemeReviewWidget id={product.id} />
               </div>
             )}
 

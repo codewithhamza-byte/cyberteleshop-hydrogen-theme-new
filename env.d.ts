@@ -30,6 +30,9 @@ declare global {
     PUBLIC_CHECKOUT_DOMAIN: string;
     SHOP_ID: string;
     PUBLIC_META_PIXEL_ID: string;
+    JUDGEME_SHOP_DOMAIN: string;
+    JUDGEME_PUBLIC_TOKEN: string;
+    JUDGEME_CDN_HOST: string;
   }
 }
 
