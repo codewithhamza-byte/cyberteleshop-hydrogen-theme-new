@@ -39,43 +39,7 @@ type LayoutProps = {
   };
 };
 
-function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const activeTheme = savedTheme || systemTheme;
-    setTheme(activeTheme);
-    document.documentElement.classList.toggle('dark', activeTheme === 'dark');
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
-
-  return (
-    <button
-      onClick={toggleTheme}
-      className="p-2 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-[#D33E13] dark:hover:text-white transition-all duration-300 hover:scale-110 flex items-center justify-center"
-      aria-label="Toggle theme"
-      title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-    >
-      {theme === 'light' ? (
-        <svg className="w-4 h-4 md:w-4.5 md:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-      ) : (
-        <svg className="w-4 h-4 md:w-4.5 md:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 10H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-        </svg>
-      )}
-    </button>
-  );
-}
+// ThemeToggle removed (Light theme only)
 
 function AnnouncementBar() {
   const announcements = [
@@ -156,37 +120,35 @@ function AnnouncementBar() {
 
 function UtilityBar() {
   return (
-    <div className="hidden lg:block bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200/40 dark:border-neutral-800/80 text-[11px] font-medium text-neutral-600 dark:text-neutral-400 py-2.5 px-6 lg:px-8 transition-colors duration-300">
+    <div className="hidden lg:block bg-neutral-50 border-b border-neutral-200/40 text-[11px] font-medium text-neutral-600 py-2.5 px-6 lg:px-8 transition-colors duration-300">
       <div className="mx-auto max-w-7xl flex justify-between items-center">
         {/* Left Side: Contact */}
         <div className="flex items-center gap-4">
           <a href="tel:03004252400" className="flex items-center gap-1.5 hover:text-[#D33E13] transition-colors duration-200">
             <span>📞</span> <span className="font-semibold">0300-4252400</span>
           </a>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
+          <span className="text-neutral-300">|</span>
           <a href="mailto:cyberteleshop@gmail.com" className="flex items-center gap-1.5 hover:text-[#D33E13] transition-colors duration-200">
             <span>✉️</span> <span>cyberteleshop@gmail.com</span>
           </a>
         </div>
 
-        {/* Right Side: Quick Links + Theme Toggle */}
+        {/* Right Side: Quick Links */}
         <div className="flex items-center gap-5">
           <Link to="/pages/contact" className="hover:text-[#D33E13] transition-colors duration-200">
             Contact Us
           </Link>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
+          <span className="text-neutral-300">|</span>
           <Link to="/pages/track-order" className="hover:text-[#D33E13] transition-colors duration-200">
             Track My Order
           </Link>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
+          <span className="text-neutral-300">|</span>
           <Link to="/wishlist" className="hover:text-[#D33E13] transition-colors duration-200 flex items-center gap-1">
             <svg className="w-3.5 h-3.5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             Wishlist
           </Link>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
-          <ThemeToggle />
         </div>
       </div>
     </div>
@@ -321,7 +283,7 @@ function MenuMobileNav({
   ];
 
   return (
-    <div className="flex flex-col justify-between h-[calc(100vh-100px)] overflow-y-auto hiddenScroll bg-white dark:bg-neutral-950">
+    <div className="flex flex-col justify-between h-[calc(100vh-100px)] overflow-y-auto hiddenScroll bg-white">
       <div className="px-6 py-4 flex flex-col gap-6">
         
         {/* Search Input in Mobile Drawer */}
@@ -329,11 +291,11 @@ function MenuMobileNav({
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
           onSubmit={onClose}
-          className="flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-4 py-2.5 w-full"
+          className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 w-full"
         >
-          <IconSearch className="text-neutral-400 dark:text-neutral-500 w-4 h-4 flex-shrink-0" />
+          <IconSearch className="text-neutral-400 w-4 h-4 flex-shrink-0" />
           <input
-            className="bg-transparent border-0 p-0 text-sm text-primary placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-0 w-full outline-none"
+            className="bg-transparent border-0 p-0 text-sm text-primary placeholder:text-neutral-400 focus:ring-0 w-full outline-none"
             type="search"
             placeholder="Search products..."
             name="q"
@@ -351,8 +313,8 @@ function MenuMobileNav({
               return (
                 <Disclosure key={item.id}>
                   {({ open }) => (
-                    <div className="border-b border-neutral-100 dark:border-neutral-900 pb-3">
-                      <Disclosure.Button className="flex items-center justify-between w-full text-left py-2 text-neutral-800 dark:text-neutral-200">
+                    <div className="border-b border-neutral-100 pb-3">
+                      <Disclosure.Button className="flex items-center justify-between w-full text-left py-2 text-neutral-800">
                         <span className="text-base font-bold uppercase tracking-wider">{item.title}</span>
                         <IconCaret direction={open ? 'up' : 'down'} className="w-5 h-5 text-neutral-500" />
                       </Disclosure.Button>
@@ -364,7 +326,7 @@ function MenuMobileNav({
                               key={col.to}
                               to={col.to}
                               onClick={onClose}
-                              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-[#D33E13] py-1 font-medium transition"
+                              className="text-sm text-neutral-600 hover:text-[#D33E13] py-1 font-medium transition"
                             >
                               {col.name}
                             </Link>
@@ -377,7 +339,7 @@ function MenuMobileNav({
                               to={child.to}
                               target={child.target}
                               onClick={onClose}
-                              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-[#D33E13] py-1 font-medium transition"
+                              className="text-sm text-neutral-600 hover:text-[#D33E13] py-1 font-medium transition"
                             >
                               {child.title}
                             </Link>
@@ -396,23 +358,21 @@ function MenuMobileNav({
                 to={item.to}
                 target={item.target}
                 onClick={onClose}
-                className="text-base font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-200 border-b border-neutral-100 dark:border-neutral-900 pb-3 py-2 flex items-center justify-between hover:text-[#D33E13] transition"
+                className="text-base font-bold uppercase tracking-wider text-neutral-800 hover:text-[#D33E13] py-2 border-b border-neutral-100"
               >
-                <span>{item.title}</span>
-                <IconArrow className="w-4 h-4 text-neutral-400" />
+                {item.title}
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Drawer Footer: Contact & Social Info */}
-      <div className="p-6 bg-neutral-50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-900 mt-auto flex flex-col gap-5">
+      <div className="p-6 bg-neutral-50 border-t border-neutral-100 mt-auto flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <h5 className="text-[10px] uppercase font-extrabold tracking-widest text-neutral-400 dark:text-neutral-500">
+          <h5 className="text-[10px] uppercase font-extrabold tracking-widest text-neutral-400">
             Need Help?
           </h5>
-          <div className="flex flex-col gap-1.5 text-xs text-neutral-600 dark:text-neutral-400">
+          <div className="flex flex-col gap-1.5 text-xs text-neutral-600">
             <a href="tel:03004252400" className="hover:text-[#D33E13] flex items-center gap-1.5 font-semibold">
               <span>📞</span> 0300-4252400
             </a>
@@ -424,13 +384,13 @@ function MenuMobileNav({
 
         {/* Socials */}
         <div className="flex items-center gap-2">
-          <a href="https://www.facebook.com/cyberteleshoplhr/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 dark:text-white hover:text-white transition-colors duration-200" title="Facebook">
+          <a href="https://www.facebook.com/cyberteleshoplhr/" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 hover:text-white transition-colors duration-200" title="Facebook">
             <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
           </a>
-          <a href="https://www.instagram.com/cybertele/?hl=en" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 dark:text-white hover:text-white transition-colors duration-200" title="Instagram">
+          <a href="https://www.instagram.com/cybertele/?hl=en" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 hover:text-white transition-colors duration-200" title="Instagram">
             <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
           </a>
-          <a href="https://www.youtube.com/@cyberteleshop275" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 dark:text-white hover:text-white transition-colors duration-200" title="YouTube">
+          <a href="https://www.youtube.com/@cyberteleshop275" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-neutral-200 hover:bg-[#D33E13] flex items-center justify-center text-neutral-700 hover:text-white transition-colors duration-200" title="YouTube">
             <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.507a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.871.507 9.388.507 9.388.507s7.517 0 9.388-.507a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
         </div>
@@ -463,13 +423,13 @@ function MobileHeader({
       role="banner"
       className={`sticky top-0 z-40 w-full transition-all duration-300 border-b flex items-center h-16 justify-between gap-3 px-4 lg:hidden ${
         scrolled
-          ? 'bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-md border-neutral-100 dark:border-neutral-800'
-          : 'bg-white dark:bg-neutral-950 border-transparent'
+          ? 'bg-white/90 backdrop-blur-md shadow-md border-neutral-100'
+          : 'bg-white border-transparent'
       }`}
     >
       <button
         onClick={openMenu}
-        className="flex flex-col items-center justify-center h-10 w-10 rounded-full bg-neutral-100/50 dark:bg-neutral-800/40 text-neutral-700 dark:text-neutral-300 transition hover:bg-neutral-200/50 dark:hover:bg-neutral-800/80"
+        className="flex flex-col items-center justify-center h-10 w-10 rounded-full bg-neutral-100/50 text-neutral-700 transition hover:bg-neutral-200/50"
         aria-label="Open menu"
       >
         <div className="flex flex-col gap-1.5 w-5">
@@ -492,15 +452,13 @@ function MobileHeader({
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100/50 dark:bg-neutral-800/40 text-neutral-700 dark:text-neutral-300 transition hover:bg-neutral-200/50 dark:hover:bg-neutral-800/80"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100/50 text-neutral-700 transition hover:bg-neutral-200/50"
           role="search"
         >
           <button type="submit" className="flex items-center justify-center h-full w-full">
             <IconSearch className="w-4 h-4" />
           </button>
         </Form>
-
-        <ThemeToggle />
 
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
@@ -523,72 +481,6 @@ function IconCompare(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  chairs: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M7 12V6a2 2 0 012-2h6a2 2 0 012-2v6M6 12v6a2 2 0 002 2h8a2 2 0 002-2v-6M9 20v2M15 20v2" />
-    </svg>
-  ),
-  tables: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M6 8v12M18 8v12M4 8v12M20 8v12" />
-    </svg>
-  ),
-  sofas: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 10v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 12v4M22 12v4M6 10V8a2 2 0 012-2h8a2 2 0 012 2v2" />
-    </svg>
-  ),
-  armchairs: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h12M4 12V8a2 2 0 012-2h12a2 2 0 012 2v4M5 12v6a2 2 0 002 2h10a2 2 0 002-2v-6M8 20v2M16 20v2" />
-    </svg>
-  ),
-  beds: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 18V6a1 1 0 011-1h3a1 1 0 011 1v6h8V8a1 1 0 011-1h3a1 1 0 011 1v12M3 14h18" />
-    </svg>
-  ),
-  storage: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM4 12h16M9 8h6M9 16h6" />
-    </svg>
-  ),
-  textiles: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21m0 0l-1.813-5.096C6.549 14.153 6 12.18 6 10a6 6 0 1112 0c0 2.18-.549 4.153-1.187 5.904L15 21m-6 0h6m-3-11v4" />
-    </svg>
-  ),
-  lighting: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 10H3m14 4.5a5.5 5.5 0 11-10 0v-2h10v2z" />
-    </svg>
-  ),
-  toys: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a4 4 0 014 4c0 1.25-.57 2.37-1.47 3.12A7 7 0 0120 16v3H4v-3a7 7 0 015.47-6.88A4 4 0 018 6a4 4 0 014-4z" />
-    </svg>
-  ),
-  decor: (
-    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="1.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18M8 5h8M9 9h6M7 13h10M6 17h12" />
-    </svg>
-  )
-};
-
-const headerCategories = [
-  { name: "Chairs", to: "/collections/chairs", icon: CATEGORY_ICONS.chairs },
-  { name: "Tables", to: "/collections/tables", icon: CATEGORY_ICONS.tables },
-  { name: "Sofas", to: "/collections/sofas", icon: CATEGORY_ICONS.sofas },
-  { name: "Armchairs", to: "/collections/armchairs", icon: CATEGORY_ICONS.armchairs },
-  { name: "Beds", to: "/collections/beds", icon: CATEGORY_ICONS.beds },
-  { name: "Storage", to: "/collections/storage", icon: CATEGORY_ICONS.storage },
-  { name: "Textiles", to: "/collections/textiles", icon: CATEGORY_ICONS.textiles },
-  { name: "Lighting", to: "/collections/lighting", icon: CATEGORY_ICONS.lighting },
-  { name: "Toys", to: "/collections/toys", icon: CATEGORY_ICONS.toys },
-  { name: "Decor", to: "/collections/decor", icon: CATEGORY_ICONS.decor }
-];
 
 function SearchBar() {
   const [isFocused, setIsFocused] = useState(false);
@@ -615,22 +507,22 @@ function SearchBar() {
       action={params.locale ? `/${params.locale}/search` : '/search'}
       className={`relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 flex-grow max-w-2xl ${
         isFocused
-          ? 'border-neutral-400 bg-white dark:bg-neutral-900 ring-2 ring-neutral-200/50 dark:ring-neutral-800/40 shadow-sm'
-          : 'border-neutral-200 dark:border-neutral-800 bg-[#fbfbfb] dark:bg-neutral-800/30 hover:bg-neutral-100 dark:hover:bg-neutral-800/60'
+          ? 'border-neutral-400 bg-white ring-2 ring-neutral-200/50 shadow-sm'
+          : 'border-neutral-200 bg-[#fbfbfb] hover:bg-neutral-100'
       }`}
     >
-      <IconSearch className="text-neutral-400 dark:text-neutral-500 w-4 h-4 flex-shrink-0" />
+      <IconSearch className="text-neutral-400 w-4 h-4 flex-shrink-0" />
       <input
         ref={searchInputRef}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className="bg-transparent border-0 p-0 text-sm text-neutral-800 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-0 w-full outline-none"
+        className="bg-transparent border-0 p-0 text-sm text-neutral-800 placeholder:text-neutral-400 focus:ring-0 w-full outline-none"
         type="search"
         placeholder="Search for products..."
         name="q"
       />
       {!isFocused && (
-        <span className="hidden md:inline-flex items-center gap-0.5 text-[9px] font-mono text-neutral-400 dark:text-neutral-500 bg-neutral-200/50 dark:bg-neutral-700/50 px-1.5 py-0.5 rounded">
+        <span className="hidden md:inline-flex items-center gap-0.5 text-[9px] font-mono text-neutral-400 bg-neutral-200/50 px-1.5 py-0.5 rounded">
           <kbd className="font-sans">⌘</kbd>K
         </span>
       )}
@@ -659,8 +551,8 @@ function DesktopHeader({
       role="banner"
       className={`sticky top-0 z-40 w-full transition-all duration-300 border-b hidden lg:block ${
         scrolled
-          ? 'bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md shadow-sm border-neutral-100 dark:border-neutral-800 py-3'
-          : 'bg-white dark:bg-neutral-950 border-transparent py-4'
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-neutral-100 py-3'
+          : 'bg-white border-transparent py-4'
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col gap-4">
@@ -690,10 +582,10 @@ function DesktopHeader({
             {/* Compare Button */}
             <Link
               to="/compare"
-              className="relative w-10 h-10 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 dark:bg-neutral-800/40 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 transition-all duration-200 flex items-center justify-center hover:scale-105"
+              className="relative w-10 h-10 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition-all duration-200 flex items-center justify-center hover:scale-105"
               title="Compare"
             >
-              <IconCompare className="w-5 h-5 text-neutral-600 dark:text-neutral-300" />
+              <IconCompare className="w-5 h-5 text-neutral-600" />
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
                 0
               </span>
@@ -702,10 +594,10 @@ function DesktopHeader({
             {/* Wishlist Button */}
             <Link
               to="/wishlist"
-              className="relative w-10 h-10 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 dark:bg-neutral-800/40 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 transition-all duration-200 flex items-center justify-center hover:scale-105"
+              className="relative w-10 h-10 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition-all duration-200 flex items-center justify-center hover:scale-105"
               title="Wishlist"
             >
-              <svg className="w-4.5 h-4.5 fill-none stroke-current text-neutral-600 dark:text-neutral-300" viewBox="0 0 24 24" strokeWidth="2">
+              <svg className="w-4.5 h-4.5 fill-none stroke-current text-neutral-600" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
@@ -714,32 +606,185 @@ function DesktopHeader({
             </Link>
 
             {/* Login / Register */}
-            <AccountLink className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 dark:bg-neutral-800/40 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 transition duration-200 text-xs font-bold hover:scale-105" />
+            <AccountLink className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition duration-200 text-xs font-bold hover:scale-105" />
 
             {/* Cart Badge with dynamic price */}
             <CartCount isHome={isHome} openCart={openCart} />
           </div>
         </div>
 
-        {/* Row 2: Categories Nav + Shipping Badge */}
-        <div className="flex items-center justify-between border-t border-neutral-100 dark:border-neutral-800/60 pt-3">
-          <nav className="flex items-center gap-3.5 xl:gap-5 flex-wrap">
-            {headerCategories.map((cat) => (
-              <Link
-                key={cat.name}
-                to={cat.to}
-                className="group flex items-center gap-1.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 hover:text-[#D33E13] dark:hover:text-white transition-colors duration-200"
-              >
-                <span className="text-neutral-400 dark:text-neutral-500 group-hover:text-[#D33E13] dark:group-hover:text-white transition-colors duration-200">
-                  {cat.icon}
-                </span>
-                <span>{cat.name}</span>
-              </Link>
-            ))}
+        {/* Row 2: Main Menu Navigation + Shipping Badge */}
+        <div className="flex items-center justify-between border-t border-neutral-100 pt-2">
+          {/* Main Menu Links with Hover Dropdowns / Mega Menu */}
+          <nav className="flex items-center gap-1 xl:gap-2 text-xs font-bold uppercase tracking-widest text-neutral-600">
+            {(menu?.items || []).map((item) => {
+              const isMega = (item.items && item.items.length > 0) || item.title.toLowerCase() === 'collections' || item.title.toLowerCase() === 'shop';
+              
+              return (
+                <div key={item.id} className="relative group py-2">
+                  <Link
+                    to={item.to}
+                    target={item.target}
+                    prefetch="intent"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all duration-200 hover:text-[#D33E13] hover:bg-neutral-100/60"
+                  >
+                    <span>{item.title}</span>
+                    {isMega && (
+                      <IconCaret className="w-3 h-3 opacity-60 group-hover:rotate-180 transition-transform duration-300" />
+                    )}
+                  </Link>
+
+                  {/* Dropdown / Mega Menu */}
+                  {isMega && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[800px] xl:w-[900px] bg-white border border-neutral-200/50 shadow-2xl rounded-2xl p-8 transition-all duration-300 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50 normal-case">
+                      <div className="grid grid-cols-4 gap-8">
+                        {/* Column 1 & 2 & 3: Child Menu items */}
+                        {item.title.toLowerCase() === 'collections' || item.title.toLowerCase() === 'shop' || item.items.length === 0 ? (
+                          <>
+                            <div className="flex flex-col gap-3">
+                              <h5 className="text-[10px] tracking-wider text-neutral-400 font-extrabold uppercase border-b border-neutral-100 pb-2">
+                                Top Categories
+                              </h5>
+                              <div className="flex flex-col gap-1">
+                                {[
+                                  { name: "Car Accessories", to: "/collections/car-accessories", desc: "Top gear, covers, lighting" },
+                                  { name: "Electronics", to: "/collections/electronics", desc: "Smart gadgets, tools, spy tech" },
+                                  { name: "Fitness", to: "/collections/fitness", desc: "Treadmills, bands, gym gear" }
+                                ].map((col) => (
+                                  <Link
+                                    key={col.to}
+                                    to={col.to}
+                                    className="group/link flex flex-col gap-0.5 py-1.5 hover:text-[#D33E13] transition-colors duration-200"
+                                  >
+                                    <span className="text-sm font-semibold text-neutral-800 group-hover/link:text-[#D33E13] transition-colors">
+                                      {col.name}
+                                    </span>
+                                    <span className="text-[10px] text-neutral-400 font-medium normal-case">
+                                      {col.desc}
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-3">
+                              <h5 className="text-[10px] tracking-wider text-neutral-400 font-extrabold uppercase border-b border-neutral-100 pb-2">
+                                More Categories
+                              </h5>
+                              <div className="flex flex-col gap-1">
+                                {[
+                                  { name: "Health & Beauty", to: "/collections/health-beauty", desc: "Self care, personal grooming" },
+                                  { name: "Sports", to: "/collections/sports", desc: "Outdoor gear, athletics" },
+                                  { name: "Toys", to: "/collections/toys", desc: "Fun for all age groups" }
+                                ].map((col) => (
+                                  <Link
+                                    key={col.to}
+                                    to={col.to}
+                                    className="group/link flex flex-col gap-0.5 py-1.5 hover:text-[#D33E13] transition-colors duration-200"
+                                  >
+                                    <span className="text-sm font-semibold text-neutral-800 group-hover/link:text-[#D33E13] transition-colors">
+                                      {col.name}
+                                    </span>
+                                    <span className="text-[10px] text-neutral-400 font-medium normal-case">
+                                      {col.desc}
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              <h5 className="text-[10px] tracking-wider text-neutral-400 font-extrabold uppercase border-b border-neutral-100 pb-2">
+                                Featured Offers
+                              </h5>
+                              <div className="flex flex-col gap-2.5 text-sm text-neutral-600">
+                                <Link to="/collections/steel-racks" className="hover:text-[#D33E13] transition-colors duration-150 flex items-center gap-2">
+                                  <span className="text-xs">📦</span> Steel Racks
+                                </Link>
+                                <Link to="/collections/spy-devices" className="hover:text-[#D33E13] transition-colors duration-150 flex items-center gap-2">
+                                  <span className="text-xs">🔍</span> Spy Devices
+                                </Link>
+                                <Link to="/collections/treadmill" className="hover:text-[#D33E13] transition-colors duration-150 flex items-center gap-2">
+                                  <span className="text-xs">🏃‍♂️</span> Treadmills
+                                </Link>
+                                <Link to="/collections/all" className="font-bold text-[#D33E13] hover:underline mt-2 flex items-center gap-1.5">
+                                  Browse All <IconArrow className="w-3.5 h-3.5" />
+                                </Link>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            {Array.from({ length: 3 }).map((_, colIdx) => {
+                              const childItems = item.items as ChildEnhancedMenuItem[];
+                              const itemsPerCol = Math.ceil(childItems.length / 3);
+                              const colItems = childItems.slice(colIdx * itemsPerCol, (colIdx + 1) * itemsPerCol);
+                              if (colItems.length === 0) return null;
+                              return (
+                                <div key={colIdx} className="flex flex-col gap-3">
+                                  <h5 className="text-[10px] tracking-wider text-neutral-400 font-extrabold uppercase border-b border-neutral-100 pb-2">
+                                    {item.title} Pt. {colIdx + 1}
+                                  </h5>
+                                  <div className="flex flex-col gap-1">
+                                    {colItems.map((child) => (
+                                      <Link
+                                        key={child.id}
+                                        to={child.to}
+                                        target={child.target}
+                                        className="group/link flex items-center gap-2 py-1.5 text-sm text-neutral-700 hover:text-[#D33E13] transition-colors duration-200"
+                                      >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-300 group-hover/link:bg-[#D33E13] group-hover/link:scale-125 transition-all duration-200" />
+                                        <span className="transform group-hover/link:translate-x-1 transition-transform duration-200">
+                                          {child.title}
+                                        </span>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </>
+                        )}
+
+                        {/* Promo Banner Card (Column 4) */}
+                        <div className="col-span-1">
+                          <div className="bg-gradient-to-br from-[#D33E13] to-[#ff7a54] text-white p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between h-full min-h-[200px] shadow-lg shadow-orange-500/10 group/promo hover:scale-[1.02] transition-all duration-300 select-none">
+                            <div className="absolute -right-10 -bottom-10 w-28 h-28 bg-white/10 rounded-full blur-xl group-hover/promo:scale-150 transition-transform duration-500" />
+                            <div className="absolute -left-10 -top-10 w-20 h-20 bg-black/10 rounded-full blur-lg" />
+                            
+                            <div className="relative z-10">
+                              <span className="bg-white/20 text-[8px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">
+                                Trending
+                              </span>
+                              <h4 className="text-base font-black uppercase tracking-tight mt-2.5 leading-tight">
+                                Super Sale Live
+                              </h4>
+                              <p className="text-[10px] text-white/95 mt-1 leading-normal">
+                                Order now to get extra discounts. Fast Cash on Delivery across Pakistan!
+                              </p>
+                            </div>
+                            
+                            <div className="relative z-10 mt-4">
+                              <Link
+                                to="/collections/all"
+                                className="inline-flex items-center gap-1 bg-white text-[#D33E13] hover:bg-neutral-100 px-3 py-1.5 rounded-xl text-[10px] font-bold transition duration-200 shadow-sm"
+                              >
+                                <span>Shop Now</span>
+                                <IconArrow className="w-3 h-3" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
 
           <div className="flex-shrink-0">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[10px] font-extrabold uppercase tracking-wider border border-sky-100/50 dark:border-sky-900/20">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-sky-50 text-sky-700 text-[10px] font-extrabold uppercase tracking-wider border border-sky-100/50">
               Free shipping for all orders of $1,300
             </span>
           </div>
@@ -756,7 +801,7 @@ function AccountLink({className}: {className?: string}) {
   return (
     <Link to="/account" className={className}>
       <svg
-        className="w-4 h-4 text-neutral-500 dark:text-neutral-400"
+        className="w-4 h-4 text-neutral-500"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -786,11 +831,10 @@ function CartCount({
   if (!rootData) return null;
 
   return (
-    <Suspense fallback={<Badge count={0} dark={isHome} openCart={openCart} />}>
+    <Suspense fallback={<Badge count={0} openCart={openCart} />}>
       <Await resolve={rootData?.cart}>
         {(cart) => (
           <Badge
-            dark={isHome}
             openCart={openCart}
             count={cart?.totalQuantity || 0}
             cost={cart?.cost}
@@ -803,12 +847,10 @@ function CartCount({
 
 function Badge({
   openCart,
-  dark,
   count,
   cost,
 }: {
   count: number;
-  dark: boolean;
   openCart: () => void;
   cost?: any;
 }) {
@@ -823,8 +865,8 @@ function Badge({
 
   const BadgeCounter = useMemo(
     () => (
-      <div className="relative flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 transition duration-200 hover:scale-105 select-none font-bold text-xs uppercase tracking-wider">
-        <IconBag className="w-4 h-4 text-white dark:text-neutral-950" />
+      <div className="relative flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-950 text-white transition duration-200 hover:scale-105 select-none font-bold text-xs uppercase tracking-wider">
+        <IconBag className="w-4 h-4 text-white" />
         <span className="font-mono text-[11px] font-extrabold">
           <Money data={subtotal} />
         </span>
@@ -852,6 +894,7 @@ function Badge({
     </Link>
   );
 }
+
 
 function Footer() {
   return (
