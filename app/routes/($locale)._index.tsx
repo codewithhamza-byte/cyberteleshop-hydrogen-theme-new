@@ -374,15 +374,15 @@ function CategorySlider({
         {/* Categories Slider */}
         <div
           ref={containerRef}
-          className="mt-8 flex gap-4 md:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+          className="mt-8 flex gap-4 md:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth hiddenScroll"
         >
           {items.map((collection) => (
             <Link
               key={collection.id}
               to={`/collections/${collection.handle}`}
-              className="group block relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-contrast/95 shadow-sm transition duration-300 hover:shadow-xl w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] xl:w-[calc((100%-100px)/6)] flex-shrink-0 snap-start aspect-square"
+              className="group block w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] xl:w-[calc((100%-100px)/6)] flex-shrink-0 snap-start"
             >
-              <div className="relative w-full h-full overflow-hidden bg-primary/5">
+              <div className="relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-primary/5 aspect-square">
                 <Image
                   data={collection.image!}
                   alt={collection.image?.altText || collection.title}
@@ -390,11 +390,11 @@ function CategorySlider({
                   sizes="(max-width: 32em) 50vw, (max-width: 48em) 33vw, 16vw"
                   aspectRatio="1/1"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end px-3 py-4 text-white">
-                  <Heading size="copy" className="text-xs sm:text-base font-extrabold uppercase tracking-wider text-center w-full truncate">
-                    {collection.title}
-                  </Heading>
-                </div>
+              </div>
+              <div className="mt-3 text-center px-1">
+                <Heading size="copy" className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-primary group-hover:text-[#D33E13] transition-colors duration-200 truncate w-full">
+                  {collection.title}
+                </Heading>
               </div>
             </Link>
           ))}
