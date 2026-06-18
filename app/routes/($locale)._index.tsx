@@ -353,8 +353,8 @@ function CollectionShowcase({data}: {data: any}) {
 
   return (
     <Section padding="y" className="bg-contrast w-full overflow-x-hidden flex flex-col" display="flex">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-6 items-center text-center mb-8 w-full max-w-full">
+      <div className="w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 items-center text-center mb-6 w-full">
           <div>
             <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
               Featured Collections
@@ -364,36 +364,39 @@ function CollectionShowcase({data}: {data: any}) {
             </Text>
           </div>
 
-          {/* Tabs header */}
-          <div className="grid grid-cols-2 gap-2 w-full p-2 bg-primary/5 rounded-2xl border border-primary/10 md:flex md:w-auto md:gap-2 md:p-1.5 md:rounded-full md:max-w-4xl justify-center">
-            {tabs.map((tab) => {
-              const isActive = tab.id === activeTab;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full text-center px-2 py-2.5 rounded-xl text-[10px] md:inline-block md:w-auto md:px-5 md:py-2.5 md:rounded-full md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                    isActive
-                      ? 'bg-[#D33E13] text-white shadow-sm scale-[1.02] border border-[#D33E13]'
-                      : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          {/* Tabs header — scrollable on all screen sizes */}
+          <div className="w-full overflow-x-auto hiddenScroll">
+            <div className="flex gap-2 p-1.5 bg-primary/5 rounded-2xl border border-primary/10 min-w-max mx-auto">
+              {tabs.map((tab) => {
+                const isActive = tab.id === activeTab;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? 'bg-[#D33E13] text-white shadow-sm scale-[1.02] border border-[#D33E13]'
+                        : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Products Layout: Horizontal swimlane on mobile, Grid on desktop */}
-        <div className="md:hidden swimlane hiddenScroll gap-4 scroll-px-4 px-4 pb-4">
-          {currentProducts.slice(0, 8).map((product: any) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              className="snap-start w-[calc((100vw-48px)/2)] flex-shrink-0"
-            />
-          ))}
+        {/* Products Layout: 2-col swimlane on mobile, 4-col grid on desktop */}
+        <div className="md:hidden w-full overflow-x-auto hiddenScroll pb-4">
+          <div className="grid grid-cols-2 gap-3 w-full">
+            {currentProducts.slice(0, 8).map((product: any) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </div>
         </div>
         <Grid layout="products" className="hidden md:grid w-full md:grid-cols-4 pb-0">
           {currentProducts.slice(0, 8).map((product: any) => (
@@ -421,8 +424,8 @@ function ProductSection({
 
   return (
     <Section padding="y" className="bg-contrast w-full overflow-x-hidden border-t border-primary/5 flex flex-col" display="flex">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-2 items-center text-center mb-8">
+      <div className="w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2 items-center text-center mb-6">
           <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
             {title}
           </Heading>
@@ -432,7 +435,7 @@ function ProductSection({
         </div>
 
         {/* Products Layout: Horizontal swimlane on mobile, Grid on desktop */}
-        <div className="md:hidden swimlane hiddenScroll gap-4 scroll-px-4 px-4 pb-4">
+        <div className="md:hidden swimlane hiddenScroll gap-4 scroll-px-4 px-4 pb-4 -mx-4">
           {products.slice(0, 8).map((product: any) => (
             <ProductCard
               key={product.id}
