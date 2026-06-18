@@ -75,7 +75,7 @@ export function SearchModal({isOpen, onClose}: SearchModalProps) {
       try {
         const localePrefix = params.locale ? `/${params.locale}` : '';
         const res = await fetch(`${localePrefix}/api/predictive-search?q=${encodeURIComponent(searchTerm)}`);
-        const data = await res.json();
+        const data = (await res.json()) as any;
         setSuggestions({
           products: data.products || [],
           collections: data.collections || [],
