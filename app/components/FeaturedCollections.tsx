@@ -22,7 +22,7 @@ export function FeaturedCollections({
 
   return (
     <Section {...props} heading={title}>
-      <Grid items={collectionsWithImage.length}>
+      <Grid items={collectionsWithImage.length} layout="products" className="lg:grid-cols-4 md:grid-cols-3">
         {collectionsWithImage.map((collection) => {
           return (
             <Link key={collection.id} to={`/collections/${collection.handle}`}>

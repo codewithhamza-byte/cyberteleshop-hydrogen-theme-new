@@ -348,9 +348,13 @@ function CollectionShowcase({data}: {data: any}) {
         </div>
 
         {/* Products Grid */}
-        <Grid layout="products" className="md:grid-cols-4 pb-0">
-          {currentProducts.slice(0, 8).map((product: any) => (
-            <ProductCard key={product.id} product={product} />
+        <Grid layout="products" className="w-full md:grid-cols-4 pb-0">
+          {currentProducts.slice(0, 8).map((product: any, idx: number) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              className={idx >= 4 ? 'hidden md:block' : ''}
+            />
           ))}
         </Grid>
       </div>
