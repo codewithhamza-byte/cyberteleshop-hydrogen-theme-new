@@ -83,6 +83,12 @@ export function ProductCard({
     ? (product.description.length > 95 ? product.description.substring(0, 95) + '...' : product.description)
     : 'High-quality electronics and accessories engineered to elevate your daily tech experience.';
 
+  const truncatedTitle = product.title
+    ? (product.title.split(/\s+/).length > 5
+        ? product.title.split(/\s+/).slice(0, 5).join(' ') + '...'
+        : product.title)
+    : '';
+
   return (
     <div className={clsx("flex flex-col h-full justify-between gap-3 sm:gap-5 rounded-[1.75rem] sm:rounded-[2.5rem] border border-primary/5 bg-contrast p-3.5 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5", className)}>
       <div className="flex flex-col gap-3 sm:gap-4">
@@ -130,7 +136,7 @@ export function ProductCard({
               className="w-full"
             >
               <h3 className="font-extrabold text-xs sm:text-base md:text-lg text-primary line-clamp-2 hover:text-[#D33E13] transition-colors min-h-[2rem] sm:min-h-[2.5rem]">
-                {product.title}
+                {truncatedTitle}
               </h3>
             </Link>
             {/* Judge.me Star Rating Badge */}
