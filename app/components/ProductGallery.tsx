@@ -16,6 +16,7 @@ export function ProductGallery({
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activePlayIdx, setActivePlayIdx] = useState<number | null>(null);
   const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   if (!media.length) {
@@ -39,6 +40,7 @@ export function ProductGallery({
 
   const scrollToIdx = (idx: number) => {
     setActiveIdx(idx);
+    setActivePlayIdx(null); // Stop playing video when slide changes
     if (mobileScrollRef.current) {
       const width = mobileScrollRef.current.clientWidth;
       mobileScrollRef.current.scrollTo({
@@ -63,6 +65,7 @@ export function ProductGallery({
     const index = Math.round(container.scrollLeft / container.clientWidth);
     if (index !== activeIdx && index >= 0 && index < media.length) {
       setActiveIdx(index);
+      setActivePlayIdx(null); // Stop playing video when swiped away
     }
   };
 
@@ -153,14 +156,87 @@ export function ProductGallery({
           onScroll={handleMobileScroll}
           className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth hiddenScroll w-full aspect-square bg-white border border-gray-100 rounded-2xl shadow-sm animate-fade-in"
         >
-          {media.map((med, i) => (
-            <div
-              key={med.id || i}
-              className="snap-start w-full h-full flex-shrink-0 flex items-center justify-center p-2"
-            >
-              <ActiveMediaRenderer media={med} />
-            </div>
-          ))}
+          {media.map((med, i) => {
+            const {isImage, isVideo, isExternalVideo, isModel, imageUrl, altText} = getMediaDetails(med);
+            const isPlayable = isVideo || isExternalVideo;
+            const isPlaying = activePlayIdx === i;
+
+            return (
+              <div
+                key={med.id || i}
+                className="snap-start w-full h-full flex-shrink-0 flex items-center justify-center p-2 relative select-none"
+              >
+                {isPlayable ? (
+                  isPlaying ? (
+                    <div className="w-full h-full relative">
+                      <ActiveMediaRenderer media={med} />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActivePlayIdx(null);
+                        }}
+                        className="absolute top-2 right-2 z-20 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 focus:outline-none"
+                      >
+                        <IconClose className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div 
+                      className="w-full h-full relative cursor-pointer flex items-center justify-center group"
+                      onClick={() => setActivePlayIdx(i)}
+                    >
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={altText}
+                          className="w-full h-full object-contain aspect-square rounded-xl"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-xl animate-pulse">
+                          Video Preview
+                        </div>
+                      )}
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 bg-black/15 flex items-center justify-center rounded-xl group-hover:bg-black/25 transition-all duration-300">
+                        <div className="w-14 h-14 rounded-full bg-white/95 text-[#D33E13] flex items-center justify-center shadow-lg transform group-hover:scale-110 active:scale-95 transition-all duration-200">
+                          <PlayIcon className="w-8 h-8 ml-1" />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                ) : isModel ? (
+                  <div 
+                    className="w-full h-full relative cursor-pointer flex items-center justify-center group"
+                    onClick={() => {
+                      setActiveIdx(i);
+                      setLightboxOpen(true);
+                    }}
+                  >
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt={altText}
+                        className="w-full h-full object-contain aspect-square rounded-xl"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-xl">
+                        3D Model
+                      </div>
+                    )}
+                    {/* 3D Icon Overlay */}
+                    <div className="absolute inset-0 bg-black/15 flex items-center justify-center rounded-xl group-hover:bg-black/25 transition-all duration-300">
+                      <div className="px-4.5 py-2.5 rounded-full bg-white/95 text-[#D33E13] flex items-center gap-2 shadow-lg transform group-hover:scale-105 active:scale-95 transition-all duration-200 text-xs font-black uppercase tracking-wider">
+                        <CubeIcon className="w-5 h-5" />
+                        View 3D Model
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <ActiveMediaRenderer media={med} />
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Expand / Zoom overlay button */}
