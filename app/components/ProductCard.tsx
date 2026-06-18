@@ -11,6 +11,7 @@ import {Button} from '~/components/Button';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {isDiscounted, isNewArrival} from '~/lib/utils';
 import {getProductPlaceholder} from '~/lib/placeholders';
+import {JudgemePreviewBadge} from '@judgeme/shopify-hydrogen';
 
 export function ProductCard({
   product,
@@ -115,6 +116,10 @@ export function ProductCard({
                 {product.title}
               </h3>
             </Link>
+            {/* Judge.me Star Rating Badge */}
+            <div className="min-h-[1.25rem] -mt-0.5 mb-1.5">
+              <JudgemePreviewBadge id={product.id} template="product" />
+            </div>
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <span className={clsx("font-black text-xs sm:text-sm md:text-base", cardColor.text)}>
                 <Money withoutTrailingZeros data={price!} />

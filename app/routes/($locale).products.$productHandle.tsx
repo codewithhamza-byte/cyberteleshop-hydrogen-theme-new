@@ -265,7 +265,7 @@ export default function Product() {
   });
 
   // Client states for premium interactive interface
-  const [activeTab, setActiveTab] = useState<'description' | 'reviews' | 'shipping' | 'returns'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'shipping' | 'returns'>('description');
   const [toast, setToast] = useState<string | null>(null);
   const [askQuestionOpen, setAskQuestionOpen] = useState(false);
   const [viewersCount, setViewersCount] = useState(13);
@@ -395,8 +395,7 @@ export default function Product() {
                   )}
                   <button
                     onClick={() => {
-                      setActiveTab('reviews');
-                      const element = document.getElementById('product-tabs');
+                      const element = document.getElementById('product-reviews');
                       if (element) {
                         element.scrollIntoView({behavior: 'smooth', block: 'start'});
                       }
@@ -539,10 +538,9 @@ export default function Product() {
         {/* Bottom Tabbed Content Area */}
         <div id="product-tabs" className="mt-16 border-t border-gray-100 pt-10">
           <div className="flex flex-wrap gap-2 justify-center mb-8 border-b border-gray-100 pb-4">
-            {(['description', 'reviews', 'shipping', 'returns'] as const).map((tab) => {
+            {(['description', 'shipping', 'returns'] as const).map((tab) => {
               const labels = {
                 description: 'Description',
-                reviews: 'Customer Reviews',
                 shipping: 'Shipping & Returns',
                 returns: 'Return Policies',
               };
@@ -572,12 +570,6 @@ export default function Product() {
                   __html: descriptionHtml || '<p>No description available.</p>',
                 }}
               />
-            )}
-
-            {activeTab === 'reviews' && (
-              <div className="flex flex-col gap-4">
-                <JudgemeReviewWidget id={product.id} />
-              </div>
             )}
 
             {activeTab === 'shipping' && (
@@ -622,6 +614,18 @@ export default function Product() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Dedicated Judge.me Reviews Section */}
+        <div id="product-reviews" className="mt-16 border-t border-gray-100 pt-16 scroll-mt-24">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-8 text-center uppercase tracking-wider">
+              Customer Reviews
+            </h2>
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
+              <JudgemeReviewWidget id={product.id} />
+            </div>
           </div>
         </div>
       </Section>

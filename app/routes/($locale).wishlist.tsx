@@ -129,7 +129,7 @@ export default function Wishlist() {
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Loading saved items...</p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-8">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-8">
             {products.map((product) => (
               <div key={product.id} className="relative group flex flex-col">
                 <ProductCard product={product} />

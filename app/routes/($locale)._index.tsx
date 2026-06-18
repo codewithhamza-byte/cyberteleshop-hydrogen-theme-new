@@ -12,6 +12,7 @@ import {Button} from '~/components/Button';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {ProductSwimlane} from '~/components/ProductSwimlane';
 import {Heading, Section, Text} from '~/components/Text';
+import {Grid} from '~/components/Grid';
 import {Link} from '~/components/Link';
 import type {HomepageCategoryCollectionsQuery} from 'storefrontapi.generated';
 import {seoPayload} from '~/lib/seo.server';
@@ -347,13 +348,11 @@ function CollectionShowcase({data}: {data: any}) {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-4 md:gap-6 pb-0">
+        <Grid layout="products" className="md:grid-cols-4 pb-0">
           {currentProducts.slice(0, 8).map((product: any) => (
-            <div key={product.id} className="w-full">
-              <ProductCard product={product} />
-            </div>
+            <ProductCard key={product.id} product={product} />
           ))}
-        </div>
+        </Grid>
       </div>
     </Section>
   );

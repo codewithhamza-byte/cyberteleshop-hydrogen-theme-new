@@ -148,7 +148,7 @@ export default function AllProducts() {
                     )}
                   </PreviousLink>
                 </div>
-                <Grid data-test="product-grid">{itemsMarkup}</Grid>
+                <Grid layout="products" data-test="product-grid">{itemsMarkup}</Grid>
                 <div className="flex items-center justify-center mt-8">
                   <NextLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#D33E13] hover:bg-[#b0300d] text-xs font-extrabold text-white transition-all duration-200 shadow-md shadow-[#D33E13]/10 hover:shadow-lg cursor-pointer">
                     {isLoading ? (
