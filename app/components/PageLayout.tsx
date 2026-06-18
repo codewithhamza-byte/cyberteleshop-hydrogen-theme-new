@@ -444,6 +444,8 @@ function MobileHeader({
         <img
           src={logoSrc}
           alt={title}
+          width={165}
+          height={32}
           className="h-8 w-auto object-contain transition-transform duration-200 hover:scale-105"
           loading="eager"
         />
@@ -569,6 +571,8 @@ function DesktopHeader({
               <img
                 src={logoSrc}
                 alt={title}
+                width={165}
+                height={36}
                 className="h-9 w-auto object-contain filter drop-shadow-sm hover:drop-shadow-md transition-all"
                 loading="eager"
               />

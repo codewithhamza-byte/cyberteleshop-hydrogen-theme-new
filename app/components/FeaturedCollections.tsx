@@ -10,6 +10,18 @@ type FeaturedCollectionsProps = HomepageFeaturedCollectionsQuery & {
   [key: string]: any;
 };
 
+export function shopifyCollectionImageLoader({src, width, height, crop}: any) {
+  try {
+    const url = new URL(src);
+    const targetWidth = width ? Math.min(width, 400) : 400;
+    url.searchParams.set('width', String(targetWidth));
+    url.searchParams.set('crop', crop || 'center');
+    return url.toString();
+  } catch (e) {
+    return src;
+  }
+}
+
 export function FeaturedCollections({
   collections,
   title = 'Collections',
@@ -42,11 +54,11 @@ export function FeaturedCollections({
                     alt={`Image of ${collection.title}`}
                     data={collection.image}
                     sizes="(max-width: 32em) 50vw, (max-width: 48em) 33vw, 25vw"
-                    widths={[160, 320, 480, 640]}
                     width={400}
                     height={300}
                     aspectRatio="4/3"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loader={shopifyCollectionImageLoader}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#1e293b] to-[#0f172a]" />

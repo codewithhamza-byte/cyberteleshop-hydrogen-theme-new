@@ -291,6 +291,7 @@ function LandingHero() {
       <Link to="/collections/all" className="block relative group w-full">
         <Image
           data={{
+            __typename: 'Image',
             url: 'https://cdn.shopify.com/s/files/1/0680/6172/4863/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973',
             altText: 'CyberTeleshop Premium Electronic Sales Banner',
             width: 2000,
@@ -298,10 +299,10 @@ function LandingHero() {
           }}
           className="w-full h-[160px] sm:h-auto object-cover object-[65%] sm:object-center block select-none"
           sizes="100vw"
-          widths={[360, 480, 720, 1080, 1440, 2000]}
           width={2000}
           height={694}
           loading="eager"
+          fetchPriority="high"
         />
         {/* Subtle hover overlay to invite action */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition duration-300" />

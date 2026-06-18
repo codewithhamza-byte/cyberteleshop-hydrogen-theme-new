@@ -13,6 +13,20 @@ import {isDiscounted, isNewArrival} from '~/lib/utils';
 import {getProductPlaceholder} from '~/lib/placeholders';
 import {JudgemePreviewBadge} from '@judgeme/shopify-hydrogen';
 
+export function shopifyImageLoader({src, width, height, crop}: any) {
+  try {
+    const url = new URL(src);
+    const targetWidth = width ? Math.min(width, 320) : 320;
+    url.searchParams.set('width', String(targetWidth));
+    const targetHeight = height ? Math.min(height, 320) : 320;
+    url.searchParams.set('height', String(targetHeight));
+    url.searchParams.set('crop', crop || 'center');
+    return url.toString();
+  } catch (e) {
+    return src;
+  }
+}
+
 export function ProductCard({
   product,
   label,
@@ -88,13 +102,13 @@ export function ProductCard({
             <Image
               className="object-cover w-full h-full aspect-square fadeIn transition duration-500 group-hover:scale-105"
               sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
-              widths={[160, 320, 480, 640]}
               width={320}
               height={320}
               aspectRatio="1/1"
               data={image}
               alt={image.altText || `Picture of ${product.title}`}
               loading={loading}
+              loader={shopifyImageLoader}
             />
           )}
 
