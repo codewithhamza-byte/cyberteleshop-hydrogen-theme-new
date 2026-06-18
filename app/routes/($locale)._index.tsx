@@ -315,28 +315,28 @@ function CollectionShowcase({data}: {data: any}) {
 
   return (
     <Section padding="y" className="bg-contrast w-full overflow-x-hidden">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex flex-col gap-6 items-center text-center mb-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-6 items-center text-center mb-8 w-full max-w-full">
           <div>
-            <Heading size="heading" className="text-3xl font-extrabold tracking-tight uppercase">
+            <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
               Featured Collections
             </Heading>
-            <Text as="p" className="mt-2 text-primary/80 max-w-xl">
+            <Text as="p" className="mt-2 text-primary/80 max-w-xl text-xs sm:text-sm">
               Quickly browse and discover hot products from our top active collections.
             </Text>
           </div>
 
           {/* Tabs header */}
-          <div className="flex w-full md:w-auto overflow-x-auto md:overflow-x-visible whitespace-nowrap justify-start md:justify-center gap-1.5 md:gap-2 p-1.5 bg-primary/5 rounded-2xl md:rounded-full border border-primary/10 max-w-full md:max-w-4xl hiddenScroll">
+          <div className="grid grid-cols-2 gap-2 w-full p-2 bg-primary/5 rounded-2xl border border-primary/10 md:flex md:w-auto md:gap-2 md:p-1.5 md:rounded-full md:max-w-4xl justify-center">
             {tabs.map((tab) => {
               const isActive = tab.id === activeTab;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`inline-block px-4 py-2 md:px-5 md:py-2.5 rounded-xl md:rounded-full text-[10px] md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                  className={`w-full text-center px-2 py-2.5 rounded-xl text-[10px] md:inline-block md:w-auto md:px-5 md:py-2.5 md:rounded-full md:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-[#D33E13] text-white shadow-sm scale-102 border border-[#D33E13]'
+                      ? 'bg-[#D33E13] text-white shadow-sm scale-[1.02] border border-[#D33E13]'
                       : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
                   }`}
                 >
