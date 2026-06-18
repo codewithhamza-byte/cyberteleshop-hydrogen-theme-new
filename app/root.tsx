@@ -156,7 +156,7 @@ function Layout({children}: {children?: React.ReactNode}) {
     shopDomain: data?.env?.JUDGEME_SHOP_DOMAIN || 'hydrogen-preview.myshopify.com',
     publicToken: data?.env?.JUDGEME_PUBLIC_TOKEN || 'your-public-token',
     cdnHost: data?.env?.JUDGEME_CDN_HOST || 'https://cdn.judge.me',
-    delay: 500,
+    delay: 2500,
   });
 
   return (

@@ -88,6 +88,9 @@ export function ProductCard({
             <Image
               className="object-cover w-full h-full aspect-square fadeIn transition duration-500 group-hover:scale-105"
               sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
+              widths={[160, 320, 480, 640]}
+              width={320}
+              height={320}
               aspectRatio="1/1"
               data={image}
               alt={image.altText || `Picture of ${product.title}`}
@@ -101,7 +104,7 @@ export function ProductCard({
             </span>
           )}
         </Link>
-
+ 
         {/* Product Details Section */}
         <div className="flex flex-col gap-1.5 sm:gap-2">
           {/* Title & Price */}
@@ -125,18 +128,18 @@ export function ProductCard({
                 <Money withoutTrailingZeros data={price!} />
               </span>
               {compareAtPrice && isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
-                <span className="text-[10px] sm:text-xs text-primary/45 line-through font-medium">
+                <span className="text-[10px] sm:text-xs text-primary/65 line-through font-medium">
                   <Money withoutTrailingZeros data={compareAtPrice as MoneyV2} />
                 </span>
               )}
             </div>
           </div>
-
+ 
           {/* Description (Hidden on mobile for card compactness) */}
-          <p className="hidden sm:block text-xs text-primary/60 line-clamp-2 leading-relaxed min-h-[2.5rem]">
+          <p className="hidden sm:block text-xs text-primary/75 line-clamp-2 leading-relaxed min-h-[2.5rem]">
             {shortDescription}
           </p>
-
+ 
         </div>
       </div>
 

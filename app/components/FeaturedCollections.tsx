@@ -42,6 +42,9 @@ export function FeaturedCollections({
                     alt={`Image of ${collection.title}`}
                     data={collection.image}
                     sizes="(max-width: 32em) 50vw, (max-width: 48em) 33vw, 25vw"
+                    widths={[160, 320, 480, 640]}
+                    width={400}
+                    height={300}
                     aspectRatio="4/3"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
