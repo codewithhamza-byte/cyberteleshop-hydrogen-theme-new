@@ -634,6 +634,20 @@ function TestimonialsSection() {
   );
 }
 
+export function shopifyCategorySliderImageLoader({src, width, height, crop}: any) {
+  try {
+    const url = new URL(src);
+    const targetWidth = width ? Math.min(width, 200) : 200;
+    url.searchParams.set('width', String(targetWidth));
+    const targetHeight = height ? Math.min(height, 200) : 200;
+    url.searchParams.set('height', String(targetHeight));
+    url.searchParams.set('crop', crop || 'center');
+    return url.toString();
+  } catch (e) {
+    return src;
+  }
+}
+
 function CategorySlider({
   collections,
 }: {
@@ -706,7 +720,10 @@ function CategorySlider({
                   alt={collection.image?.altText || collection.title}
                   className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
                   sizes="(max-width: 32em) 50vw, (max-width: 48em) 33vw, 16vw"
+                  width={200}
+                  height={200}
                   aspectRatio="1/1"
+                  loader={shopifyCategorySliderImageLoader}
                 />
               </div>
               <div className="mt-3 text-center px-1">
