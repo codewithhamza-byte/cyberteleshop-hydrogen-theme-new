@@ -94,6 +94,7 @@ export default function Collections() {
                 </Button>
               </div>
               <Grid
+                layout="products"
                 items={nodes.length === 3 ? 3 : 2}
                 data-test="collection-grid"
               >

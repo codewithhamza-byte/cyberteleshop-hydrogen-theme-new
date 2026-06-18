@@ -21,7 +21,7 @@ export function FeaturedSection() {
 
   return (
     <>
-      {featuredCollections.nodes.length < 2 && (
+      {featuredCollections.nodes.length > 0 && (
         <FeaturedCollections
           title="Popular Collections"
           collections={featuredCollections}
