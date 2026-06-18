@@ -82,7 +82,3 @@ const API_ALL_PRODUCTS_QUERY = `#graphql
   ${PRODUCT_CARD_FRAGMENT}
 ` as const;
 
-// no-op
-export default function ProductsApiRoute() {
-  return null;
-}

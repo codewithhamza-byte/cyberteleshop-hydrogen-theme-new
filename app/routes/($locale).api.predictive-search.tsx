@@ -121,6 +121,4 @@ const FALLBACK_SEARCH_QUERY = `#graphql
   }
 ` as const;
 
-export default function PredictiveSearchApiRoute() {
-  return null;
-}
+
