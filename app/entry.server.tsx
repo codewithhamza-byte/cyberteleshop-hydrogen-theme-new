@@ -19,6 +19,7 @@ export default async function handleRequest(
     },
     scriptSrc: [
       'self',
+      'unsafe-inline',
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://www.google-analytics.com',

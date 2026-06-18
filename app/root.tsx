@@ -152,7 +152,7 @@ function Layout({children}: {children?: React.ReactNode}) {
     shopDomain: data?.env?.JUDGEME_SHOP_DOMAIN || 'hydrogen-preview.myshopify.com',
     publicToken: data?.env?.JUDGEME_PUBLIC_TOKEN || 'your-public-token',
     cdnHost: data?.env?.JUDGEME_CDN_HOST || 'https://cdn.judge.me',
-    delay: 2500,
+    delay: 500,
   });
 
   return (
@@ -162,6 +162,24 @@ function Layout({children}: {children?: React.ReactNode}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="msvalidate.01" content="A352E6A0AF9A652267361BBB572B8468" />
         <link rel="stylesheet" href={styles}></link>
+        {nonce && (
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.cspNonce = "${nonce}";
+                const originalCreateElement = document.createElement;
+                document.createElement = function(tagName, options) {
+                  const element = originalCreateElement.call(document, tagName, options);
+                  if (tagName.toLowerCase() === 'script') {
+                    element.setAttribute('nonce', "${nonce}");
+                  }
+                  return element;
+                };
+              `,
+            }}
+          />
+        )}
         <Meta />
         <Links />
       </head>
