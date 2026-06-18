@@ -25,7 +25,7 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 
 import type {ProductFragment} from 'storefrontapi.generated';
-import {Heading, Section, Text} from '~/components/Text';
+import {Heading, Text} from '~/components/Text';
 import {Link} from '~/components/Link';
 import {Button} from '~/components/Button';
 import {AddToCartButton} from '~/components/AddToCartButton';
@@ -312,7 +312,7 @@ export default function Product() {
 
   return (
     <>
-      <Section display="flex" className="px-4 md:px-8 lg:px-16 py-6 max-w-7xl mx-auto flex flex-col">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Breadcrumb Navigation & Utility Controls */}
         <div className="flex justify-between items-center py-3 border-b border-gray-100 mb-8">
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
@@ -628,7 +628,7 @@ export default function Product() {
             </div>
           </div>
         </div>
-      </Section>
+      </div>
 
       {/* Recommended Products Carousel */}
       <Suspense fallback={<Skeleton className="h-32" />}>
@@ -731,43 +731,43 @@ export default function Product() {
 
       {/* Sticky Bottom Add to Cart Bar */}
       {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 md:bottom-6 md:right-6 md:left-auto md:w-full md:max-w-md bg-white/95 dark:bg-black/95 backdrop-blur-md border-t md:border border-gray-150 md:border-gray-200/50 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] py-3.5 px-4 md:px-5 z-[90] flex items-center justify-between md:rounded-2xl gap-3 animate-slideUp">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="fixed bottom-0 left-0 right-0 z-[90] bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgb(0,0,0,0.10)] py-3 px-4 flex items-center justify-between gap-3 animate-slideUp md:bottom-5 md:left-auto md:right-5 md:max-w-sm md:rounded-2xl md:border md:shadow-2xl md:px-5">
+          <div className="flex items-center gap-3 min-w-0 overflow-hidden">
             {media.nodes[0]?.previewImage?.url && (
               <img
                 src={media.nodes[0].previewImage.url}
                 alt={title}
-                width={48}
-                height={48}
+                width={44}
+                height={44}
                 className="w-10 h-10 object-cover rounded-lg border border-gray-100 hidden sm:block flex-shrink-0"
               />
             )}
-            <div className="min-w-0">
-              <h4 className="font-extrabold text-xs text-gray-900 line-clamp-1">
+            <div className="min-w-0 overflow-hidden">
+              <h4 className="font-extrabold text-xs text-gray-900 truncate">
                 {title}
               </h4>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-xs font-black text-[#D33E13]">
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span className="text-xs font-black text-[#D33E13] whitespace-nowrap">
                   <Money data={selectedVariant.price} withoutTrailingZeros />
                 </span>
                 {selectedVariant.title && selectedVariant.title !== 'Default Title' && (
-                  <span className="text-[10px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[80px]">
+                  <span className="text-[10px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.5 rounded">
                     {selectedVariant.title}
                   </span>
                 )}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex-shrink-0">
             {!isOutOfStock ? (
               <AddToCartButton
                 lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
-                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-5 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
+                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-5 rounded-xl text-xs whitespace-nowrap shadow-md shadow-[#D33E13]/10"
               >
                 Add to Cart
               </AddToCartButton>
             ) : (
-              <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl">Sold Out</span>
+              <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl whitespace-nowrap">Sold Out</span>
             )}
           </div>
         </div>
