@@ -26,8 +26,25 @@ export async function loader({
 
   invariant(data, 'No data returned from predictive search query');
 
-  const products = data.predictiveSearch?.products || [];
+  let products = data.predictiveSearch?.products || [];
   const collections = data.predictiveSearch?.collections || [];
+
+  if (products.length === 0) {
+    try {
+      const fallbackData = await storefront.query(FALLBACK_SEARCH_QUERY, {
+        variables: {
+          query,
+          country: storefront.i18n.country,
+          language: storefront.i18n.language,
+        },
+      });
+      if (fallbackData?.products?.nodes) {
+        products = fallbackData.products.nodes;
+      }
+    } catch (err) {
+      console.error('Error fetching fallback search suggestions:', err);
+    }
+  }
 
   return json({
     products,
@@ -67,6 +84,38 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
         id
         title
         handle
+      }
+    }
+  }
+` as const;
+
+const FALLBACK_SEARCH_QUERY = `#graphql
+  query FallbackSearch(
+    $query: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    products(first: 5, query: $query) {
+      nodes {
+        id
+        title
+        handle
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        variants(first: 1) {
+          nodes {
+            image {
+              url
+              altText
+              width
+              height
+            }
+          }
+        }
       }
     }
   }
