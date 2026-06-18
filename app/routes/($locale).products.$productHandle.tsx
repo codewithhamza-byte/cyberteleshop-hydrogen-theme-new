@@ -760,26 +760,12 @@ export default function Product() {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {!isOutOfStock ? (
-              <>
-                <AddToCartButton
-                  lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
-                  className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-3 sm:px-4 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
-                >
-                  Add
-                </AddToCartButton>
-                <a
-                  href={`https://api.whatsapp.com/send?phone=923146257174&text=${encodeURIComponent(`Hi Cyberteleshop, I want to order ${product.title} (${selectedVariant.title || 'Default'}) for Rs. ${Math.round(selectedVariant.price.amount)}: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#25D366] hover:bg-[#20ba56] text-white p-2.5 rounded-xl flex items-center justify-center shadow-md shadow-[#25D366]/10 transition-colors"
-                  title="Order via WhatsApp"
-                >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.59 1.966 14.12 .943 11.498.943c-5.442 0-9.87 4.372-9.874 9.802-.001 1.65.453 3.262 1.313 4.685L1.879 21.35l6.082-1.596-.314-.199z" />
-                    <path d="M6.51 7.21c-.151-.336-.311-.343-.456-.349-.118-.005-.254-.005-.39-.005-.136 0-.356.051-.542.253-.186.202-.711.694-.711 1.694 0 1 .728 1.968.829 2.103.102.135 1.432 2.186 3.47 3.067.485.209.862.335 1.156.429.488.155.932.133 1.283.08.391-.059 1.202-.491 1.371-.965.17-.474.17-.88.119-.965-.051-.085-.186-.135-.373-.22-.186-.085-1.101-.542-1.27-.604-.17-.061-.294-.092-.418.093-.125.186-.48.604-.588.728-.109.124-.217.138-.403.045-.186-.093-.787-.29-1.5-.933-.554-.494-.928-1.104-1.037-1.289-.109-.186-.012-.286.081-.378.083-.083.186-.217.279-.326.093-.109.124-.186.186-.31.062-.124.031-.233-.016-.326-.046-.092-.41-1.002-.562-1.378z" />
-                  </svg>
-                </a>
-              </>
+              <AddToCartButton
+                lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
+                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-5 rounded-xl text-xs md:text-sm shadow-md shadow-[#D33E13]/10"
+              >
+                Add to Cart
+              </AddToCartButton>
             ) : (
               <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl">Sold Out</span>
             )}
@@ -812,15 +798,17 @@ export function ProductForm({
   const closeRef = useRef<HTMLButtonElement>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
+  const [isCompare, setIsCompare] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const list = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
-      setIsWishlist(list.includes(product.id));
+      const wList = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
+      setIsWishlist(wList.includes(product.id));
+
+      const cList = JSON.parse(localStorage.getItem('compare') || '[]') as string[];
+      setIsCompare(cList.includes(product.id));
     }
   }, [product.id]);
-
-
 
   const toggleWishlist = () => {
     if (typeof window !== 'undefined') {
@@ -835,6 +823,28 @@ export function ProductForm({
         showToast('Added to wishlist');
       }
       localStorage.setItem('wishlist', JSON.stringify(list));
+      window.dispatchEvent(new Event('wishlist-updated'));
+    }
+  };
+
+  const toggleCompare = () => {
+    if (typeof window !== 'undefined') {
+      let list = JSON.parse(localStorage.getItem('compare') || '[]') as string[];
+      if (list.includes(product.id)) {
+        list = list.filter((id: string) => id !== product.id);
+        setIsCompare(false);
+        showToast('Removed from compare list');
+      } else {
+        if (list.length >= 4) {
+          showToast('You can compare up to 4 products');
+          return;
+        }
+        list.push(product.id);
+        setIsCompare(true);
+        showToast('Added to compare list');
+      }
+      localStorage.setItem('compare', JSON.stringify(list));
+      window.dispatchEvent(new Event('compare-updated'));
     }
   };
 
@@ -1068,6 +1078,29 @@ export function ProductForm({
                   className={clsx('w-5 h-5', isWishlist ? 'fill-current' : 'fill-none')}
                 />
               </button>
+
+              {/* Compare Button */}
+              <button
+                onClick={toggleCompare}
+                className={clsx(
+                  'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
+                  isCompare
+                    ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13]'
+                    : 'border-gray-200 hover:border-gray-400 bg-white text-gray-600 hover:text-gray-900',
+                )}
+                title={isCompare ? 'Remove from Compare' : 'Add to Compare'}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+              </button>
             </div>
 
             {/* Row 2: Buy It Now Checkout CTA */}
@@ -1085,26 +1118,6 @@ export function ProductForm({
                 >
                   Buy it now
                 </button>
-
-                <a
-                  href={`https://api.whatsapp.com/send?phone=923146257174&text=${encodeURIComponent(`Hi Cyberteleshop, I would like to order:
-*Product:* ${product.title}
-*Variant:* ${selectedVariant?.title || 'Default'}
-*Price:* Rs. ${Math.round(selectedVariant?.price?.amount || 0)}
-*Quantity:* ${quantity}
-*Link:* ${typeof window !== 'undefined' ? window.location.href : ''}
-
-Please confirm my order.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#20ba56] text-white font-extrabold py-4 px-6 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center gap-2.5 text-base md:text-lg tracking-wide uppercase active:scale-[0.98]"
-                >
-                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.59 1.966 14.12 .943 11.498.943c-5.442 0-9.87 4.372-9.874 9.802-.001 1.65.453 3.262 1.313 4.685L1.879 21.35l6.082-1.596-.314-.199z" />
-                    <path d="M6.51 7.21c-.151-.336-.311-.343-.456-.349-.118-.005-.254-.005-.39-.005-.136 0-.356.051-.542.253-.186.202-.711.694-.711 1.694 0 1 .728 1.968.829 2.103.102.135 1.432 2.186 3.47 3.067.485.209.862.335 1.156.429.488.155.932.133 1.283.08.391-.059 1.202-.491 1.371-.965.17-.474.17-.88.119-.965-.051-.085-.186-.135-.373-.22-.186-.085-1.101-.542-1.27-.604-.17-.061-.294-.092-.418.093-.125.186-.48.604-.588.728-.109.124-.217.138-.403.045-.186-.093-.787-.29-1.5-.933-.554-.494-.928-1.104-1.037-1.289-.109-.186-.012-.286.081-.378.083-.083.186-.217.279-.326.093-.109.124-.186.186-.31.062-.124.031-.233-.016-.326-.046-.092-.41-1.002-.562-1.378z" />
-                  </svg>
-                  <span>Order via WhatsApp</span>
-                </a>
 
                 {/* Secure Checkout Badges */}
                 <div className="flex flex-col items-center gap-2 mt-4 py-2 border-t border-gray-100">

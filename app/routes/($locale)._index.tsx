@@ -469,10 +469,10 @@ function FlashSaleCountdown() {
   return (
     <Section padding="y" className="w-full bg-contrast">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/20 p-8 md:p-12 lg:p-16 shadow-xl border border-primary/10">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#F59E0B]/10 p-8 md:p-12 lg:p-16 shadow-xl border border-primary/10">
           
           {/* Decorative blur elements */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#D33E13]/10 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#F59E0B]/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
@@ -480,13 +480,13 @@ function FlashSaleCountdown() {
             <div className="text-center lg:text-left max-w-xl">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-[#D33E13] bg-[#D33E13]/15 border border-[#D33E13]/30 mb-4">
                 <span className="w-2 h-2 rounded-full bg-[#D33E13] animate-pulse" />
-                Limited Offer
+                Summer Special
               </span>
               <Heading size="heading" className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-tight">
-                MID-YEAR MEGA <br className="hidden sm:inline" /> FLASH SALE!
+                SUMMER CRUSH <br className="hidden sm:inline" /> MEGA SALE!
               </Heading>
               <Text as="p" className="mt-4 text-gray-300 text-sm sm:text-base font-medium max-w-lg leading-relaxed">
-                Grab your favorite premium gadgets, car accessories, and fitness gear before the clock runs out. Stock is extremely limited!
+                Beat the heat with our hottest discounts of the season! Save big on premium gadgets, car accessories, and fitness gear before stock runs out.
               </Text>
 
               {/* Progress bar */}
@@ -496,7 +496,7 @@ function FlashSaleCountdown() {
                   <span>87% Claimed</span>
                 </div>
                 <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#D33E13] to-orange-500 h-full w-[87%] rounded-full animate-pulse" />
+                  <div className="bg-gradient-to-r from-[#D33E13] to-amber-500 h-full w-[87%] rounded-full animate-pulse" />
                 </div>
               </div>
             </div>
@@ -534,7 +534,7 @@ function FlashSaleCountdown() {
               {/* Action Button */}
               <Link to="/collections/hot-deals" className="w-full">
                 <Button className="w-full py-4 bg-[#D33E13] text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-lg hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2">
-                  Shop Mega Deals Now &rarr;
+                  Shop Summer Deals Now &rarr;
                 </Button>
               </Link>
             </div>

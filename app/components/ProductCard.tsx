@@ -126,25 +126,25 @@ export function ProductCard({
         </Link>
  
         {/* Product Details Section */}
-        <div className="flex flex-col gap-1.5 sm:gap-2">
+        <div className="flex flex-col gap-1">
           {/* Title & Price */}
-          <div className="flex flex-col gap-1 sm:gap-1.5">
+          <div className="flex flex-col gap-0.5">
             <Link
               onClick={onClick}
               to={`/products/${product.handle}`}
               prefetch="viewport"
               className="w-full"
             >
-              <h3 className="font-extrabold text-xs sm:text-base md:text-lg text-primary line-clamp-2 hover:text-[#D33E13] transition-colors min-h-[2rem] sm:min-h-[2.5rem]">
+              <h3 className="font-medium text-xs sm:text-sm md:text-base text-primary line-clamp-1 hover:text-[#D33E13] transition-colors">
                 {truncatedTitle}
               </h3>
             </Link>
             {/* Judge.me Star Rating Badge */}
-            <div className="min-h-[1.25rem] -mt-0.5 mb-1.5">
+            <div>
               <JudgemePreviewBadge id={product.id} template="product" />
             </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <span className={clsx("font-black text-xs sm:text-sm md:text-base", cardColor.text)}>
+            <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+              <span className={clsx("font-extrabold text-xs sm:text-sm md:text-base", cardColor.text)}>
                 <Money withoutTrailingZeros data={price!} />
               </span>
               {compareAtPrice && isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (

@@ -536,6 +536,31 @@ function DesktopHeader({
   const {y} = useWindowScroll();
   const scrolled = y > 20;
 
+  const [compareCount, setCompareCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  useEffect(() => {
+    const updateCounts = () => {
+      if (typeof window !== 'undefined') {
+        const compare = JSON.parse(localStorage.getItem('compare') || '[]') as string[];
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
+        setCompareCount(compare.length);
+        setWishlistCount(wishlist.length);
+      }
+    };
+
+    updateCounts();
+
+    window.addEventListener('storage', updateCounts);
+    window.addEventListener('compare-updated', updateCounts);
+    window.addEventListener('wishlist-updated', updateCounts);
+    return () => {
+      window.removeEventListener('storage', updateCounts);
+      window.removeEventListener('compare-updated', updateCounts);
+      window.removeEventListener('wishlist-updated', updateCounts);
+    };
+  }, []);
+
   return (
     <header
       role="banner"
@@ -578,9 +603,11 @@ function DesktopHeader({
               title="Compare"
             >
               <IconCompare className="w-5 h-5 text-neutral-600" />
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
-                0
-              </span>
+              {compareCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
+                  {compareCount}
+                </span>
+              )}
             </Link>
 
             {/* Wishlist Button */}
@@ -592,9 +619,11 @@ function DesktopHeader({
               <svg className="w-5 h-5 fill-none stroke-current text-neutral-600" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
-                0
-              </span>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             {/* Login / Register */}
