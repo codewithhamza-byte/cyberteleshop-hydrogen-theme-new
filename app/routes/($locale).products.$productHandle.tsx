@@ -113,6 +113,139 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
   return getSeoMeta(...matches.map((match) => (match.data as any).seo));
 };
 
+function ProductCountdown({ targetDate }: { targetDate?: string }) {
+  const [timeLeft, setTimeLeft] = useState<{
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  } | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    
+    // Determine the countdown target
+    let finalTargetDate = targetDate;
+    if (!finalTargetDate) {
+      // Evergreen fallback: target 11:59:59 PM today (or tomorrow if <2 hours left)
+      const now = new Date();
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+      if (endOfToday.getTime() - now.getTime() < 2 * 60 * 60 * 1000) {
+        endOfToday.setDate(endOfToday.getDate() + 1);
+      }
+      finalTargetDate = endOfToday.toISOString();
+    }
+
+    const calculateTime = () => {
+      const difference = +new Date(finalTargetDate) - +new Date();
+      if (difference <= 0) {
+        return null;
+      }
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    };
+
+    // Initial calculation
+    setTimeLeft(calculateTime());
+
+    const timer = setInterval(() => {
+      const remaining = calculateTime();
+      setTimeLeft(remaining);
+      if (!remaining) {
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  if (!mounted || !timeLeft) return null;
+
+  return (
+    <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-neutral-900 dark:to-neutral-950 border border-[#D33E13]/10 dark:border-[#D33E13]/20 rounded-2xl p-4 md:p-5 shadow-sm mt-3 animate-fade-in">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D33E13]"></span>
+          </span>
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#D33E13]">
+            Limited Time Offer!
+          </h4>
+        </div>
+        <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 bg-white dark:bg-neutral-800 px-2 py-0.5 rounded border border-neutral-100 dark:border-neutral-700 shadow-sm">
+          Ends Soon
+        </span>
+      </div>
+      <div className="flex items-center gap-3">
+        {/* Days */}
+        {timeLeft.days > 0 && (
+          <>
+            <div className="flex flex-col items-center">
+              <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+                {String(timeLeft.days).padStart(2, '0')}
+              </div>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+                Days
+              </span>
+            </div>
+            <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+          </>
+        )}
+
+        {/* Hours */}
+        <div className="flex flex-col items-center">
+          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+            {String(timeLeft.hours).padStart(2, '0')}
+          </div>
+          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+            Hours
+          </span>
+        </div>
+        
+        <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+
+        {/* Minutes */}
+        <div className="flex flex-col items-center">
+          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+            {String(timeLeft.minutes).padStart(2, '0')}
+          </div>
+          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+            Mins
+          </span>
+        </div>
+
+        <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+
+        {/* Seconds */}
+        <div className="flex flex-col items-center">
+          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+            {String(timeLeft.seconds).padStart(2, '0')}
+          </div>
+          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+            Secs
+          </span>
+        </div>
+        
+        <div className="ml-auto hidden sm:block">
+          <p className="text-[11px] font-extrabold text-neutral-600 dark:text-neutral-300 leading-snug">
+            Order now to secure promotional pricing.
+          </p>
+          <p className="text-[9px] font-bold text-neutral-400 mt-0.5">
+            Fast delivery nationwide.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Product() {
   const {product, shop, recommended, variants, storeDomain} =
     useLoaderData<typeof loader>();
@@ -300,6 +433,9 @@ export default function Product() {
                   <strong className="text-[#D33E13] font-extrabold">{viewersCount} customers</strong> are viewing this right now
                 </span>
               </div>
+
+              {/* Countdown Timer */}
+              <ProductCountdown targetDate={product.countdownTimer?.value} />
 
               {/* Help & Share shortcuts */}
               <div className="flex items-center gap-5 text-xs md:text-sm text-gray-600 font-bold py-1 border-y border-gray-100 my-1">
@@ -924,7 +1060,7 @@ export function ProductForm({
                     <VisaIcon className="h-4 w-auto opacity-70 hover:opacity-100 transition-opacity" />
                     <MastercardIcon className="h-4 w-auto opacity-70 hover:opacity-100 transition-opacity" />
                     <CodIcon />
-                    <div className="flex items-center gap-1 text-gray-450 text-[10px] font-extrabold">
+                    <div className="flex items-center gap-1 text-gray-500 text-[10px] font-extrabold">
                       <SecureIcon className="w-3.5 h-3.5" />
                       <span>SSL SECURED</span>
                     </div>
@@ -1217,6 +1353,9 @@ const PRODUCT_FRAGMENT = `#graphql
     }
     adjacentVariants (selectedOptions: $selectedOptions) {
       ...ProductVariant
+    }
+    countdownTimer: metafield(namespace: "custom", key: "countdown_timer") {
+      value
     }
     seo {
       description

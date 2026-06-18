@@ -150,7 +150,7 @@ export default function CartRoute() {
                 />
               </div>
             </div>
-            <div className="text-xs text-gray-450 font-bold uppercase tracking-wider md:text-right">
+            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider md:text-right">
               Shipping Threshold: Rs. 5,000
             </div>
           </div>

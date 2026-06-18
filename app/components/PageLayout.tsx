@@ -598,7 +598,7 @@ function DesktopHeader({
               className="relative w-10 h-10 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition-all duration-200 flex items-center justify-center hover:scale-105"
               title="Wishlist"
             >
-              <svg className="w-4.5 h-4.5 fill-none stroke-current text-neutral-600" viewBox="0 0 24 24" strokeWidth="2">
+              <svg className="w-5 h-5 fill-none stroke-current text-neutral-600" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-[9px] font-bold">
@@ -607,7 +607,7 @@ function DesktopHeader({
             </Link>
 
             {/* Login / Register */}
-            <AccountLink className="flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition duration-200 text-xs font-bold hover:scale-105" />
+            <AccountLink className="flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-100/50 hover:bg-neutral-200/50 text-neutral-700 transition duration-200 text-xs font-bold hover:scale-105" />
 
             {/* Cart Badge with dynamic price */}
             <CartCount isHome={isHome} openCart={openCart} />
@@ -866,12 +866,12 @@ function Badge({
 
   const BadgeCounter = useMemo(
     () => (
-      <div className="relative flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-950 text-white transition duration-200 hover:scale-105 select-none font-bold text-xs uppercase tracking-wider">
+      <div className="relative flex items-center justify-center lg:gap-2 w-10 h-10 lg:w-auto lg:h-auto lg:pl-4 lg:pr-6 lg:py-2 rounded-full bg-neutral-950 text-white transition duration-200 hover:scale-105 select-none font-bold text-xs uppercase tracking-wider">
         <IconBag className="w-4 h-4 text-white" />
-        <span className="font-mono text-[11px] font-extrabold">
+        <span className="hidden lg:inline font-mono text-[11px] font-extrabold">
           <Money data={subtotal} />
         </span>
-        <span className="absolute -top-1 -right-1 text-[9px] font-black bg-[#D33E13] text-white h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full shadow-md shadow-orange-500/30">
+        <span className="absolute -top-1 -right-1 lg:-right-1.5 text-[9px] font-black bg-[#D33E13] text-white h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full shadow-md shadow-orange-500/30 animate-pulse">
           {count}
         </span>
       </div>
@@ -900,9 +900,9 @@ function Badge({
 function Footer() {
   return (
     <footer className="bg-neutral-950 text-neutral-300 border-t border-neutral-900 pt-16 pb-12 px-6 md:px-8 lg:px-12 w-full font-sans">
-      <div className="mx-auto max-w-7xl grid gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border-b border-neutral-900 pb-12">
+      <div className="mx-auto max-w-7xl grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border-b border-neutral-900 pb-12">
         {/* Column 1: Brand details & Social */}
-        <div className="col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
+        <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
           <Link to="/" className="inline-block">
             <Heading size="lead" className="text-xl font-extrabold uppercase tracking-wider text-white">
               Cyber Tele Shop
@@ -987,7 +987,7 @@ function Footer() {
         </div>
 
         {/* Column 5: Contact & Newsletter */}
-        <div className="col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
+        <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-6">
           <div className="flex flex-col gap-4">
             <Heading size="lead" as="h4" className="text-sm font-extrabold uppercase tracking-wider text-white">
               Contact Us
@@ -1026,9 +1026,9 @@ function Footer() {
               />
               <button
                 type="submit"
-                className="bg-[#D33E13] text-white text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-[#b0300c] transition duration-200"
+                className="bg-[#D33E13] text-white text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-[#b0300c] transition duration-200 whitespace-nowrap"
               >
-                Sub
+                Subscribe
               </button>
             </form>
           </div>

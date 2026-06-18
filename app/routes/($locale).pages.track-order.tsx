@@ -28,6 +28,8 @@ export default function TrackOrder() {
     if (!orderId || !emailOrPhone) return;
 
     setLoading(true);
+    setTrackingResult(null); // Clear previous result while loading new search
+    
     // Simulate lookup delay
     setTimeout(() => {
       setLoading(false);
@@ -79,7 +81,7 @@ export default function TrackOrder() {
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 pb-24">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
         <div className="grid gap-8 md:grid-cols-12">
           
           {/* Left Column: Track Form */}
@@ -157,6 +159,38 @@ export default function TrackOrder() {
 
         </div>
 
+        {/* Skeleton Loader during search */}
+        {loading && (
+          <div className="mt-8 bg-white border border-gray-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-pulse">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-5 mb-6 gap-4">
+              <div className="space-y-2 w-full sm:w-1/3">
+                <div className="h-3.5 bg-gray-200 rounded w-16" />
+                <div className="h-6 bg-gray-200 rounded w-48" />
+              </div>
+              <div className="space-y-2 w-full sm:w-1/4 sm:text-right flex flex-col sm:items-end">
+                <div className="h-3 bg-gray-200 rounded w-24" />
+                <div className="h-4 bg-gray-200 rounded w-32" />
+                <div className="h-3 bg-gray-200 rounded w-28" />
+              </div>
+            </div>
+
+            <div className="relative border-l-2 border-gray-150 ml-4 pl-6 space-y-8 py-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="relative">
+                  <span className="absolute -left-[33px] top-0.5 w-5 h-5 rounded-full border-2 border-gray-200 bg-white" />
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                    <div className="space-y-2 w-full sm:w-2/3">
+                      <div className="h-4 bg-gray-200 rounded w-36" />
+                      <div className="h-3 bg-gray-200 rounded w-full" />
+                    </div>
+                    <div className="h-3 bg-gray-200 rounded w-16 pt-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Tracking Results Area */}
         {trackingResult && (
           <div className="mt-8 bg-white border border-gray-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm animate-fade-in">
@@ -170,7 +204,7 @@ export default function TrackOrder() {
                 </h3>
               </div>
               <div className="text-left sm:text-right">
-                <p className="text-xs text-gray-450 font-bold uppercase tracking-wider">Carrier & Tracking</p>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Carrier & Tracking</p>
                 <p className="text-sm font-extrabold text-gray-900">{trackingResult.carrier}</p>
                 <p className="text-xs font-semibold text-gray-500">{trackingResult.trackingNumber}</p>
               </div>
@@ -181,25 +215,25 @@ export default function TrackOrder() {
               {trackingResult.steps.map((step: any, idx: number) => (
                 <div key={idx} className="relative">
                   {/* Point circle */}
-                  <span className={`absolute -left-[31px] top-0.5 w-4.5 h-4.5 rounded-full border-2 bg-white flex items-center justify-center ${
+                  <span className={`absolute -left-[33px] top-0.5 w-5 h-5 rounded-full border-2 bg-white flex items-center justify-center ${
                     step.active
                       ? 'border-[#D33E13] text-[#D33E13]'
                       : step.completed
                       ? 'border-emerald-500 bg-emerald-50'
-                      : 'border-gray-200'
+                      : 'border-gray-250'
                   }`}>
                     {step.completed && !step.active && (
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full" />
                     )}
                     {step.active && (
-                      <span className="w-1.5 h-1.5 bg-[#D33E13] rounded-full animate-ping" />
+                      <span className="w-2 h-2 bg-[#D33E13] rounded-full animate-ping" />
                     )}
                   </span>
                   
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-1">
                     <div>
                       <h4 className={`text-sm font-black uppercase tracking-tight ${
-                        step.active ? 'text-[#D33E13]' : step.completed ? 'text-gray-950' : 'text-gray-450'
+                        step.active ? 'text-[#D33E13]' : step.completed ? 'text-gray-950' : 'text-gray-500'
                       }`}>
                         {step.title}
                       </h4>
