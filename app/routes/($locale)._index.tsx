@@ -122,7 +122,32 @@ export default function Homepage() {
       {showcaseCollections && (
         <Suspense>
           <Await resolve={showcaseCollections}>
-            {(response) => <CollectionShowcase data={response} />}
+            {(response) => (
+              <>
+                <CollectionShowcase data={response} />
+                
+                {/* 1st Section: New Products */}
+                <ProductSection
+                  title="New Products"
+                  subtitle="Discover our latest arrivals and newest additions to the store."
+                  products={response?.newArrivals?.products?.nodes || []}
+                />
+
+                {/* 2nd Section: Fitness */}
+                <ProductSection
+                  title="Fitness"
+                  subtitle="Stay Active. Stay Strong. Discover the Best in Fitness Gear."
+                  products={response?.fitness?.products?.nodes || []}
+                />
+
+                {/* 3rd Section: Health & Beauty */}
+                <ProductSection
+                  title="Health & Beauty"
+                  subtitle="Feel Good. Look Great. Explore Premium Health & Beauty Products."
+                  products={response?.healthBeauty?.products?.nodes || []}
+                />
+              </>
+            )}
           </Await>
         </Suspense>
       )}
@@ -350,6 +375,44 @@ function CollectionShowcase({data}: {data: any}) {
         {/* Products Grid */}
         <Grid layout="products" className="w-full md:grid-cols-4 pb-0">
           {currentProducts.slice(0, 8).map((product: any, idx: number) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              className={idx >= 4 ? 'hidden md:block' : ''}
+            />
+          ))}
+        </Grid>
+      </div>
+    </Section>
+  );
+}
+
+function ProductSection({
+  title,
+  subtitle,
+  products,
+}: {
+  title: string;
+  subtitle: string;
+  products: any[];
+}) {
+  if (!products || products.length === 0) return null;
+
+  return (
+    <Section padding="y" className="bg-contrast w-full overflow-x-hidden border-t border-primary/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2 items-center text-center mb-8">
+          <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            {title}
+          </Heading>
+          <Text as="p" className="text-primary/80 max-w-xl text-xs sm:text-sm font-medium">
+            {subtitle}
+          </Text>
+        </div>
+
+        {/* Products Grid */}
+        <Grid layout="products" className="w-full md:grid-cols-4 pb-0">
+          {products.slice(0, 8).map((product: any, idx: number) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -599,6 +662,24 @@ export const COLLECTIONS_SHOWCASE_QUERY = `#graphql
       }
     }
     bestRated: collection(handle: "best-rated") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    fitness: collection(handle: "fitness") {
+      title
+      handle
+      products(first: 8) {
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+    healthBeauty: collection(handle: "health-beauty") {
       title
       handle
       products(first: 8) {
