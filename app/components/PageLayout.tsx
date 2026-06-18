@@ -8,6 +8,7 @@ import {Money} from '~/components/Money';
 import {type LayoutQuery} from 'storefrontapi.generated';
 import {Text, Heading, Section} from '~/components/Text';
 import {Link} from '~/components/Link';
+import {SearchModal} from '~/components/SearchModal';
 import {Cart} from '~/components/Cart';
 import {CartLoading} from '~/components/CartLoading';
 import {Input} from '~/components/Input';
@@ -185,6 +186,8 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
   const logoSrc =
     'https://www.cyberteleshop.com/cdn/shop/files/nexteaze_logo_2.svg?v=1747654489&width=165';
 
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const {
     isOpen: isCartOpen,
     openDrawer: openCart,
@@ -217,6 +220,7 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
         logoSrc={logoSrc}
         menu={menu}
         openCart={openCart}
+        openSearch={() => setIsSearchOpen(true)}
       />
       <MobileHeader
         isHome={isHome}
@@ -225,7 +229,9 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
         openCart={openCart}
         openMenu={openMenu}
         isOpenMenu={isMenuOpen}
+        openSearch={() => setIsSearchOpen(true)}
       />
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }
@@ -407,6 +413,7 @@ function MobileHeader({
   openCart,
   openMenu,
   isOpenMenu,
+  openSearch,
 }: {
   title: string;
   logoSrc: string;
@@ -414,8 +421,8 @@ function MobileHeader({
   openCart: () => void;
   openMenu: () => void;
   isOpenMenu: boolean;
+  openSearch: () => void;
 }) {
-  const params = useParams();
   const {y} = useWindowScroll();
   const scrolled = y > 20;
 
@@ -452,16 +459,13 @@ function MobileHeader({
       </Link>
 
       <div className="flex items-center gap-1.5">
-        <Form
-          method="get"
-          action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100/50 text-neutral-700 transition hover:bg-neutral-200/50"
-          role="search"
+        <button
+          onClick={openSearch}
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100/50 text-neutral-700 transition hover:bg-neutral-200/50 cursor-pointer"
+          aria-label="Search"
         >
-          <button type="submit" className="flex items-center justify-center h-full w-full">
-            <IconSearch className="w-4 h-4" />
-          </button>
-        </Form>
+          <IconSearch className="w-4 h-4" />
+        </button>
 
         <CartCount isHome={isHome} openCart={openCart} />
       </div>
@@ -485,51 +489,32 @@ function IconCompare(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function SearchBar() {
-  const [isFocused, setIsFocused] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const params = useParams();
-
-  // Keyboard shortcut listener: focus search input on Ctrl+K or /
+function SearchBar({openSearch}: {openSearch: () => void}) {
+  // Keyboard shortcut listener: open search modal on Ctrl+K or /
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey && e.key === 'k') || e.key === '/') {
-        if (document.activeElement !== searchInputRef.current) {
-          e.preventDefault();
-          searchInputRef.current?.focus();
-        }
+        e.preventDefault();
+        openSearch();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [openSearch]);
 
   return (
-    <Form
-      method="get"
-      action={params.locale ? `/${params.locale}/search` : '/search'}
-      className={`relative flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 flex-grow max-w-2xl ${
-        isFocused
-          ? 'border-neutral-400 bg-white ring-2 ring-neutral-200/50 shadow-sm'
-          : 'border-neutral-200 bg-[#fbfbfb] hover:bg-neutral-100'
-      }`}
+    <div
+      onClick={openSearch}
+      className="relative flex items-center gap-2 rounded-full border border-neutral-200 bg-[#fbfbfb] hover:bg-neutral-100 px-4 py-2 transition-all duration-300 flex-grow max-w-2xl cursor-pointer select-none"
     >
       <IconSearch className="text-neutral-400 w-4 h-4 flex-shrink-0" />
-      <input
-        ref={searchInputRef}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className="bg-transparent border-0 p-0 text-sm text-neutral-800 placeholder:text-neutral-400 focus:ring-0 w-full outline-none"
-        type="search"
-        placeholder="Search for products..."
-        name="q"
-      />
-      {!isFocused && (
-        <span className="hidden md:inline-flex items-center gap-0.5 text-[9px] font-mono text-neutral-400 bg-neutral-200/50 px-1.5 py-0.5 rounded">
-          <kbd className="font-sans">⌘</kbd>K
-        </span>
-      )}
-    </Form>
+      <span className="text-sm text-neutral-400 font-medium">
+        Search for products, categories...
+      </span>
+      <span className="hidden md:inline-flex items-center gap-0.5 text-[9px] font-mono text-neutral-400 bg-neutral-200/50 px-1.5 py-0.5 rounded ml-auto">
+        <kbd className="font-sans">⌘</kbd>K
+      </span>
+    </div>
   );
 }
 
@@ -538,11 +523,13 @@ function DesktopHeader({
   logoSrc,
   menu,
   openCart,
+  openSearch,
   title,
 }: {
   isHome: boolean;
   logoSrc: string;
   openCart: () => void;
+  openSearch: () => void;
   menu?: EnhancedMenu;
   title: string;
 }) {
@@ -580,7 +567,7 @@ function DesktopHeader({
           </div>
 
           {/* Wide Pill Search Bar */}
-          <SearchBar />
+          <SearchBar openSearch={openSearch} />
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
