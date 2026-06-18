@@ -385,13 +385,21 @@ function CollectionShowcase({data}: {data: any}) {
           </div>
         </div>
 
-        {/* Products Grid */}
-        <Grid layout="products" className="w-full md:grid-cols-4 pb-0">
-          {currentProducts.slice(0, 8).map((product: any, idx: number) => (
+        {/* Products Layout: Horizontal swimlane on mobile, Grid on desktop */}
+        <div className="md:hidden swimlane hiddenScroll gap-4 scroll-px-4 px-4 pb-4">
+          {currentProducts.slice(0, 8).map((product: any) => (
             <ProductCard
               key={product.id}
               product={product}
-              className={idx >= 4 ? 'hidden md:block' : ''}
+              className="snap-start w-[calc((100vw-48px)/2)] flex-shrink-0"
+            />
+          ))}
+        </div>
+        <Grid layout="products" className="hidden md:grid w-full md:grid-cols-4 pb-0">
+          {currentProducts.slice(0, 8).map((product: any) => (
+            <ProductCard
+              key={product.id}
+              product={product}
             />
           ))}
         </Grid>
@@ -423,13 +431,21 @@ function ProductSection({
           </Text>
         </div>
 
-        {/* Products Grid */}
-        <Grid layout="products" className="w-full md:grid-cols-4 pb-0">
-          {products.slice(0, 8).map((product: any, idx: number) => (
+        {/* Products Layout: Horizontal swimlane on mobile, Grid on desktop */}
+        <div className="md:hidden swimlane hiddenScroll gap-4 scroll-px-4 px-4 pb-4">
+          {products.slice(0, 8).map((product: any) => (
             <ProductCard
               key={product.id}
               product={product}
-              className={idx >= 4 ? 'hidden md:block' : ''}
+              className="snap-start w-[calc((100vw-48px)/2)] flex-shrink-0"
+            />
+          ))}
+        </div>
+        <Grid layout="products" className="hidden md:grid w-full md:grid-cols-4 pb-0">
+          {products.slice(0, 8).map((product: any) => (
+            <ProductCard
+              key={product.id}
+              product={product}
             />
           ))}
         </Grid>

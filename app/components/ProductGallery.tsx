@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import {Image} from '@shopify/hydrogen';
 import clsx from 'clsx';
 import type {MediaFragment} from 'storefrontapi.generated';
@@ -16,6 +16,7 @@ export function ProductGallery({
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   if (!media.length) {
     return null;
@@ -36,12 +37,33 @@ export function ProductGallery({
     return {isImage, isVideo, isExternalVideo, isModel, imageUrl, altText};
   };
 
+  const scrollToIdx = (idx: number) => {
+    setActiveIdx(idx);
+    if (mobileScrollRef.current) {
+      const width = mobileScrollRef.current.clientWidth;
+      mobileScrollRef.current.scrollTo({
+        left: width * idx,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   const handlePrev = () => {
-    setActiveIdx((prev) => (prev - 1 + media.length) % media.length);
+    const nextIdx = (activeIdx - 1 + media.length) % media.length;
+    scrollToIdx(nextIdx);
   };
 
   const handleNext = () => {
-    setActiveIdx((prev) => (prev + 1) % media.length);
+    const nextIdx = (activeIdx + 1) % media.length;
+    scrollToIdx(nextIdx);
+  };
+
+  const handleMobileScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const index = Math.round(container.scrollLeft / container.clientWidth);
+    if (index !== activeIdx && index >= 0 && index < media.length) {
+      setActiveIdx(index);
+    }
   };
 
   return (
@@ -55,7 +77,7 @@ export function ProductGallery({
           return (
             <button
               key={med.id || i}
-              onClick={() => setActiveIdx(i)}
+              onClick={() => scrollToIdx(i)}
               className={clsx(
                 'relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 bg-white focus:outline-none',
                 isActive ? 'border-[#D33E13] scale-95 shadow-md' : 'border-gray-200 hover:border-gray-400',
@@ -91,8 +113,8 @@ export function ProductGallery({
         })}
       </div>
 
-      {/* Main Active Media Display */}
-      <div className="relative flex-1 bg-white border border-gray-100 rounded-2xl overflow-hidden aspect-square flex items-center justify-center group shadow-sm">
+      {/* Main Active Media Display - Desktop Version */}
+      <div className="hidden md:flex relative flex-1 bg-white border border-gray-100 rounded-2xl overflow-hidden aspect-square items-center justify-center group shadow-sm">
         {/* Render active media */}
         <ActiveMediaRenderer media={activeMedia} />
 
@@ -124,6 +146,50 @@ export function ProductGallery({
         )}
       </div>
 
+      {/* Main Active Media Display - Mobile Version (Horizontally Swipeable) */}
+      <div className="relative md:hidden flex-1 w-full">
+        <div
+          ref={mobileScrollRef}
+          onScroll={handleMobileScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth hiddenScroll w-full aspect-square bg-white border border-gray-100 rounded-2xl shadow-sm animate-fade-in"
+        >
+          {media.map((med, i) => (
+            <div
+              key={med.id || i}
+              className="snap-start w-full h-full flex-shrink-0 flex items-center justify-center p-2"
+            >
+              <ActiveMediaRenderer media={med} />
+            </div>
+          ))}
+        </div>
+
+        {/* Expand / Zoom overlay button */}
+        <button
+          onClick={() => setLightboxOpen(true)}
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-md border border-gray-100 flex items-center justify-center active:scale-95 transition-all duration-200 focus:outline-none"
+          title="Zoom image"
+        >
+          <ZoomIcon className="w-4 h-4 text-[#D33E13]" />
+        </button>
+
+        {/* Floating Page Indicator Dots */}
+        {media.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/20 backdrop-blur-sm px-2.5 py-1 rounded-full z-10">
+            {media.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => scrollToIdx(i)}
+                className={clsx(
+                  'w-1.5 h-1.5 rounded-full transition-all duration-300',
+                  i === activeIdx ? 'bg-white w-3.5' : 'bg-white/50'
+                )}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Thumbnails list - Mobile (Horizontal bottom) */}
       <div className="flex md:hidden gap-3 overflow-x-auto py-2 px-1 hiddenScroll scroll-smooth">
         {media.map((med, i) => {
@@ -133,10 +199,10 @@ export function ProductGallery({
           return (
             <button
               key={med.id || i}
-              onClick={() => setActiveIdx(i)}
+              onClick={() => scrollToIdx(i)}
               className={clsx(
                 'relative w-16 h-16 rounded-lg overflow-hidden border-2 shrink-0 bg-white transition-all duration-200',
-                isActive ? 'border-[#D33E13] scale-95' : 'border-gray-200',
+                isActive ? 'border-[#D33E13] scale-95 shadow-sm' : 'border-gray-200',
               )}
             >
               {imageUrl ? (

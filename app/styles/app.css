@@ -98,6 +98,28 @@ shop-pay-button {
         @apply mt-0;
       }
     }
+
+    iframe,
+    video,
+    embed,
+    object {
+      max-width: 100% !important;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 16 / 9;
+    }
+
+    table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
   }
 }
 
