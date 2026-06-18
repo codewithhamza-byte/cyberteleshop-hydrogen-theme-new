@@ -352,62 +352,57 @@ function CollectionShowcase({data}: {data: any}) {
     tabs.find((tab) => tab.id === activeTab)?.products || [];
 
   return (
-    <Section padding="y" className="bg-contrast w-full overflow-x-hidden flex flex-col" display="flex">
+    <section className="bg-contrast w-full py-6 md:py-8 lg:py-12 overflow-hidden">
       <div className="w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 items-center text-center mb-6 w-full">
-          <div>
-            <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
-              Featured Collections
-            </Heading>
-            <Text as="p" className="mt-2 text-primary/80 max-w-xl text-xs sm:text-sm">
-              Quickly browse and discover hot products from our top active collections.
-            </Text>
-          </div>
 
-          {/* Tabs header — scrollable on all screen sizes */}
-          <div className="w-full overflow-x-auto hiddenScroll">
-            <div className="flex gap-2 p-1.5 bg-primary/5 rounded-2xl border border-primary/10 min-w-max mx-auto">
-              {tabs.map((tab) => {
-                const isActive = tab.id === activeTab;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                      isActive
-                        ? 'bg-[#D33E13] text-white shadow-sm scale-[1.02] border border-[#D33E13]'
-                        : 'text-primary/70 hover:text-primary hover:bg-primary/5 border border-transparent'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+        {/* Section heading */}
+        <div className="flex flex-col items-center text-center gap-2 mb-6">
+          <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            Featured Collections
+          </Heading>
+          <Text as="p" className="mt-1 text-primary/80 max-w-xl text-xs sm:text-sm">
+            Quickly browse and discover hot products from our top active collections.
+          </Text>
+        </div>
+
+        {/* Tabs — single scrollable row, always horizontal */}
+        <div className="w-full overflow-x-auto hiddenScroll mb-6">
+          <div
+            style={{display: 'flex', flexDirection: 'row', flexWrap: 'nowrap'}}
+            className="gap-2 p-1.5 bg-primary/5 rounded-2xl border border-primary/10 w-max mx-auto"
+          >
+            {tabs.map((tab) => {
+              const isActive = tab.id === activeTab;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={{whiteSpace: 'nowrap', flexShrink: 0}}
+                  className={`px-4 py-2 rounded-xl text-[10px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#D33E13] text-white shadow-sm border border-[#D33E13]'
+                      : 'text-primary/70 hover:text-primary hover:bg-primary/10 border border-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Products Layout: 2-col swimlane on mobile, 4-col grid on desktop */}
-        <div className="md:hidden w-full overflow-x-auto hiddenScroll pb-4">
-          <div className="grid grid-cols-2 gap-3 w-full">
-            {currentProducts.slice(0, 8).map((product: any) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </div>
-        </div>
-        <Grid layout="products" className="hidden md:grid w-full md:grid-cols-4 pb-0">
+        {/* Products: 2-col grid on mobile, 4-col on desktop */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5 w-full">
           {currentProducts.slice(0, 8).map((product: any) => (
             <ProductCard
               key={product.id}
               product={product}
             />
           ))}
-        </Grid>
+        </div>
+
       </div>
-    </Section>
+    </section>
   );
 }
 
