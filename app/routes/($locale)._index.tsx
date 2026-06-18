@@ -352,7 +352,7 @@ function CollectionShowcase({data}: {data: any}) {
     tabs.find((tab) => tab.id === activeTab)?.products || [];
 
   return (
-    <Section padding="y" className="bg-contrast w-full overflow-x-hidden">
+    <Section padding="y" className="bg-contrast w-full overflow-x-hidden flex flex-col" display="flex">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 items-center text-center mb-8 w-full max-w-full">
           <div>
@@ -420,7 +420,7 @@ function ProductSection({
   if (!products || products.length === 0) return null;
 
   return (
-    <Section padding="y" className="bg-contrast w-full overflow-x-hidden border-t border-primary/5">
+    <Section padding="y" className="bg-contrast w-full overflow-x-hidden border-t border-primary/5 flex flex-col" display="flex">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2 items-center text-center mb-8">
           <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">

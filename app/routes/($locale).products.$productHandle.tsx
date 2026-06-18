@@ -312,7 +312,7 @@ export default function Product() {
 
   return (
     <>
-      <Section className="px-4 md:px-8 lg:px-16 py-6 max-w-7xl mx-auto">
+      <Section display="flex" className="px-4 md:px-8 lg:px-16 py-6 max-w-7xl mx-auto flex flex-col">
         {/* Breadcrumb Navigation & Utility Controls */}
         <div className="flex justify-between items-center py-3 border-b border-gray-100 mb-8">
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
@@ -367,14 +367,14 @@ export default function Product() {
         </div>
 
         {/* Main Product Presentation Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start w-full max-w-full overflow-hidden">
           {/* Left Column: Media Gallery */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 min-w-0 w-full overflow-hidden">
             <ProductGallery media={media.nodes} className="w-full" />
           </div>
 
           {/* Right Column: Info & Buy Actions */}
-          <div className="lg:col-span-5 sticky lg:top-28">
+          <div className="lg:col-span-5 sticky lg:top-28 min-w-0 w-full">
             <div className="flex flex-col gap-5">
               {/* Urgency Factor badge */}
               <div className="flex items-center gap-2 text-[#D33E13] font-semibold text-xs md:text-sm bg-[#D33E13]/5 px-3 py-1.5 rounded-full w-fit">
