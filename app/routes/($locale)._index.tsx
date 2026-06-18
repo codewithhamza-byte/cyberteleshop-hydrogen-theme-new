@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {Suspense, useState, useRef} from 'react';
+import {Suspense, useState, useRef, useEffect} from 'react';
 import {Await, useLoaderData} from '@remix-run/react';
 import {getSeoMeta, Image} from '@shopify/hydrogen';
 import {ProductCard} from '~/components/ProductCard';
@@ -146,6 +146,9 @@ export default function Homepage() {
                   subtitle="Feel Good. Look Great. Explore Premium Health & Beauty Products."
                   products={response?.healthBeauty?.products?.nodes || []}
                 />
+
+                {/* Customer Testimonials Section */}
+                <TestimonialsSection />
               </>
             )}
           </Await>
@@ -154,7 +157,13 @@ export default function Homepage() {
       {categoryCollections && (
         <Suspense>
           <Await resolve={categoryCollections}>
-            {(response) => <CategorySlider collections={response} />}
+            {(response) => (
+              <>
+                <CategorySlider collections={response} />
+                {/* Flash Sale Countdown right after Category Slider */}
+                <FlashSaleCountdown />
+              </>
+            )}
           </Await>
         </Suspense>
       )}
@@ -420,6 +429,202 @@ function ProductSection({
             />
           ))}
         </Grid>
+      </div>
+    </Section>
+  );
+}
+
+function FlashSaleCountdown() {
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 4,
+    minutes: 34,
+    seconds: 12,
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { hours: prev.hours, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        } else {
+          // Reset to 6 hours when finished
+          return { hours: 5, minutes: 59, seconds: 59 };
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num: number) => String(num).padStart(2, '0');
+
+  return (
+    <Section padding="y" className="w-full bg-contrast">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#D33E13]/20 p-8 md:p-12 lg:p-16 shadow-xl border border-primary/10">
+          
+          {/* Decorative blur elements */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#D33E13]/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+            {/* Left side: Sale Info */}
+            <div className="text-center lg:text-left max-w-xl">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-[#D33E13] bg-[#D33E13]/15 border border-[#D33E13]/30 mb-4">
+                <span className="w-2 h-2 rounded-full bg-[#D33E13] animate-pulse" />
+                Limited Offer
+              </span>
+              <Heading size="heading" className="text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-tight">
+                MID-YEAR MEGA <br className="hidden sm:inline" /> FLASH SALE!
+              </Heading>
+              <Text as="p" className="mt-4 text-gray-300 text-sm sm:text-base font-medium max-w-lg leading-relaxed">
+                Grab your favorite premium gadgets, car accessories, and fitness gear before the clock runs out. Stock is extremely limited!
+              </Text>
+
+              {/* Progress bar */}
+              <div className="mt-6">
+                <div className="flex justify-between text-xs text-gray-300 font-bold mb-1.5 uppercase">
+                  <span>🔥 Selling Fast</span>
+                  <span>87% Claimed</span>
+                </div>
+                <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#D33E13] to-orange-500 h-full w-[87%] rounded-full animate-pulse" />
+                </div>
+              </div>
+            </div>
+
+            {/* Right side: Countdown & CTA */}
+            <div className="flex flex-col items-center gap-6 bg-white/5 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] border border-white/10 w-full max-w-md shadow-lg">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-gray-200">
+                Offer Ends In:
+              </span>
+
+              {/* Timer Clocks */}
+              <div className="flex items-center gap-3 sm:gap-4 justify-center">
+                <div className="flex flex-col items-center">
+                  <div className="bg-[#0f172a]/95 text-white w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl text-xl sm:text-2xl font-black border border-white/10 shadow-inner">
+                    {formatNumber(timeLeft.hours)}
+                  </div>
+                  <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider mt-1.5">Hrs</span>
+                </div>
+                <span className="text-xl sm:text-2xl font-black text-[#D33E13] -mt-4">:</span>
+                <div className="flex flex-col items-center">
+                  <div className="bg-[#0f172a]/95 text-white w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl text-xl sm:text-2xl font-black border border-white/10 shadow-inner">
+                    {formatNumber(timeLeft.minutes)}
+                  </div>
+                  <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider mt-1.5">Min</span>
+                </div>
+                <span className="text-xl sm:text-2xl font-black text-[#D33E13] -mt-4">:</span>
+                <div className="flex flex-col items-center">
+                  <div className="bg-[#0f172a]/95 text-[#D33E13] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-2xl text-xl sm:text-2xl font-black border border-[#D33E13]/25 shadow-inner animate-pulse">
+                    {formatNumber(timeLeft.seconds)}
+                  </div>
+                  <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider mt-1.5">Sec</span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <Link to="/collections/hot-deals" className="w-full">
+                <Button className="w-full py-4 bg-[#D33E13] text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-lg hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2">
+                  Shop Mega Deals Now &rarr;
+                </Button>
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function TestimonialsSection() {
+  const reviews = [
+    {
+      name: "Muhammad Ali",
+      rating: 5,
+      date: "2 days ago",
+      text: "Outstanding service! Ordered the Ab Roller and received it within 24 hours. The COD option gave me peace of mind, and the quality is absolutely top-notch.",
+      city: "Lahore"
+    },
+    {
+      name: "Sara Khan",
+      rating: 5,
+      date: "1 week ago",
+      text: "The Fitness Belt works wonders! Delivery was super fast, and the customer support team on WhatsApp was incredibly helpful. Highly recommended!",
+      city: "Karachi"
+    },
+    {
+      name: "Zainab B.",
+      rating: 5,
+      date: "3 days ago",
+      text: "Ordered a couple of products from their Health & Beauty line. The products were authentic and well-packaged. Will definitely buy again!",
+      city: "Islamabad"
+    }
+  ];
+
+  return (
+    <Section padding="y" className="bg-primary/5 w-full overflow-x-hidden border-t border-primary/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2 items-center text-center mb-10">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#D33E13] bg-[#D33E13]/10 border border-[#D33E13]/30 px-3 py-1.5 rounded-full w-fit mb-1 block">
+            Client Reviews
+          </span>
+          <Heading size="heading" className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase">
+            Loved By Our Customers
+          </Heading>
+          <Text as="p" className="text-primary/80 max-w-xl text-xs sm:text-sm font-medium">
+            Hear from some of our 10,000+ satisfied buyers who trust CyberTeleshop for premium quality products.
+          </Text>
+        </div>
+
+        {/* Reviews Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviews.map((review, idx) => (
+            <div 
+              key={idx} 
+              className="bg-contrast border border-primary/10 rounded-[2rem] p-6 sm:p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div>
+                {/* Stars */}
+                <div className="flex items-center gap-1 mb-4 text-[#D33E13]">
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <svg key={i} className="w-4.5 h-4.5 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+
+                {/* Review Text */}
+                <Text as="p" className="text-primary/95 text-xs sm:text-sm font-medium leading-relaxed italic">
+                  "{review.text}"
+                </Text>
+              </div>
+
+              {/* Reviewer Details */}
+              <div className="mt-6 pt-4 border-t border-primary/5 flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D33E13]/10 to-orange-500/10 flex items-center justify-center text-sm font-black text-[#D33E13] border border-[#D33E13]/25 uppercase">
+                  {review.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-extrabold text-primary flex items-center gap-1.5">
+                    {review.name}
+                    <span className="inline-flex items-center gap-0.5 text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase border border-emerald-600/20">
+                      ✓ Verified
+                    </span>
+                  </h4>
+                  <p className="text-[10px] text-primary/70 font-semibold mt-0.5">
+                    {review.city} &bull; {review.date}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </Section>
   );
