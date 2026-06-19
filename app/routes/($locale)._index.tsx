@@ -47,7 +47,7 @@ export async function loader(args: LoaderFunctionArgs) {
 
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
   const {shop, brandMetaobject} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
-    cache: context.storefront.CacheLong(),
+    cache: context.storefront.CacheShort(),
   });
 
   console.log('[Homepage Metaobject Debug] brandMetaobject nodes:', brandMetaobject?.nodes);
@@ -299,7 +299,17 @@ function SmartTechPromo() {
 
 function LandingHero({brandFields}: {brandFields: any}) {
   const heroBannerImage = brandFields?.hero_banner_image;
-  const heroBannerLink = brandFields?.hero_banner_link?.value || '/collections/all';
+  
+  let heroBannerLink = '/collections/all';
+  const rawLink = brandFields?.hero_banner_link?.value;
+  if (rawLink) {
+    try {
+      const parsed = JSON.parse(rawLink) as any;
+      heroBannerLink = parsed?.url || rawLink;
+    } catch {
+      heroBannerLink = rawLink;
+    }
+  }
 
   let imageUrl =
     'https://cdn.shopify.com/s/files/1/0680/6172/4863/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973';
