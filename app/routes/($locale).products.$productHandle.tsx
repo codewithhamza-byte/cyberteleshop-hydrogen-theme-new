@@ -168,77 +168,74 @@ function ProductCountdown({ targetDate }: { targetDate?: string }) {
   if (!mounted || !timeLeft) return null;
 
   return (
-    <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-neutral-900 dark:to-neutral-950 border border-[#D33E13]/10 dark:border-[#D33E13]/20 rounded-2xl p-4 md:p-5 shadow-sm mt-3 animate-fade-in">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 relative">
+    <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-neutral-900 dark:to-neutral-950 border border-[#D33E13]/10 dark:border-[#D33E13]/20 rounded-xl p-2.5 shadow-sm mt-3 animate-fade-in">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <span className="flex h-1.5 w-1.5 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D33E13]"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#D33E13]"></span>
           </span>
-          <h4 className="text-xs font-black uppercase tracking-wider text-[#D33E13]">
+          <h4 className="text-[10px] font-black uppercase tracking-wider text-[#D33E13]">
             Limited Time Offer!
           </h4>
         </div>
-        <span className="text-[10px] font-extrabold uppercase tracking-widest text-neutral-400 bg-white dark:bg-neutral-800 px-2 py-0.5 rounded border border-neutral-100 dark:border-neutral-700 shadow-sm">
+        <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 bg-white dark:bg-neutral-800 px-1.5 py-0.5 rounded border border-neutral-100 dark:border-neutral-700 shadow-sm">
           Ends Soon
         </span>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* Days */}
         {timeLeft.days > 0 && (
           <>
             <div className="flex flex-col items-center">
-              <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+              <div className="bg-[#D33E13] text-white rounded-lg h-8 w-8 flex items-center justify-center text-xs font-black tracking-tight shadow-sm shadow-red-500/10">
                 {String(timeLeft.days).padStart(2, '0')}
               </div>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+              <span className="text-[8px] font-extrabold uppercase tracking-widest text-neutral-400 mt-0.5">
                 Days
               </span>
             </div>
-            <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+            <span className="text-sm font-black text-[#D33E13] pb-3 animate-pulse">:</span>
           </>
         )}
 
         {/* Hours */}
         <div className="flex flex-col items-center">
-          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+          <div className="bg-[#D33E13] text-white rounded-lg h-8 w-8 flex items-center justify-center text-xs font-black tracking-tight shadow-sm shadow-red-500/10">
             {String(timeLeft.hours).padStart(2, '0')}
           </div>
-          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+          <span className="text-[8px] font-extrabold uppercase tracking-widest text-neutral-400 mt-0.5">
             Hours
           </span>
         </div>
         
-        <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+        <span className="text-sm font-black text-[#D33E13] pb-3 animate-pulse">:</span>
 
         {/* Minutes */}
         <div className="flex flex-col items-center">
-          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+          <div className="bg-[#D33E13] text-white rounded-lg h-8 w-8 flex items-center justify-center text-xs font-black tracking-tight shadow-sm shadow-red-500/10">
             {String(timeLeft.minutes).padStart(2, '0')}
           </div>
-          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+          <span className="text-[8px] font-extrabold uppercase tracking-widest text-neutral-400 mt-0.5">
             Mins
           </span>
         </div>
 
-        <span className="text-lg font-black text-[#D33E13] pb-4 animate-pulse">:</span>
+        <span className="text-sm font-black text-[#D33E13] pb-3 animate-pulse">:</span>
 
         {/* Seconds */}
         <div className="flex flex-col items-center">
-          <div className="bg-[#D33E13] text-white rounded-xl h-11 w-11 flex items-center justify-center text-base font-black tracking-tight shadow-md shadow-red-500/10">
+          <div className="bg-[#D33E13] text-white rounded-lg h-8 w-8 flex items-center justify-center text-xs font-black tracking-tight shadow-sm shadow-red-500/10">
             {String(timeLeft.seconds).padStart(2, '0')}
           </div>
-          <span className="text-[9px] font-extrabold uppercase tracking-widest text-neutral-400 mt-1">
+          <span className="text-[8px] font-extrabold uppercase tracking-widest text-neutral-400 mt-0.5">
             Secs
           </span>
         </div>
         
         <div className="ml-auto hidden sm:block">
-          <p className="text-[11px] font-extrabold text-neutral-600 dark:text-neutral-300 leading-snug">
+          <p className="text-[10px] font-extrabold text-neutral-600 dark:text-neutral-300 leading-snug">
             Order now to secure promotional pricing.
-          </p>
-          <p className="text-[9px] font-bold text-neutral-400 mt-0.5">
-            Fast delivery nationwide.
           </p>
         </div>
       </div>
@@ -382,17 +379,12 @@ export default function Product() {
                 <span>{salesCount} sold in last 24 hours</span>
               </div>
 
-              {/* Product title & vendor */}
+              {/* Product title */}
               <div className="grid gap-1">
                 <Heading as="h1" className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
                   {title}
                 </Heading>
                 <div className="flex flex-wrap items-center gap-3.5 mt-1">
-                  {vendor && (
-                    <Text className="text-xs font-bold text-gray-400 tracking-wider uppercase bg-gray-100 px-2 py-0.5 rounded">
-                      {vendor}
-                    </Text>
-                  )}
                   <button
                     onClick={() => {
                       const element = document.getElementById('product-reviews');
@@ -436,22 +428,38 @@ export default function Product() {
               {/* Countdown Timer */}
               <ProductCountdown targetDate={product.countdownTimer?.value} />
 
-              {/* Help & Share shortcuts */}
-              <div className="flex items-center gap-5 text-xs md:text-sm text-gray-600 font-bold py-1 border-y border-gray-100 my-1">
+              {/* Wishlist, Compare & Share shortcuts */}
+              <div className="flex items-center gap-4 text-xs md:text-sm text-gray-600 font-bold py-1 border-y border-gray-100 my-1">
                 <button
-                  onClick={() => setAskQuestionOpen(true)}
+                  onClick={() => {
+                    const el = document.querySelector('[data-wishlist-btn]') as HTMLButtonElement | null;
+                    el?.click();
+                  }}
                   className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
                 >
-                  <QuestionMarkCircleIcon className="w-5 h-5 text-gray-400" />
-                  Ask a Question
+                  <HeartIcon className="w-4 h-4 text-gray-400" />
+                  Wishlist
+                </button>
+                <span className="text-gray-200">|</span>
+                <button
+                  onClick={() => {
+                    const el = document.querySelector('[data-compare-btn]') as HTMLButtonElement | null;
+                    el?.click();
+                  }}
+                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                  </svg>
+                  Compare
                 </button>
                 <span className="text-gray-200">|</span>
                 <button
                   onClick={handleShare}
                   className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
                 >
-                  <ShareIcon className="w-5 h-5 text-gray-400" />
-                  Share Product
+                  <ShareIcon className="w-4 h-4 text-gray-400" />
+                  Share
                 </button>
               </div>
 
@@ -504,10 +512,7 @@ export default function Product() {
                     {selectedVariant.availableForSale ? 'Instock' : 'Out of stock'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-gray-100">
-                  <span className="text-gray-500 font-semibold">Vendor:</span>
-                  <span className="text-gray-800 font-bold">{vendor || 'Cyberteleshop'}</span>
-                </div>
+
                 <div className="flex justify-between items-center pb-2 border-b border-gray-100">
                   <span className="text-gray-500 font-semibold">Type:</span>
                   <span className="text-gray-800 font-bold">{product.productType || 'Simple'}</span>
@@ -1065,6 +1070,7 @@ export function ProductForm({
 
               {/* Wishlist Button */}
               <button
+                data-wishlist-btn
                 onClick={toggleWishlist}
                 className={clsx(
                   'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
@@ -1081,6 +1087,7 @@ export function ProductForm({
 
               {/* Compare Button */}
               <button
+                data-compare-btn
                 onClick={toggleCompare}
                 className={clsx(
                   'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
