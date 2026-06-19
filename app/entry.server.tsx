@@ -29,6 +29,9 @@ export default async function handleRequest(
       'https://judge.me',
       'https://*.judge.me',
       'https://www.cyberteleshop.com',
+      'https://analytics.tiktok.com',
+      'https://sc-static.net',
+      'https://s.pinimg.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
@@ -42,6 +45,10 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://judge.me',
       'https://*.judge.me',
+      'https://analytics.tiktok.com',
+      'https://*.tiktok.com',
+      'https://tr.snapchat.com',
+      'https://ct.pinterest.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     imgSrc: [

@@ -112,6 +112,14 @@ export type LayoutQuery = {
       }>;
     }>;
     metaPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    googleTagId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    tiktokPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+    snapchatPixelId?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Metafield, 'value'>
+    >;
+    pinterestPixelId?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Metafield, 'value'>
+    >;
   };
   headerMenu?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.Menu, 'id'> & {
@@ -160,6 +168,12 @@ export type ShopFragment = Pick<
     }>;
   }>;
   metaPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  googleTagId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  tiktokPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  snapchatPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  pinterestPixelId?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value'>
+  >;
 };
 
 export type MenuItemFragment = Pick<
@@ -1723,7 +1737,7 @@ export type WishlistProductsQuery = {
 };
 
 interface GeneratedQueryTypes {
-  '#graphql\n  query layout(\n    $language: LanguageCode\n    $headerMenuHandle: String!\n    $footerMenuHandle: String!\n  ) @inContext(language: $language) {\n    shop {\n      ...Shop\n    }\n    headerMenu: menu(handle: $headerMenuHandle) {\n      ...Menu\n    }\n    footerMenu: menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n  }\n  fragment Shop on Shop {\n    id\n    name\n    description\n    primaryDomain {\n      url\n    }\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n    }\n    metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {\n      value\n    }\n  }\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n': {
+  '#graphql\n  query layout(\n    $language: LanguageCode\n    $headerMenuHandle: String!\n    $footerMenuHandle: String!\n  ) @inContext(language: $language) {\n    shop {\n      ...Shop\n    }\n    headerMenu: menu(handle: $headerMenuHandle) {\n      ...Menu\n    }\n    footerMenu: menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n  }\n  fragment Shop on Shop {\n    id\n    name\n    description\n    primaryDomain {\n      url\n    }\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n    }\n    metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {\n      value\n    }\n    googleTagId: metafield(namespace: "analytics", key: "google_tag_id") {\n      value\n    }\n    tiktokPixelId: metafield(namespace: "analytics", key: "tiktok_pixel_id") {\n      value\n    }\n    snapchatPixelId: metafield(namespace: "analytics", key: "snapchat_pixel_id") {\n      value\n    }\n    pinterestPixelId: metafield(namespace: "analytics", key: "pinterest_pixel_id") {\n      value\n    }\n  }\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n': {
     return: LayoutQuery;
     variables: LayoutQueryVariables;
   };

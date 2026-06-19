@@ -118,6 +118,10 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     selectedLocale: storefront.i18n,
     env: {
       PUBLIC_META_PIXEL_ID: (layout.shop as any).metaPixelId?.value || env.PUBLIC_META_PIXEL_ID,
+      PUBLIC_GOOGLE_TAG_ID: (layout.shop as any).googleTagId?.value || env.PUBLIC_GOOGLE_TAG_ID || '',
+      PUBLIC_TIKTOK_PIXEL_ID: (layout.shop as any).tiktokPixelId?.value || env.PUBLIC_TIKTOK_PIXEL_ID || '',
+      PUBLIC_SNAPCHAT_PIXEL_ID: (layout.shop as any).snapchatPixelId?.value || env.PUBLIC_SNAPCHAT_PIXEL_ID || '',
+      PUBLIC_PINTEREST_PIXEL_ID: (layout.shop as any).pinterestPixelId?.value || env.PUBLIC_PINTEREST_PIXEL_ID || '',
       JUDGEME_SHOP_DOMAIN: env.JUDGEME_SHOP_DOMAIN,
       JUDGEME_PUBLIC_TOKEN: env.JUDGEME_PUBLIC_TOKEN,
       JUDGEME_CDN_HOST: env.JUDGEME_CDN_HOST,
@@ -192,6 +196,10 @@ function Layout({children}: {children?: React.ReactNode}) {
           >
             <AnalyticsTracker
               metaPixelId={data.env?.PUBLIC_META_PIXEL_ID}
+              googleTagId={data.env?.PUBLIC_GOOGLE_TAG_ID}
+              tiktokPixelId={data.env?.PUBLIC_TIKTOK_PIXEL_ID}
+              snapchatPixelId={data.env?.PUBLIC_SNAPCHAT_PIXEL_ID}
+              pinterestPixelId={data.env?.PUBLIC_PINTEREST_PIXEL_ID}
             />
             <PageLayout
               key={`${locale.language}-${locale.country}`}
@@ -280,6 +288,18 @@ const LAYOUT_QUERY = `#graphql
       }
     }
     metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {
+      value
+    }
+    googleTagId: metafield(namespace: "analytics", key: "google_tag_id") {
+      value
+    }
+    tiktokPixelId: metafield(namespace: "analytics", key: "tiktok_pixel_id") {
+      value
+    }
+    snapchatPixelId: metafield(namespace: "analytics", key: "snapchat_pixel_id") {
+      value
+    }
+    pinterestPixelId: metafield(namespace: "analytics", key: "pinterest_pixel_id") {
       value
     }
   }
