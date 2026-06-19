@@ -419,7 +419,7 @@ export default function Product() {
               <ProductCountdown targetDate={product.countdownTimer?.value} />
 
               {/* Dynamic Product options & add/buy CTA buttons — sticky so it follows you while scrolling */}
-              <div className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4 -mx-1">
+              <div className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4">
                 <ProductForm
                   product={product}
                   productOptions={productOptions}
@@ -698,7 +698,7 @@ export default function Product() {
       <div className="pb-20 sm:pb-24 md:pb-0" />
 
       {/* Persistent Sticky Bottom Bar - Mobile Only */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 md:hidden">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
           {/* Quantity Selector */}
           <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">

@@ -62,7 +62,7 @@ export function Drawer({
                 leaveFrom="translate-x-0"
                 leaveTo={offScreen[openFrom]}
               >
-                <Dialog.Panel className="w-screen max-w-[420px] h-screen-dynamic flex flex-col bg-white shadow-2xl overflow-hidden">
+                <Dialog.Panel className="w-full max-w-[420px] h-screen-dynamic flex flex-col bg-white shadow-2xl overflow-hidden">
                   {/* Header */}
                   <header
                     className="flex-shrink-0 flex items-center px-5 py-4 border-b border-neutral-100 bg-white"
