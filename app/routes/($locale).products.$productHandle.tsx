@@ -309,9 +309,9 @@ export default function Product() {
 
   return (
     <>
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 sm:py-3">
         {/* Breadcrumb Navigation & Utility Controls */}
-        <div className="flex justify-between items-center py-2 border-b border-gray-100 mb-4">
+        <div className="flex justify-between items-center py-1.5 sm:py-2 border-b border-gray-100 mb-2 sm:mb-4">
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
             <Link to="/" className="hover:text-primary transition-colors font-medium">Home</Link>
             <span>/</span>
@@ -364,7 +364,7 @@ export default function Product() {
         </div>
 
         {/* Main Product Presentation Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start w-full max-w-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14 items-start w-full max-w-full overflow-hidden">
           {/* Left Column: Media Gallery */}
           <div className="lg:col-span-7 min-w-0 w-full overflow-hidden">
             <ProductGallery media={media.nodes} className="w-full" />
@@ -372,7 +372,7 @@ export default function Product() {
 
           {/* Right Column: Info & Buy Actions */}
           <div className="lg:col-span-5 sticky lg:top-28 min-w-0 w-full">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 sm:gap-3">
               {/* Urgency Factor badge */}
               <div className="flex items-center gap-2 text-[#D33E13] font-semibold text-xs md:text-sm bg-[#D33E13]/5 px-3 py-1.5 rounded-full w-fit">
                 <span>🔥</span>
@@ -418,7 +418,7 @@ export default function Product() {
               </div>
 
               {/* Social Proof viewing count */}
-              <div className="flex items-center gap-2.5 text-gray-600 text-xs bg-gray-50 border border-gray-150 rounded-xl px-4 py-2.5 w-fit font-semibold shadow-sm">
+              <div className="flex items-center gap-2 sm:gap-2.5 text-gray-600 text-xs bg-gray-50 border border-gray-150 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 w-fit font-semibold shadow-sm">
                 <span className="text-base animate-pulse">👁️</span>
                 <span>
                   <strong className="text-[#D33E13] font-extrabold">{viewersCount} customers</strong> are viewing this right now
@@ -440,7 +440,7 @@ export default function Product() {
               />
 
               {/* Trust badges and shipping estimate */}
-              <div className="flex flex-col gap-3.5 py-4 border-t border-b border-gray-100 my-2">
+              <div className="flex flex-col gap-2 sm:gap-3.5 py-2.5 sm:py-4 border-t border-b border-gray-100 my-1 sm:my-2">
                 <div className="flex items-start gap-3">
                   <span className="text-xl">📦</span>
                   <div>
@@ -460,7 +460,7 @@ export default function Product() {
               </div>
 
               {/* Product Meta details checklist */}
-              <div className="bg-gray-50/60 border border-gray-100 rounded-2xl p-5 text-xs md:text-sm flex flex-col gap-3">
+              <div className="bg-gray-50/60 border border-gray-100 rounded-2xl p-3 sm:p-5 text-xs md:text-sm flex flex-col gap-2 sm:gap-3">
                 <div className="flex justify-between items-center pb-2 border-b border-gray-100">
                   <span className="text-gray-500 font-semibold">Sku:</span>
                   <span className="text-gray-800 font-bold">{selectedVariant.sku || 'N/A'}</span>
@@ -507,8 +507,8 @@ export default function Product() {
         </div>
 
         {/* Bottom Tabbed Content Area */}
-        <div id="product-tabs" className="mt-16 border-t border-gray-100 pt-10">
-          <div className="flex flex-wrap gap-2 justify-center mb-8 border-b border-gray-100 pb-4">
+        <div id="product-tabs" className="mt-6 sm:mt-16 border-t border-gray-100 pt-5 sm:pt-10">
+          <div className="flex flex-wrap gap-2 justify-center mb-4 sm:mb-8 border-b border-gray-100 pb-3 sm:pb-4">
             {(['description', 'shipping', 'returns'] as const).map((tab) => {
               const labels = {
                 description: 'Description',
@@ -533,7 +533,7 @@ export default function Product() {
             })}
           </div>
 
-          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 min-h-[220px] shadow-sm animate-fadeIn">
+          <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 md:p-8 min-h-[180px] sm:min-h-[220px] shadow-sm animate-fadeIn">
             {activeTab === 'description' && (
               <div
                 className="prose max-w-none prose-orange text-gray-700 leading-relaxed text-sm md:text-base"
@@ -822,11 +822,11 @@ export function ProductForm({
   };
 
   return (
-    <div className="grid gap-6">
-      <div className="grid gap-4">
+    <div className="grid gap-3 sm:gap-6">
+      <div className="grid gap-2 sm:gap-4">
         {/* Scarcity Progress Bar */}
         {selectedVariant && selectedVariant.availableForSale && (
-          <div className="bg-orange-50/70 border border-orange-100/80 rounded-2xl p-4 w-full shadow-sm">
+          <div className="bg-orange-50/70 border border-orange-100/80 rounded-2xl p-3 sm:p-4 w-full shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-orange-900 flex items-center gap-1.5">
                 <span className="flex h-2 w-2 relative">
@@ -987,7 +987,7 @@ export function ProductForm({
 
         {/* Quantity, Cart and Checkout panel */}
         {selectedVariant && (
-          <div className="flex flex-col gap-4 mt-2">
+          <div className="flex flex-col gap-2.5 sm:gap-4 mt-1 sm:mt-2">
             {/* Row 1: Quantity + Add to Cart */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Quantity Selector */}
