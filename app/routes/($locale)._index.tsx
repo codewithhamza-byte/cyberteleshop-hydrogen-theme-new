@@ -50,6 +50,7 @@ async function loadCriticalData({context, request}: LoaderFunctionArgs) {
     cache: context.storefront.CacheLong(),
   });
 
+  console.log('[Homepage Metaobject Debug] brandMetaobject nodes:', brandMetaobject?.nodes);
   const brandNode = brandMetaobject?.nodes?.[0];
   const brandFields: Record<string, any> = {};
   if (brandNode) {

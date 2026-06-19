@@ -104,6 +104,7 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
   const {storefront, env} = context;
 
   const brandNode = (layout as any).brandMetaobject?.nodes?.[0];
+  console.log('[Layout Metaobject Debug] brandMetaobject nodes:', (layout as any).brandMetaobject?.nodes);
   const brandFields: Record<string, any> = {};
   if (brandNode) {
     for (const field of brandNode.fields || []) {
