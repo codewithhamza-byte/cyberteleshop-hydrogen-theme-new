@@ -46,12 +46,21 @@ export async function loader(args: LoaderFunctionArgs) {
 }
 
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
-  const {shop} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
+  const {shop, brandMetaobject} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
     cache: context.storefront.CacheLong(),
   });
 
+  const brandNode = brandMetaobject?.nodes?.[0];
+  const brandFields: Record<string, any> = {};
+  if (brandNode) {
+    for (const field of brandNode.fields || []) {
+      brandFields[field.key] = field;
+    }
+  }
+
   return {
     shop,
+    brandFields,
     seo: seoPayload.home({url: request.url}),
   };
 }
@@ -112,6 +121,7 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 export default function Homepage() {
   const {
     shop,
+    brandFields,
     featuredProducts,
     categoryCollections,
     showcaseCollections,
@@ -119,7 +129,7 @@ export default function Homepage() {
 
   return (
     <>
-      <LandingHero shop={shop} />
+      <LandingHero brandFields={brandFields} />
       {showcaseCollections && (
         <Suspense>
           <Await resolve={showcaseCollections}>
@@ -286,9 +296,9 @@ function SmartTechPromo() {
   );
 }
 
-function LandingHero({shop}: {shop: any}) {
-  const heroBannerImage = shop?.heroBannerImage;
-  const heroBannerLink = shop?.heroBannerLink?.value || '/collections/all';
+function LandingHero({brandFields}: {brandFields: any}) {
+  const heroBannerImage = brandFields?.hero_banner_image;
+  const heroBannerLink = brandFields?.hero_banner_link?.value || '/collections/all';
 
   let imageUrl =
     'https://cdn.shopify.com/s/files/1/0680/6172/4863/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973';
@@ -815,21 +825,26 @@ const HOMEPAGE_SEO_QUERY = `#graphql
     shop {
       name
       description
-      heroBannerImage: metafield(namespace: "brand", key: "hero_banner_image") {
-        value
-        reference {
-          ... on MediaImage {
-            image {
+    }
+    brandMetaobject: metaobjects(type: "brand", first: 1) {
+      nodes {
+        fields {
+          key
+          value
+          reference {
+            ... on MediaImage {
+              image {
+                url
+                altText
+                width
+                height
+              }
+            }
+            ... on GenericFile {
               url
-              altText
-              width
-              height
             }
           }
         }
-      }
-      heroBannerLink: metafield(namespace: "brand", key: "hero_banner_link") {
-        value
       }
     }
   }

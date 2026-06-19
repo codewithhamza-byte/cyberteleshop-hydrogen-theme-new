@@ -103,7 +103,20 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
 
   const {storefront, env} = context;
 
-  const faviconField = (layout.shop as any).faviconUrl;
+  const brandNode = (layout as any).brandMetaobject?.nodes?.[0];
+  const brandFields: Record<string, any> = {};
+  if (brandNode) {
+    for (const field of brandNode.fields || []) {
+      brandFields[field.key] = field;
+    }
+  }
+
+  // Attach logoUrl to layout.shop so that PageLayout can read it
+  if (layout.shop) {
+    (layout.shop as any).logoUrl = brandFields.logo_url || null;
+  }
+
+  const faviconField = brandFields.favicon_url;
   const faviconUrl =
     faviconField?.reference?.image?.url ||
     faviconField?.reference?.url ||
@@ -284,6 +297,24 @@ const LAYOUT_QUERY = `#graphql
     footerMenu: menu(handle: $footerMenuHandle) {
       ...Menu
     }
+    brandMetaobject: metaobjects(type: "brand", first: 1) {
+      nodes {
+        fields {
+          key
+          value
+          reference {
+            ... on MediaImage {
+              image {
+                url
+              }
+            }
+            ... on GenericFile {
+              url
+            }
+          }
+        }
+      }
+    }
   }
   fragment Shop on Shop {
     id
@@ -300,32 +331,6 @@ const LAYOUT_QUERY = `#graphql
       }
       squareLogo {
         image {
-          url
-        }
-      }
-    }
-    logoUrl: metafield(namespace: "brand", key: "logo_url") {
-      value
-      reference {
-        ... on MediaImage {
-          image {
-            url
-          }
-        }
-        ... on GenericFile {
-          url
-        }
-      }
-    }
-    faviconUrl: metafield(namespace: "brand", key: "favicon_url") {
-      value
-      reference {
-        ... on MediaImage {
-          image {
-            url
-          }
-        }
-        ... on GenericFile {
           url
         }
       }
@@ -411,5 +416,10 @@ async function getLayoutData({storefront, env}: AppLoadContext) {
       )
     : undefined;
 
-  return {shop: data.shop, headerMenu, footerMenu};
+  return {
+    shop: data.shop,
+    brandMetaobject: data.brandMetaobject,
+    headerMenu,
+    footerMenu,
+  };
 }

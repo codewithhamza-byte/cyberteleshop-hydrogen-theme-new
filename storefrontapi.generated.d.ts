@@ -114,22 +114,6 @@ export type LayoutQuery = {
         image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>;
       }>;
     }>;
-    logoUrl?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metafield, 'value'> & {
-        reference?: StorefrontAPI.Maybe<
-          | Pick<StorefrontAPI.GenericFile, 'url'>
-          | {image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>}
-        >;
-      }
-    >;
-    faviconUrl?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metafield, 'value'> & {
-        reference?: StorefrontAPI.Maybe<
-          | Pick<StorefrontAPI.GenericFile, 'url'>
-          | {image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>}
-        >;
-      }
-    >;
     metaPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
     googleTagId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
     tiktokPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -174,6 +158,18 @@ export type LayoutQuery = {
       >;
     }
   >;
+  brandMetaobject: {
+    nodes: Array<{
+      fields: Array<
+        Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'> & {
+          reference?: StorefrontAPI.Maybe<
+            | Pick<StorefrontAPI.GenericFile, 'url'>
+            | {image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>}
+          >;
+        }
+      >;
+    }>;
+  };
 };
 
 export type ShopFragment = Pick<
@@ -189,22 +185,6 @@ export type ShopFragment = Pick<
       image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>;
     }>;
   }>;
-  logoUrl?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Metafield, 'value'> & {
-      reference?: StorefrontAPI.Maybe<
-        | Pick<StorefrontAPI.GenericFile, 'url'>
-        | {image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>}
-      >;
-    }
-  >;
-  faviconUrl?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Metafield, 'value'> & {
-      reference?: StorefrontAPI.Maybe<
-        | Pick<StorefrontAPI.GenericFile, 'url'>
-        | {image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'url'>>}
-      >;
-    }
-  >;
   metaPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   googleTagId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   tiktokPixelId?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
@@ -265,19 +245,25 @@ export type HomepageSeoQueryVariables = StorefrontAPI.Exact<{
 }>;
 
 export type HomepageSeoQuery = {
-  shop: Pick<StorefrontAPI.Shop, 'name' | 'description'> & {
-    heroBannerImage?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metafield, 'value'> & {
-        reference?: StorefrontAPI.Maybe<{
-          image?: StorefrontAPI.Maybe<
-            Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
+  shop: Pick<StorefrontAPI.Shop, 'name' | 'description'>;
+  brandMetaobject: {
+    nodes: Array<{
+      fields: Array<
+        Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'> & {
+          reference?: StorefrontAPI.Maybe<
+            | Pick<StorefrontAPI.GenericFile, 'url'>
+            | {
+                image?: StorefrontAPI.Maybe<
+                  Pick<
+                    StorefrontAPI.Image,
+                    'url' | 'altText' | 'width' | 'height'
+                  >
+                >;
+              }
           >;
-        }>;
-      }
-    >;
-    heroBannerLink?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metafield, 'value'>
-    >;
+        }
+      >;
+    }>;
   };
 };
 
@@ -1788,7 +1774,7 @@ export type WishlistProductsQuery = {
 };
 
 interface GeneratedQueryTypes {
-  '#graphql\n  query layout(\n    $language: LanguageCode\n    $headerMenuHandle: String!\n    $footerMenuHandle: String!\n  ) @inContext(language: $language) {\n    shop {\n      ...Shop\n    }\n    headerMenu: menu(handle: $headerMenuHandle) {\n      ...Menu\n    }\n    footerMenu: menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n  }\n  fragment Shop on Shop {\n    id\n    name\n    description\n    primaryDomain {\n      url\n    }\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n      squareLogo {\n        image {\n          url\n        }\n      }\n    }\n    logoUrl: metafield(namespace: "brand", key: "logo_url") {\n      value\n      reference {\n        ... on MediaImage {\n          image {\n            url\n          }\n        }\n        ... on GenericFile {\n          url\n        }\n      }\n    }\n    faviconUrl: metafield(namespace: "brand", key: "favicon_url") {\n      value\n      reference {\n        ... on MediaImage {\n          image {\n            url\n          }\n        }\n        ... on GenericFile {\n          url\n        }\n      }\n    }\n    metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {\n      value\n    }\n    googleTagId: metafield(namespace: "analytics", key: "google_tag_id") {\n      value\n    }\n    tiktokPixelId: metafield(namespace: "analytics", key: "tiktok_pixel_id") {\n      value\n    }\n    snapchatPixelId: metafield(namespace: "analytics", key: "snapchat_pixel_id") {\n      value\n    }\n    pinterestPixelId: metafield(namespace: "analytics", key: "pinterest_pixel_id") {\n      value\n    }\n  }\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n': {
+  '#graphql\n  query layout(\n    $language: LanguageCode\n    $headerMenuHandle: String!\n    $footerMenuHandle: String!\n  ) @inContext(language: $language) {\n    shop {\n      ...Shop\n    }\n    headerMenu: menu(handle: $headerMenuHandle) {\n      ...Menu\n    }\n    footerMenu: menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n    brandMetaobject: metaobjects(type: "brand", first: 1) {\n      nodes {\n        fields {\n          key\n          value\n          reference {\n            ... on MediaImage {\n              image {\n                url\n              }\n            }\n            ... on GenericFile {\n              url\n            }\n          }\n        }\n      }\n    }\n  }\n  fragment Shop on Shop {\n    id\n    name\n    description\n    primaryDomain {\n      url\n    }\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n      squareLogo {\n        image {\n          url\n        }\n      }\n    }\n    metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {\n      value\n    }\n    googleTagId: metafield(namespace: "analytics", key: "google_tag_id") {\n      value\n    }\n    tiktokPixelId: metafield(namespace: "analytics", key: "tiktok_pixel_id") {\n      value\n    }\n    snapchatPixelId: metafield(namespace: "analytics", key: "snapchat_pixel_id") {\n      value\n    }\n    pinterestPixelId: metafield(namespace: "analytics", key: "pinterest_pixel_id") {\n      value\n    }\n  }\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n': {
     return: LayoutQuery;
     variables: LayoutQueryVariables;
   };
@@ -1796,7 +1782,7 @@ interface GeneratedQueryTypes {
     return: GetShopPrimaryDomainQuery;
     variables: GetShopPrimaryDomainQueryVariables;
   };
-  '#graphql\n  query homepageSeo {\n    shop {\n      name\n      description\n      heroBannerImage: metafield(namespace: "brand", key: "hero_banner_image") {\n        value\n        reference {\n          ... on MediaImage {\n            image {\n              url\n              altText\n              width\n              height\n            }\n          }\n        }\n      }\n      heroBannerLink: metafield(namespace: "brand", key: "hero_banner_link") {\n        value\n      }\n    }\n  }\n': {
+  '#graphql\n  query homepageSeo {\n    shop {\n      name\n      description\n    }\n    brandMetaobject: metaobjects(type: "brand", first: 1) {\n      nodes {\n        fields {\n          key\n          value\n          reference {\n            ... on MediaImage {\n              image {\n                url\n                altText\n                width\n                height\n              }\n            }\n            ... on GenericFile {\n              url\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: HomepageSeoQuery;
     variables: HomepageSeoQueryVariables;
   };
