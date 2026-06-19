@@ -149,8 +149,8 @@ function Layout({children}: {children?: React.ReactNode}) {
   const locale = data?.selectedLocale ?? DEFAULT_LOCALE;
 
   useJudgeme({
-    shopDomain: data?.env?.JUDGEME_SHOP_DOMAIN || 'hydrogen-preview.myshopify.com',
-    publicToken: data?.env?.JUDGEME_PUBLIC_TOKEN || 'your-public-token',
+    shopDomain: data?.env?.JUDGEME_SHOP_DOMAIN || 'cyberteleshop.myshopify.com',
+    publicToken: data?.env?.JUDGEME_PUBLIC_TOKEN || 'oka8liRSLfTcXMYhgN1fIwEkmuQ',
     cdnHost: data?.env?.JUDGEME_CDN_HOST || 'https://cdn.judge.me',
     delay: 500,
   });

@@ -28,6 +28,7 @@ export default async function handleRequest(
       'https://cdn.judge.me',
       'https://judge.me',
       'https://*.judge.me',
+      'https://www.cyberteleshop.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
