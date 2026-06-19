@@ -267,6 +267,7 @@ export default function Product() {
   const [viewersCount, setViewersCount] = useState(13);
   const [salesCount, setSalesCount] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   // Dynamic viewer count + delivery date
   useEffect(() => {
@@ -427,6 +428,8 @@ export default function Product() {
                   showToast={showToast}
                   isOutOfStock={isOutOfStock}
                   handleShare={handleShare}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
                 />
               </div>
 
@@ -693,6 +696,61 @@ export default function Product() {
 
       {/* Spacing for persistent bottom bar only on mobile */}
       <div className="pb-20 sm:pb-24 md:pb-0" />
+
+      {/* Persistent Sticky Bottom Bar - Mobile Only */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full md:hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          {/* Quantity Selector */}
+          <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">
+            <button
+              type="button"
+              disabled={quantity <= 1}
+              onClick={() => setQuantity((q) => q - 1)}
+              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black disabled:opacity-30 transition-colors"
+            >
+              &minus;
+            </button>
+            <span className="w-6 sm:w-8 text-center font-bold text-black text-sm sm:text-base">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => q + 1)}
+              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black transition-colors"
+            >
+              &#43;
+            </button>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-1 items-center gap-2 sm:gap-3 min-w-0">
+            {!isOutOfStock ? (
+              <>
+                <AddToCartButton
+                  lines={[{merchandiseId: selectedVariant.id!, quantity}]}
+                  className="flex-1 bg-black hover:bg-neutral-800 text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
+                >
+                  Add to Cart
+                </AddToCartButton>
+                <button
+                  onClick={() => {
+                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                      'gid://shopify/ProductVariant/',
+                      '',
+                    )}:${quantity}`;
+                    window.location.href = checkoutUrl;
+                  }}
+                  className="flex-1 bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md shadow-[#D33E13]/20 h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
+                >
+                  Buy it now
+                </button>
+              </>
+            ) : (
+              <div className="flex-1 bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded-full text-sm sm:text-base whitespace-nowrap h-10 sm:h-12 flex items-center justify-center uppercase tracking-widest">
+                Sold Out
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </>
   );
 }
@@ -709,6 +767,8 @@ export function ProductForm({
   showToast,
   isOutOfStock,
   handleShare,
+  quantity,
+  setQuantity,
 }: {
   product: ProductFragment;
   productOptions: MappedProductOptions[];
@@ -717,9 +777,10 @@ export function ProductForm({
   showToast: (msg: string) => void;
   isOutOfStock: boolean;
   handleShare: () => void;
+  quantity: number;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
-  const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
   const [isCompare, setIsCompare] = useState(false);
 
@@ -1057,61 +1118,6 @@ export function ProductForm({
             )}
           </div>
         )}
-      </div>
-
-      {/* Persistent Sticky Bottom Bar - Mobile Only */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full md:hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
-          {/* Quantity Selector */}
-          <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">
-            <button
-              type="button"
-              disabled={quantity <= 1}
-              onClick={() => setQuantity((q) => q - 1)}
-              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black disabled:opacity-30 transition-colors"
-            >
-              &minus;
-            </button>
-            <span className="w-6 sm:w-8 text-center font-bold text-black text-sm sm:text-base">{quantity}</span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => q + 1)}
-              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black transition-colors"
-            >
-              &#43;
-            </button>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-1 items-center gap-2 sm:gap-3 min-w-0">
-            {!isOutOfStock ? (
-              <>
-                <AddToCartButton
-                  lines={[{merchandiseId: selectedVariant.id!, quantity}]}
-                  className="flex-1 bg-black hover:bg-neutral-800 text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
-                >
-                  Add to Cart
-                </AddToCartButton>
-                <button
-                  onClick={() => {
-                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
-                      'gid://shopify/ProductVariant/',
-                      '',
-                    )}:${quantity}`;
-                    window.location.href = checkoutUrl;
-                  }}
-                  className="flex-1 bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md shadow-[#D33E13]/20 h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
-                >
-                  Buy it now
-                </button>
-              </>
-            ) : (
-              <div className="flex-1 bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded-full text-sm sm:text-base whitespace-nowrap h-10 sm:h-12 flex items-center justify-center uppercase tracking-widest">
-                Sold Out
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
