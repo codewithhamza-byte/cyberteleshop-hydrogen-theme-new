@@ -188,9 +188,9 @@ export default function CartRoute() {
               </div>
               <div className="mt-6 flex flex-col gap-2">
                 <a 
-                  href="https://wa.me/923146257174" 
+                  href="https://wa.me/923004252400" 
                   target="_blank" 
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-center py-2.5 rounded-xl text-xs md:text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-[#25D366]/10"
                 >
                   💬 WhatsApp Support

@@ -52,7 +52,7 @@ export default function TrackOrder() {
   };
 
   const getWhatsAppLink = () => {
-    const phone = '923146257174'; // Format for international whatsapp API
+    const phone = '923004252400'; // Format for international whatsapp API
     const message = `Hi CyberTeleshop, I'd like to track my order.\nOrder ID: ${orderId || '___'}\nName/Phone: ${emailOrPhone || '___'}`;
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   };
