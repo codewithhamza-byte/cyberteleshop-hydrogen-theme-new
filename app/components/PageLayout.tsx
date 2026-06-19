@@ -372,6 +372,9 @@ function MenuMobileNav({
             );
           })}
         </nav>
+
+        {/* Wishlist & Compare Quick Links */}
+        <MobileMenuWishlistCompare onClose={onClose} />
       </div>
 
       <div className="p-6 bg-neutral-50 border-t border-neutral-100 mt-auto flex flex-col gap-5">
@@ -402,6 +405,92 @@ function MenuMobileNav({
           </a>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MobileMenuWishlistCompare({ onClose }: { onClose: () => void }) {
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [compareCount, setCompareCount] = useState(0);
+
+  useEffect(() => {
+    const updateCounts = () => {
+      if (typeof window !== 'undefined') {
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]') as string[];
+        const compare = JSON.parse(localStorage.getItem('compare') || '[]') as string[];
+        setWishlistCount(wishlist.length);
+        setCompareCount(compare.length);
+      }
+    };
+    updateCounts();
+    window.addEventListener('wishlist-updated', updateCounts);
+    window.addEventListener('compare-updated', updateCounts);
+    window.addEventListener('storage', updateCounts);
+    return () => {
+      window.removeEventListener('wishlist-updated', updateCounts);
+      window.removeEventListener('compare-updated', updateCounts);
+      window.removeEventListener('storage', updateCounts);
+    };
+  }, []);
+
+  return (
+    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-neutral-100">
+      {/* Wishlist */}
+      <Link
+        to="/wishlist"
+        onClick={onClose}
+        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors duration-200 group"
+      >
+        <div className="relative flex-shrink-0">
+          <svg
+            className="w-5 h-5 fill-none stroke-rose-500 group-hover:stroke-rose-600 transition-colors"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          {wishlistCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#D33E13] text-white rounded-full flex items-center justify-center text-[9px] font-extrabold leading-none">
+              {wishlistCount}
+            </span>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-extrabold text-neutral-800 leading-tight">Wishlist</p>
+          <p className="text-[10px] text-neutral-400 font-medium">
+            {wishlistCount > 0 ? `${wishlistCount} item${wishlistCount > 1 ? 's' : ''}` : 'Empty'}
+          </p>
+        </div>
+      </Link>
+
+      {/* Compare */}
+      <Link
+        to="/compare"
+        onClick={onClose}
+        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors duration-200 group"
+      >
+        <div className="relative flex-shrink-0">
+          <svg
+            className="w-5 h-5 stroke-blue-500 group-hover:stroke-blue-600 transition-colors"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+          </svg>
+          {compareCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#D33E13] text-white rounded-full flex items-center justify-center text-[9px] font-extrabold leading-none">
+              {compareCount}
+            </span>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-extrabold text-neutral-800 leading-tight">Compare</p>
+          <p className="text-[10px] text-neutral-400 font-medium">
+            {compareCount > 0 ? `${compareCount} item${compareCount > 1 ? 's' : ''}` : 'Empty'}
+          </p>
+        </div>
+      </Link>
     </div>
   );
 }
