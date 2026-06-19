@@ -25,7 +25,7 @@ import {FeaturedProducts} from '~/components/FeaturedProducts';
 type Layouts = 'page' | 'drawer';
 
 // Free shipping threshold in PKR
-const FREE_SHIPPING_THRESHOLD = 3000;
+const FREE_SHIPPING_THRESHOLD = 5000;
 
 // ─── Root Cart component ────────────────────────────────────────────────────
 export function Cart({
@@ -170,7 +170,7 @@ function CartPromoBanner({subtotal}: {subtotal: number}) {
   const promos = [
     {
       icon: '⚡',
-      text: 'FREE SHIPPING on orders over Rs. 3,000',
+      text: 'FREE SHIPPING on orders over Rs. 5,000',
       color: 'from-emerald-500 to-teal-500',
     },
     {
@@ -283,7 +283,7 @@ function DrawerCartEmpty({onClose}: {onClose?: () => void}) {
           🔥 Active Promotions
         </p>
         {[
-          {icon: '⚡', label: 'Free Shipping', desc: 'On orders over Rs. 3,000'},
+          {icon: '⚡', label: 'Free Shipping', desc: 'On orders over Rs. 5,000'},
           {icon: '🎁', label: '10% OFF First Order', desc: 'Use code: CYBER10'},
           {icon: '🔄', label: '7-Day Returns', desc: '100% hassle-free returns'},
           {icon: '🛡️', label: 'Secure Checkout', desc: 'SSL encrypted payments'},
