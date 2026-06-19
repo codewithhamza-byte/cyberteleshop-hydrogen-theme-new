@@ -159,6 +159,12 @@ function UtilityBar() {
 
 export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
+
+  const logoSrc =
+    (layout?.shop as any)?.logoUrl?.value ||
+    layout?.shop?.brand?.logo?.image?.url ||
+    'https://www.cyberteleshop.com/cdn/shop/files/nexteaze_logo_2.svg?v=1747654489&width=165';
+
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -170,7 +176,7 @@ export function PageLayout({children, layout}: LayoutProps) {
           </a>
         </div>
         {headerMenu && layout?.shop.name && (
-          <Header title={layout.shop.name} menu={headerMenu} />
+          <Header title={layout.shop.name} menu={headerMenu} logoSrc={logoSrc} />
         )}
         <main role="main" id="mainContent" className="flex-grow">
           {children}
@@ -194,10 +200,16 @@ export function PageLayout({children, layout}: LayoutProps) {
   );
 }
 
-function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
+function Header({
+  title,
+  menu,
+  logoSrc,
+}: {
+  title: string;
+  menu?: EnhancedMenu;
+  logoSrc: string;
+}) {
   const isHome = useIsHomePath();
-  const logoSrc =
-    'https://www.cyberteleshop.com/cdn/shop/files/nexteaze_logo_2.svg?v=1747654489&width=165';
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 

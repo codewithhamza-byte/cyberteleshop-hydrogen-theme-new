@@ -43,7 +43,7 @@ function root({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: shop.name,
-      logo: shop.brand?.logo?.image?.url,
+      logo: (shop as any).logoUrl?.value || shop.brand?.logo?.image?.url,
       sameAs: [
         'https://twitter.com/shopify',
         'https://facebook.com/shopify',

@@ -111,6 +111,7 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 
 export default function Homepage() {
   const {
+    shop,
     featuredProducts,
     categoryCollections,
     showcaseCollections,
@@ -118,7 +119,7 @@ export default function Homepage() {
 
   return (
     <>
-      <LandingHero />
+      <LandingHero shop={shop} />
       {showcaseCollections && (
         <Suspense>
           <Await resolve={showcaseCollections}>
@@ -285,22 +286,40 @@ function SmartTechPromo() {
   );
 }
 
-function LandingHero() {
+function LandingHero({shop}: {shop: any}) {
+  const heroBannerImage = shop?.heroBannerImage;
+  const heroBannerLink = shop?.heroBannerLink?.value || '/collections/all';
+
+  let imageUrl =
+    'https://cdn.shopify.com/s/files/1/0680/6172/4863/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973';
+  let altText = 'CyberTeleshop Premium Electronic Sales Banner';
+  let width = 2000;
+  let height = 694;
+
+  if (heroBannerImage?.reference?.image?.url) {
+    imageUrl = heroBannerImage.reference.image.url;
+    altText = heroBannerImage.reference.image.altText || altText;
+    width = heroBannerImage.reference.image.width || width;
+    height = heroBannerImage.reference.image.height || height;
+  } else if (heroBannerImage?.value) {
+    imageUrl = heroBannerImage.value;
+  }
+
   return (
     <section className="w-full bg-contrast overflow-hidden border-b border-primary/5">
-      <Link to="/collections/all" className="block relative group w-full">
+      <Link to={heroBannerLink} className="block relative group w-full">
         <Image
           data={{
             __typename: 'Image',
-            url: 'https://cdn.shopify.com/s/files/1/0680/6172/4863/files/blue_gradient_electronic_sales_promotion_banner_72_x_25_in.webp?v=1747654973',
-            altText: 'CyberTeleshop Premium Electronic Sales Banner',
-            width: 2000,
-            height: 694,
+            url: imageUrl,
+            altText: altText,
+            width: width,
+            height: height,
           }}
           className="w-full h-[160px] sm:h-auto object-cover object-[65%] sm:object-center block select-none"
           sizes="100vw"
-          width={2000}
-          height={694}
+          width={width}
+          height={height}
           loading="eager"
           fetchPriority="high"
         />
@@ -796,6 +815,22 @@ const HOMEPAGE_SEO_QUERY = `#graphql
     shop {
       name
       description
+      heroBannerImage: metafield(namespace: "brand", key: "hero_banner_image") {
+        value
+        reference {
+          ... on MediaImage {
+            image {
+              url
+              altText
+              width
+              height
+            }
+          }
+        }
+      }
+      heroBannerLink: metafield(namespace: "brand", key: "hero_banner_link") {
+        value
+      }
     }
   }
 ` as const;

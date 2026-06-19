@@ -103,9 +103,12 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
 
   const {storefront, env} = context;
 
+  const faviconUrl = (layout.shop as any).faviconUrl?.value || (layout.shop as any).brand?.squareLogo?.image?.url || null;
+
   return {
     layout,
     seo,
+    faviconUrl,
     shop: getShopAnalytics({
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
@@ -186,6 +189,9 @@ function Layout({children}: {children?: React.ReactNode}) {
         )}
         <Meta />
         <Links />
+        {data?.faviconUrl && (
+          <link rel="icon" type="image/x-icon" href={data.faviconUrl} />
+        )}
       </head>
       <body>
         {data ? (
@@ -286,6 +292,17 @@ const LAYOUT_QUERY = `#graphql
           url
         }
       }
+      squareLogo {
+        image {
+          url
+        }
+      }
+    }
+    logoUrl: metafield(namespace: "brand", key: "logo_url") {
+      value
+    }
+    faviconUrl: metafield(namespace: "brand", key: "favicon_url") {
+      value
     }
     metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {
       value
