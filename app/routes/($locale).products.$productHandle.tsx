@@ -309,9 +309,9 @@ export default function Product() {
 
   return (
     <>
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         {/* Breadcrumb Navigation & Utility Controls */}
-        <div className="flex justify-between items-center py-3 border-b border-gray-100 mb-8">
+        <div className="flex justify-between items-center py-2 border-b border-gray-100 mb-4">
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
             <Link to="/" className="hover:text-primary transition-colors font-medium">Home</Link>
             <span>/</span>
@@ -372,7 +372,7 @@ export default function Product() {
 
           {/* Right Column: Info & Buy Actions */}
           <div className="lg:col-span-5 sticky lg:top-28 min-w-0 w-full">
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               {/* Urgency Factor badge */}
               <div className="flex items-center gap-2 text-[#D33E13] font-semibold text-xs md:text-sm bg-[#D33E13]/5 px-3 py-1.5 rounded-full w-fit">
                 <span>🔥</span>
@@ -428,41 +428,6 @@ export default function Product() {
               {/* Countdown Timer */}
               <ProductCountdown targetDate={product.countdownTimer?.value} />
 
-              {/* Wishlist, Compare & Share shortcuts */}
-              <div className="flex items-center gap-4 text-xs md:text-sm text-gray-600 font-bold py-1 border-y border-gray-100 my-1">
-                <button
-                  onClick={() => {
-                    const el = document.querySelector('[data-wishlist-btn]') as HTMLButtonElement | null;
-                    el?.click();
-                  }}
-                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
-                >
-                  <HeartIcon className="w-4 h-4 text-gray-400" />
-                  Wishlist
-                </button>
-                <span className="text-gray-200">|</span>
-                <button
-                  onClick={() => {
-                    const el = document.querySelector('[data-compare-btn]') as HTMLButtonElement | null;
-                    el?.click();
-                  }}
-                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4 text-gray-400">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-                  </svg>
-                  Compare
-                </button>
-                <span className="text-gray-200">|</span>
-                <button
-                  onClick={handleShare}
-                  className="flex items-center gap-2 hover:text-[#D33E13] transition-colors"
-                >
-                  <ShareIcon className="w-4 h-4 text-gray-400" />
-                  Share
-                </button>
-              </div>
-
               {/* Dynamic Product options & add/buy CTA buttons */}
               <ProductForm
                 product={product}
@@ -471,6 +436,7 @@ export default function Product() {
                 storeDomain={storeDomain}
                 showToast={showToast}
                 isOutOfStock={isOutOfStock}
+                handleShare={handleShare}
               />
 
               {/* Trust badges and shipping estimate */}
@@ -792,6 +758,7 @@ export function ProductForm({
   storeDomain,
   showToast,
   isOutOfStock,
+  handleShare,
 }: {
   product: ProductFragment;
   productOptions: MappedProductOptions[];
@@ -799,6 +766,7 @@ export function ProductForm({
   storeDomain: string;
   showToast: (msg: string) => void;
   isOutOfStock: boolean;
+  handleShare: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const [quantity, setQuantity] = useState(1);
@@ -1020,7 +988,7 @@ export function ProductForm({
         {/* Quantity, Cart and Checkout panel */}
         {selectedVariant && (
           <div className="flex flex-col gap-4 mt-2">
-            {/* Row 1: Quantity, Add to Cart, Wishlist, Compare */}
+            {/* Row 1: Quantity + Add to Cart */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Quantity Selector */}
               <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 h-[52px] px-2.5 shadow-sm">
@@ -1067,47 +1035,6 @@ export function ProductForm({
                   </AddToCartButton>
                 )}
               </div>
-
-              {/* Wishlist Button */}
-              <button
-                data-wishlist-btn
-                onClick={toggleWishlist}
-                className={clsx(
-                  'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
-                  isWishlist
-                    ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13]'
-                    : 'border-gray-200 hover:border-gray-400 bg-white text-gray-600 hover:text-gray-900',
-                )}
-                title={isWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-              >
-                <HeartIcon
-                  className={clsx('w-5 h-5', isWishlist ? 'fill-current' : 'fill-none')}
-                />
-              </button>
-
-              {/* Compare Button */}
-              <button
-                data-compare-btn
-                onClick={toggleCompare}
-                className={clsx(
-                  'w-[52px] h-[52px] rounded-xl border flex items-center justify-center transition-all duration-200 shadow-sm focus:outline-none',
-                  isCompare
-                    ? 'border-[#D33E13] bg-[#D33E13]/5 text-[#D33E13]'
-                    : 'border-gray-200 hover:border-gray-400 bg-white text-gray-600 hover:text-gray-900',
-                )}
-                title={isCompare ? 'Remove from Compare' : 'Add to Compare'}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-                </svg>
-              </button>
             </div>
 
             {/* Row 2: Buy It Now Checkout CTA */}
@@ -1126,8 +1053,45 @@ export function ProductForm({
                   Buy it now
                 </button>
 
+                {/* Wishlist | Compare | Share */}
+                <div className="flex items-center gap-4 text-xs text-gray-500 font-bold py-1 border-y border-gray-100">
+                  <button
+                    onClick={toggleWishlist}
+                    className={clsx(
+                      'flex items-center gap-1.5 transition-colors',
+                      isWishlist ? 'text-[#D33E13]' : 'hover:text-[#D33E13]',
+                    )}
+                  >
+                    <HeartIcon
+                      className={clsx('w-3.5 h-3.5', isWishlist ? 'fill-current' : 'fill-none stroke-current')}
+                    />
+                    {isWishlist ? 'Wishlisted' : 'Wishlist'}
+                  </button>
+                  <span className="text-gray-200">|</span>
+                  <button
+                    onClick={toggleCompare}
+                    className={clsx(
+                      'flex items-center gap-1.5 transition-colors',
+                      isCompare ? 'text-[#D33E13]' : 'hover:text-[#D33E13]',
+                    )}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3.5 h-3.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg>
+                    {isCompare ? 'Comparing' : 'Compare'}
+                  </button>
+                  <span className="text-gray-200">|</span>
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center gap-1.5 hover:text-[#D33E13] transition-colors"
+                  >
+                    <ShareIcon className="w-3.5 h-3.5" />
+                    Share
+                  </button>
+                </div>
+
                 {/* Secure Checkout Badges */}
-                <div className="flex flex-col items-center gap-2 mt-4 py-2 border-t border-gray-100">
+                <div className="flex flex-col items-center gap-2 mt-2 py-2 border-t border-gray-100">
                   <span className="text-[10px] text-gray-400 font-extrabold uppercase tracking-widest">Guaranteed Safe Checkout</span>
                   <div className="flex justify-center gap-3.5 items-center flex-wrap">
                     <VisaIcon className="h-4 w-auto opacity-70 hover:opacity-100 transition-opacity" />
