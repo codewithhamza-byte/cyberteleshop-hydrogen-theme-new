@@ -5,7 +5,7 @@ import {Heading} from '~/components/Text';
 import {IconClose} from '~/components/Icon';
 
 /**
- * Drawer component that opens on user click.
+ * Redesigned Drawer component with premium modern UI.
  * @param heading - string. Shown at the top of the drawer.
  * @param open - boolean state. if true opens the drawer.
  * @param onClose - function should set the open state.
@@ -33,16 +33,17 @@ export function Drawer({
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog as="div" className="relative z-[100]" onClose={onClose}>
+        {/* Backdrop */}
         <Transition.Child
           as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0 left-0"
+          enter="ease-out duration-400"
+          enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-200"
+          leave="ease-in duration-300"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0">
@@ -54,31 +55,53 @@ export function Drawer({
             >
               <Transition.Child
                 as={Fragment}
-                enter="transform transition ease-in-out duration-300"
+                enter="transform transition ease-[cubic-bezier(0.32,0.72,0,1)] duration-500"
                 enterFrom={offScreen[openFrom]}
                 enterTo="translate-x-0"
-                leave="transform transition ease-in-out duration-300"
+                leave="transform transition ease-[cubic-bezier(0.32,0.72,0,1)] duration-400"
                 leaveFrom="translate-x-0"
                 leaveTo={offScreen[openFrom]}
               >
-                <Dialog.Panel className="w-screen max-w-lg text-left align-middle transition-all transform shadow-xl h-screen-dynamic bg-contrast">
+                <Dialog.Panel className="w-screen max-w-[420px] h-screen-dynamic flex flex-col bg-white shadow-2xl">
+                  {/* Header */}
                   <header
-                    className={`sticky top-0 flex items-center px-6 h-nav sm:px-8 md:px-12 ${
-                      heading ? 'justify-between' : 'justify-end'
-                    }`}
+                    className="flex-shrink-0 flex items-center px-5 py-4 border-b border-neutral-100 bg-white"
+                    style={{minHeight: '64px'}}
                   >
                     {heading !== null && (
-                      <Dialog.Title>
-                        <Heading as="span" size="lead" id="cart-contents">
-                          {heading}
-                        </Heading>
+                      <Dialog.Title className="flex-1">
+                        <div className="flex items-center gap-2.5">
+                          {/* Shopping bag icon */}
+                          <div className="w-8 h-8 rounded-lg bg-[#D33E13]/10 flex items-center justify-center flex-shrink-0">
+                            <svg
+                              className="w-4 h-4 text-[#D33E13]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              strokeWidth="2"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                              />
+                            </svg>
+                          </div>
+                          <span
+                            className="text-base font-extrabold uppercase tracking-widest text-neutral-800"
+                            id="cart-contents"
+                          >
+                            {heading}
+                          </span>
+                        </div>
                       </Dialog.Title>
                     )}
                     <button
                       type="button"
-                      className="p-4 -m-4 transition text-primary hover:text-primary/50"
+                      className="ml-auto p-2 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-all duration-200 flex items-center justify-center"
                       onClick={onClose}
                       data-test="close-cart"
+                      aria-label="Close panel"
                     >
                       <IconClose aria-label="Close panel" />
                     </button>

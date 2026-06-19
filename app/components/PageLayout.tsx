@@ -241,8 +241,8 @@ function CartDrawer({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
   if (!rootData) return null;
 
   return (
-    <Drawer open={isOpen} onClose={onClose} heading="Cart" openFrom="right">
-      <div className="grid">
+    <Drawer open={isOpen} onClose={onClose} heading="My Cart" openFrom="right">
+      <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
         <Suspense fallback={<CartLoading />}>
           <Await resolve={rootData?.cart}>
             {(cart) => <Cart layout="drawer" onClose={onClose} cart={cart} />}

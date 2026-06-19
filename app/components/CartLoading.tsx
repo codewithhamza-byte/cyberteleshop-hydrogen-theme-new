@@ -1,50 +1,35 @@
 export function CartLoading() {
   return (
-    <div className="flex w-full h-screen-no-nav justify-center items-center">
-      {/* @todo better spinner? */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={38}
-        height={38}
-        viewBox="0 0 38 38"
-      >
-        <defs>
-          <linearGradient x1="8.042%" y1="0%" x2="65.682%" y2="23.865%" id="a">
-            <stop stopColor="#fff" stopOpacity={0} offset="0%" />
-            <stop stopColor="#fff" stopOpacity=".631" offset="63.146%" />
-            <stop stopColor="#fff" offset="100%" />
-          </linearGradient>
-        </defs>
-        <g fill="none" fillRule="evenodd">
-          <g transform="translate(1 1)">
-            <path
-              d="M36 18c0-9.94-8.06-18-18-18"
-              id="Oval-2"
-              stroke="url(#a)"
-              strokeWidth={2}
-            >
-              <animateTransform
-                attributeName="transform"
-                type="rotate"
-                from="0 18 18"
-                to="360 18 18"
-                dur="0.9s"
-                repeatCount="indefinite"
-              />
-            </path>
-            <circle fill="#fff" cx={36} cy={18} r={1}>
-              <animateTransform
-                attributeName="transform"
-                type="rotate"
-                from="0 18 18"
-                to="360 18 18"
-                dur="0.9s"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </g>
-        </g>
-      </svg>
+    <div className="flex flex-col flex-1 px-5 py-4 space-y-4 animate-pulse">
+      {/* Skeleton cart items */}
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="flex gap-3.5 p-3 rounded-2xl bg-neutral-50 border border-neutral-100"
+        >
+          {/* Image skeleton */}
+          <div className="w-[78px] h-[78px] rounded-xl bg-neutral-200 flex-shrink-0" />
+
+          {/* Content skeleton */}
+          <div className="flex-1 space-y-2.5 py-1">
+            <div className="h-3.5 bg-neutral-200 rounded-lg w-4/5" />
+            <div className="h-3 bg-neutral-100 rounded-lg w-2/5" />
+            <div className="flex items-center justify-between pt-1">
+              <div className="h-7 bg-neutral-200 rounded-xl w-24" />
+              <div className="h-4 bg-neutral-200 rounded-lg w-16" />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Summary skeleton */}
+      <div className="mt-auto pt-4 border-t border-neutral-100 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="h-3 bg-neutral-200 rounded-lg w-20" />
+          <div className="h-4 bg-neutral-200 rounded-lg w-24" />
+        </div>
+        <div className="h-12 bg-neutral-200 rounded-2xl w-full" />
+      </div>
     </div>
   );
 }
