@@ -261,34 +261,23 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  // Client states for premium interactive interface
   const [activeTab, setActiveTab] = useState<'description' | 'shipping' | 'returns'>('description');
   const [toast, setToast] = useState<string | null>(null);
   const [askQuestionOpen, setAskQuestionOpen] = useState(false);
   const [viewersCount, setViewersCount] = useState(13);
   const [salesCount, setSalesCount] = useState(10);
-  const [showStickyBar, setShowStickyBar] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState('');
 
-  // Dynamic viewer, sales and scroll listener
+  // Dynamic viewer count + delivery date
   useEffect(() => {
     setViewersCount(Math.floor(Math.random() * 15) + 8);
     setSalesCount(Math.floor(Math.random() * 12) + 6);
 
-    const handleScroll = () => {
-      if (typeof window !== 'undefined') {
-        setShowStickyBar(window.scrollY > 600);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-
-    // Calculate delivery date (today + 3 to 6 days)
+    // Calculate delivery date (today + 4 days)
     const date = new Date();
     date.setDate(date.getDate() + 4);
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'short', day: 'numeric' };
     setDeliveryDate(date.toLocaleDateString('en-US', options));
-
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const showToast = (msg: string) => {
@@ -371,7 +360,7 @@ export default function Product() {
           </div>
 
           {/* Right Column: Info & Buy Actions */}
-          <div className="lg:col-span-5 sticky lg:top-28 min-w-0 w-full">
+          <div className="lg:col-span-5 min-w-0 w-full">
             <div className="flex flex-col gap-2 sm:gap-3">
               {/* Urgency Factor badge */}
               <div className="flex items-center gap-2 text-[#D33E13] font-semibold text-xs md:text-sm bg-[#D33E13]/5 px-3 py-1.5 rounded-full w-fit">
@@ -428,16 +417,18 @@ export default function Product() {
               {/* Countdown Timer */}
               <ProductCountdown targetDate={product.countdownTimer?.value} />
 
-              {/* Dynamic Product options & add/buy CTA buttons */}
-              <ProductForm
-                product={product}
-                productOptions={productOptions}
-                selectedVariant={selectedVariant}
-                storeDomain={storeDomain}
-                showToast={showToast}
-                isOutOfStock={isOutOfStock}
-                handleShare={handleShare}
-              />
+              {/* Dynamic Product options & add/buy CTA buttons — sticky so it follows you while scrolling */}
+              <div className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4 -mx-1">
+                <ProductForm
+                  product={product}
+                  productOptions={productOptions}
+                  selectedVariant={selectedVariant}
+                  storeDomain={storeDomain}
+                  showToast={showToast}
+                  isOutOfStock={isOutOfStock}
+                  handleShare={handleShare}
+                />
+              </div>
 
               {/* Trust badges and shipping estimate */}
               <div className="flex flex-col gap-2 sm:gap-3.5 py-2.5 sm:py-4 border-t border-b border-gray-100 my-1 sm:my-2">
@@ -700,49 +691,7 @@ export default function Product() {
         </div>
       )}
 
-      {/* Sticky Bottom Add to Cart Bar */}
-      {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 z-[90] bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgb(0,0,0,0.10)] py-3 px-4 flex items-center justify-between gap-3 animate-slideUp md:bottom-5 md:left-auto md:right-5 md:max-w-sm md:rounded-2xl md:border md:shadow-2xl md:px-5">
-          <div className="flex items-center gap-3 min-w-0 overflow-hidden">
-            {media.nodes[0]?.previewImage?.url && (
-              <img
-                src={media.nodes[0].previewImage.url}
-                alt={title}
-                width={44}
-                height={44}
-                className="w-10 h-10 object-cover rounded-lg border border-gray-100 hidden sm:block flex-shrink-0"
-              />
-            )}
-            <div className="min-w-0 overflow-hidden">
-              <h4 className="font-extrabold text-xs text-gray-900 truncate">
-                {title}
-              </h4>
-              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                <span className="text-xs font-black text-[#D33E13] whitespace-nowrap">
-                  <Money data={selectedVariant.price} withoutTrailingZeros />
-                </span>
-                {selectedVariant.title && selectedVariant.title !== 'Default Title' && (
-                  <span className="text-[10px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.5 rounded">
-                    {selectedVariant.title}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex-shrink-0">
-            {!isOutOfStock ? (
-              <AddToCartButton
-                lines={[{merchandiseId: selectedVariant.id!, quantity: 1}]}
-                className="bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2.5 px-5 rounded-xl text-xs whitespace-nowrap shadow-md shadow-[#D33E13]/10"
-              >
-                Add to Cart
-              </AddToCartButton>
-            ) : (
-              <span className="text-xs font-bold text-gray-400 px-3 py-2 bg-gray-100 rounded-xl whitespace-nowrap">Sold Out</span>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Sticky bottom bar removed — ProductForm is now sticky inline */}
     </>
   );
 }
