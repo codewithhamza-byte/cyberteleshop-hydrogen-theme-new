@@ -20,186 +20,206 @@ export function AnalyticsTracker({
   const {subscribe, register} = useAnalytics();
   const {ready} = register('Storefront Pixels');
   const location = useLocation();
-  const initialized = useRef(false);
+  const initializedPixels = useRef<{
+    meta?: string;
+    google?: string;
+    tiktok?: string;
+    snapchat?: string;
+    pinterest?: string;
+  }>({});
 
   // Initialize third-party pixel scripts
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
     // 1. Initialize Meta Pixel
-    if (metaPixelId && metaPixelId !== 'YOUR_META_PIXEL_ID') {
-      console.log(`[Analytics] Initializing Meta Pixel with ID: ${metaPixelId}`);
-      const fbInstance = (window as any).fbq;
-      if (!fbInstance) {
-        const initFB = function (
-          f: any,
-          b: any,
-          e: any,
-          v: any,
-          n?: any,
-          t?: any,
-          s?: any,
-        ) {
-          if (f.fbq) return;
-          n = f.fbq = function () {
-            n.callMethod
-              ? n.callMethod.apply(n, arguments)
-              : n.queue.push(arguments);
+    if (metaPixelId && metaPixelId !== 'YOUR_META_PIXEL_ID' && metaPixelId.trim() !== '') {
+      if (initializedPixels.current.meta !== metaPixelId) {
+        console.log(`[Analytics] Initializing Meta Pixel with ID: ${metaPixelId}`);
+        initializedPixels.current.meta = metaPixelId;
+        const fbInstance = (window as any).fbq;
+        if (!fbInstance) {
+          const initFB = function (
+            f: any,
+            b: any,
+            e: any,
+            v: any,
+            n?: any,
+            t?: any,
+            s?: any,
+          ) {
+            if (f.fbq) return;
+            n = f.fbq = function () {
+              n.callMethod
+                ? n.callMethod.apply(n, arguments)
+                : n.queue.push(arguments);
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s);
           };
-          if (!f._fbq) f._fbq = n;
-          n.push = n;
-          n.loaded = !0;
-          n.version = '2.0';
-          n.queue = [];
-          t = b.createElement(e);
-          t.async = !0;
-          t.src = v;
-          s = b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t, s);
-        };
-        initFB(
-          window,
-          document,
-          'script',
-          'https://connect.facebook.net/en_US/fbevents.js',
-        );
+          initFB(
+            window,
+            document,
+            'script',
+            'https://connect.facebook.net/en_US/fbevents.js',
+          );
+        }
+        (window as any).fbq('init', metaPixelId);
+        (window as any).fbq('track', 'PageView');
       }
-      (window as any).fbq('init', metaPixelId);
-      (window as any).fbq('track', 'PageView');
+    } else if (metaPixelId === 'YOUR_META_PIXEL_ID') {
+      console.warn('[Analytics] Meta Pixel ID is set to placeholder "YOUR_META_PIXEL_ID". Skipping initialization.');
     }
 
     // 2. Initialize Google Analytics (gtag.js)
-    if (googleTagId && googleTagId.trim() !== '') {
-      console.log(`[Analytics] Initializing Google Analytics with Tag ID: ${googleTagId}`);
-      const scriptId = 'google-analytics-script';
-      if (!document.getElementById(scriptId)) {
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${googleTagId}`;
-        document.head.appendChild(script);
+    if (googleTagId && googleTagId.trim() !== '' && googleTagId !== 'YOUR_GOOGLE_TAG_ID') {
+      if (initializedPixels.current.google !== googleTagId) {
+        console.log(`[Analytics] Initializing Google Analytics with Tag ID: ${googleTagId}`);
+        initializedPixels.current.google = googleTagId;
+        const scriptId = 'google-analytics-script';
+        if (!document.getElementById(scriptId)) {
+          const script = document.createElement('script');
+          script.id = scriptId;
+          script.async = true;
+          script.src = `https://www.googletagmanager.com/gtag/js?id=${googleTagId}`;
+          document.head.appendChild(script);
 
-        (window as any).dataLayer = (window as any).dataLayer || [];
-        (window as any).gtag = function () {
-          (window as any).dataLayer.push(arguments);
-        };
-        (window as any).gtag('js', new Date());
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).gtag = function () {
+            (window as any).dataLayer.push(arguments);
+          };
+          (window as any).gtag('js', new Date());
+        }
         (window as any).gtag('config', googleTagId);
       }
     }
 
     // 3. Initialize TikTok Pixel
-    if (tiktokPixelId && tiktokPixelId.trim() !== '') {
-      console.log(`[Analytics] Initializing TikTok Pixel with ID: ${tiktokPixelId}`);
-      const ttqInstance = (window as any).ttq;
-      if (!ttqInstance) {
-        (function (w: any, d: any, t: string) {
-          w.TiktokAnalyticsObject = t;
-          var ttq = (w[t] = w[t] || []);
-          ttq.methods = [
-            'page',
-            'track',
-            'identify',
-            'instances',
-            'debug',
-            'on',
-            'off',
-            'once',
-            'ready',
-            'alias',
-            'group',
-            'enableCookie',
-            'disableCookie',
-          ];
-          ttq.setAndDefer = function (t: any, e: any) {
-            t[e] = function () {
-              t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+    if (tiktokPixelId && tiktokPixelId.trim() !== '' && tiktokPixelId !== 'YOUR_TIKTOK_PIXEL_ID') {
+      if (initializedPixels.current.tiktok !== tiktokPixelId) {
+        console.log(`[Analytics] Initializing TikTok Pixel with ID: ${tiktokPixelId}`);
+        initializedPixels.current.tiktok = tiktokPixelId;
+        const ttqInstance = (window as any).ttq;
+        if (!ttqInstance) {
+          (function (w: any, d: any, t: string) {
+            w.TiktokAnalyticsObject = t;
+            var ttq = (w[t] = w[t] || []);
+            ttq.methods = [
+              'page',
+              'track',
+              'identify',
+              'instances',
+              'debug',
+              'on',
+              'off',
+              'once',
+              'ready',
+              'alias',
+              'group',
+              'enableCookie',
+              'disableCookie',
+            ];
+            ttq.setAndDefer = function (t: any, e: any) {
+              t[e] = function () {
+                t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+              };
             };
-          };
-          for (var i = 0; i < ttq.methods.length; i++) {
-            ttq.setAndDefer(ttq, ttq.methods[i]);
-          }
-          ttq.instance = function (t: any) {
-            var e = ttq._i[t] || [],
-              n = 0;
-            for (n = 0; n < ttq.methods.length; n++) {
-              ttq.setAndDefer(e, ttq.methods[n]);
+            for (var i = 0; i < ttq.methods.length; i++) {
+              ttq.setAndDefer(ttq, ttq.methods[i]);
             }
-            return e;
-          };
-          ttq.load = function (e: any, n: any) {
-            var i = 'https://analytics.tiktok.com/i18n/pixel/events.js';
-            ttq._i = ttq._i || {};
-            ttq._i[e] = [];
-            ttq._i[e]._u = i;
-            ttq._t = ttq._t || {};
-            ttq._t[e] = +new Date();
-            ttq._o = ttq._o || {};
-            ttq._o[e] = n || {};
-            var o = d.createElement('script');
-            o.type = 'text/javascript';
-            o.async = true;
-            o.src = i + '?sdkid=' + e + '&lib=' + t;
-            var a = d.getElementsByTagName('script')[0];
-            a.parentNode.insertBefore(o, a);
-          };
-        })(window, document, 'ttq');
+            ttq.instance = function (t: any) {
+              var e = ttq._i[t] || [],
+                n = 0;
+              for (n = 0; n < ttq.methods.length; n++) {
+                ttq.setAndDefer(e, ttq.methods[n]);
+              }
+              return e;
+            };
+            ttq.load = function (e: any, n: any) {
+              var i = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+              ttq._i = ttq._i || {};
+              ttq._i[e] = [];
+              ttq._i[e]._u = i;
+              ttq._t = ttq._t || {};
+              ttq._t[e] = +new Date();
+              ttq._o = ttq._o || {};
+              ttq._o[e] = n || {};
+              var o = d.createElement('script');
+              o.type = 'text/javascript';
+              o.async = true;
+              o.src = i + '?sdkid=' + e + '&lib=' + t;
+              var a = d.getElementsByTagName('script')[0];
+              a.parentNode.insertBefore(o, a);
+            };
+          })(window, document, 'ttq');
+        }
+        (window as any).ttq.load(tiktokPixelId);
+        (window as any).ttq.page();
       }
-      (window as any).ttq.load(tiktokPixelId);
-      (window as any).ttq.page();
     }
 
     // 4. Initialize Snapchat Pixel
-    if (snapchatPixelId && snapchatPixelId.trim() !== '') {
-      console.log(`[Analytics] Initializing Snapchat Pixel with ID: ${snapchatPixelId}`);
-      const snapInstance = (window as any).snaptr;
-      if (!snapInstance) {
-        (function (e: any, t: any, n: string) {
-          if (e.snaptr) return;
-          var a: any = (e.snaptr = function () {
-            a.handleRequest
-              ? a.handleRequest.apply(a, arguments)
-              : a.queue.push(arguments);
-          });
-          a.queue = [];
-          var s = t.createElement(n);
-          s.async = !0;
-          s.src = 'https://sc-static.net/scevent.min.js';
-          var r = t.getElementsByTagName(n)[0];
-          r?.parentNode?.insertBefore(s, r);
-        })(window, document, 'script');
+    if (snapchatPixelId && snapchatPixelId.trim() !== '' && snapchatPixelId !== 'YOUR_SNAPCHAT_PIXEL_ID') {
+      if (initializedPixels.current.snapchat !== snapchatPixelId) {
+        console.log(`[Analytics] Initializing Snapchat Pixel with ID: ${snapchatPixelId}`);
+        initializedPixels.current.snapchat = snapchatPixelId;
+        const snapInstance = (window as any).snaptr;
+        if (!snapInstance) {
+          (function (e: any, t: any, n: string) {
+            if (e.snaptr) return;
+            var a: any = (e.snaptr = function () {
+              a.handleRequest
+                ? a.handleRequest.apply(a, arguments)
+                : a.queue.push(arguments);
+            });
+            a.queue = [];
+            var s = t.createElement(n);
+            s.async = !0;
+            s.src = 'https://sc-static.net/scevent.min.js';
+            var r = t.getElementsByTagName(n)[0];
+            r?.parentNode?.insertBefore(s, r);
+          })(window, document, 'script');
+        }
+        (window as any).snaptr('init', snapchatPixelId);
+        (window as any).snaptr('track', 'PAGE_VIEW');
       }
-      (window as any).snaptr('init', snapchatPixelId);
-      (window as any).snaptr('track', 'PAGE_VIEW');
     }
 
     // 5. Initialize Pinterest Pixel
-    if (pinterestPixelId && pinterestPixelId.trim() !== '') {
-      console.log(`[Analytics] Initializing Pinterest Pixel with ID: ${pinterestPixelId}`);
-      const pintrkInstance = (window as any).pintrk;
-      if (!pintrkInstance) {
-        const initPintrk = function (e: string) {
-          if (!(window as any).pintrk) {
-            (window as any).pintrk = function () {
-              (window as any).pintrk.queue.push(
-                Array.prototype.slice.call(arguments),
-              );
-            };
-            var n = (window as any).pintrk;
-            n.queue = [];
-            n.version = '3.0';
-            var t = document.createElement('script');
-            t.async = !0;
-            t.src = e;
-            var r = document.getElementsByTagName('script')[0];
-            r?.parentNode?.insertBefore(t, r);
-          }
-        };
-        initPintrk('https://s.pinimg.com/ct/core.js');
+    if (pinterestPixelId && pinterestPixelId.trim() !== '' && pinterestPixelId !== 'YOUR_PINTEREST_PIXEL_ID') {
+      if (initializedPixels.current.pinterest !== pinterestPixelId) {
+        console.log(`[Analytics] Initializing Pinterest Pixel with ID: ${pinterestPixelId}`);
+        initializedPixels.current.pinterest = pinterestPixelId;
+        const pintrkInstance = (window as any).pintrk;
+        if (!pintrkInstance) {
+          const initPintrk = function (e: string) {
+            if (!(window as any).pintrk) {
+              (window as any).pintrk = function () {
+                (window as any).pintrk.queue.push(
+                  Array.prototype.slice.call(arguments),
+                );
+              };
+              var n = (window as any).pintrk;
+              n.queue = [];
+              n.version = '3.0';
+              var t = document.createElement('script');
+              t.async = !0;
+              t.src = e;
+              var r = document.getElementsByTagName('script')[0];
+              r?.parentNode?.insertBefore(t, r);
+            }
+          };
+          initPintrk('https://s.pinimg.com/ct/core.js');
+        }
+        (window as any).pintrk('load', pinterestPixelId);
+        (window as any).pintrk('page');
       }
-      (window as any).pintrk('load', pinterestPixelId);
-      (window as any).pintrk('page');
     }
 
     // Signal that the integration layout registration is complete
@@ -551,7 +571,7 @@ export function AnalyticsTracker({
       if (typeof unsubWishlist === 'function') unsubWishlist();
       if (typeof unsubCompare === 'function') unsubCompare();
     };
-  }, [subscribe, location]);
+  }, [subscribe]);
 
   return null;
 }

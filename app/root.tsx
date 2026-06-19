@@ -104,11 +104,18 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
   const {storefront, env} = context;
 
   const brandNode = (layout as any).brandMetaobject?.nodes?.[0];
-  console.log('[Layout Metaobject Debug] brandMetaobject nodes:', (layout as any).brandMetaobject?.nodes);
   const brandFields: Record<string, any> = {};
   if (brandNode) {
     for (const field of brandNode.fields || []) {
       brandFields[field.key] = field;
+    }
+  }
+
+  const pixelsNode = (layout as any).pixelsMetaobject?.nodes?.[0];
+  const pixelsFields: Record<string, any> = {};
+  if (pixelsNode) {
+    for (const field of pixelsNode.fields || []) {
+      pixelsFields[field.key] = field;
     }
   }
 
@@ -125,6 +132,12 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     (layout.shop as any).brand?.squareLogo?.image?.url ||
     null;
 
+  const metaPixelId = pixelsFields.meta_pixel_id?.value || (layout.shop as any).metaPixelId?.value || env.PUBLIC_META_PIXEL_ID;
+  const googleTagId = pixelsFields.google_tag_id?.value || (layout.shop as any).googleTagId?.value || env.PUBLIC_GOOGLE_TAG_ID || '';
+  const tiktokPixelId = pixelsFields.tiktok_pixel_id?.value || (layout.shop as any).tiktokPixelId?.value || env.PUBLIC_TIKTOK_PIXEL_ID || '';
+  const snapchatPixelId = pixelsFields.snapchat_pixel_id?.value || (layout.shop as any).snapchatPixelId?.value || env.PUBLIC_SNAPCHAT_PIXEL_ID || '';
+  const pinterestPixelId = pixelsFields.pinterest_pixel_id?.value || (layout.shop as any).pinterestPixelId?.value || env.PUBLIC_PINTEREST_PIXEL_ID || '';
+
   return {
     layout,
     seo,
@@ -140,11 +153,11 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     },
     selectedLocale: storefront.i18n,
     env: {
-      PUBLIC_META_PIXEL_ID: (layout.shop as any).metaPixelId?.value || env.PUBLIC_META_PIXEL_ID,
-      PUBLIC_GOOGLE_TAG_ID: (layout.shop as any).googleTagId?.value || env.PUBLIC_GOOGLE_TAG_ID || '',
-      PUBLIC_TIKTOK_PIXEL_ID: (layout.shop as any).tiktokPixelId?.value || env.PUBLIC_TIKTOK_PIXEL_ID || '',
-      PUBLIC_SNAPCHAT_PIXEL_ID: (layout.shop as any).snapchatPixelId?.value || env.PUBLIC_SNAPCHAT_PIXEL_ID || '',
-      PUBLIC_PINTEREST_PIXEL_ID: (layout.shop as any).pinterestPixelId?.value || env.PUBLIC_PINTEREST_PIXEL_ID || '',
+      PUBLIC_META_PIXEL_ID: metaPixelId,
+      PUBLIC_GOOGLE_TAG_ID: googleTagId,
+      PUBLIC_TIKTOK_PIXEL_ID: tiktokPixelId,
+      PUBLIC_SNAPCHAT_PIXEL_ID: snapchatPixelId,
+      PUBLIC_PINTEREST_PIXEL_ID: pinterestPixelId,
       JUDGEME_SHOP_DOMAIN: env.JUDGEME_SHOP_DOMAIN,
       JUDGEME_PUBLIC_TOKEN: env.JUDGEME_PUBLIC_TOKEN,
       JUDGEME_CDN_HOST: env.JUDGEME_CDN_HOST,
@@ -316,6 +329,14 @@ const LAYOUT_QUERY = `#graphql
         }
       }
     }
+    pixelsMetaobject: metaobjects(type: "pixels", first: 1) {
+      nodes {
+        fields {
+          key
+          value
+        }
+      }
+    }
   }
   fragment Shop on Shop {
     id
@@ -420,6 +441,7 @@ async function getLayoutData({storefront, env}: AppLoadContext) {
   return {
     shop: data.shop,
     brandMetaobject: data.brandMetaobject,
+    pixelsMetaobject: data.pixelsMetaobject,
     headerMenu,
     footerMenu,
   };
