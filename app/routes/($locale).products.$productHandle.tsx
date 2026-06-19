@@ -691,7 +691,8 @@ export default function Product() {
         </div>
       )}
 
-      {/* Sticky bottom bar removed — ProductForm is now sticky inline */}
+      {/* Spacing for persistent bottom bar */}
+      <div className="pb-20 sm:pb-24" />
     </>
   );
 }
@@ -721,17 +722,6 @@ export function ProductForm({
   const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
   const [isCompare, setIsCompare] = useState(false);
-  const [showStickyBar, setShowStickyBar] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (typeof window !== 'undefined') {
-        setShowStickyBar(window.scrollY > 400); // Show after scrolling down 400px
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -1069,62 +1059,60 @@ export function ProductForm({
         )}
       </div>
 
-      {/* Sticky Bottom Bar (Quantity, Add to Cart, Buy it now) */}
-      {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 z-[90] bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgb(0,0,0,0.10)] py-3 px-4 flex flex-col gap-2 animate-slideUp md:bottom-5 md:left-auto md:right-5 md:max-w-[400px] md:rounded-2xl md:border md:shadow-2xl md:px-5">
-          <div className="flex items-center gap-3">
-            {/* Quantity Selector */}
-            <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 h-[48px] px-2 shadow-sm flex-shrink-0">
-              <button
-                type="button"
-                disabled={quantity <= 1}
-                onClick={() => setQuantity((q) => q - 1)}
-                className="w-8 h-8 flex items-center justify-center text-lg text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:hover:text-gray-500 font-bold"
-              >
-                &minus;
-              </button>
-              <span className="w-8 text-center font-extrabold text-gray-800 text-sm">{quantity}</span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                className="w-8 h-8 flex items-center justify-center text-lg text-gray-500 hover:text-gray-900 font-bold"
-              >
-                &#43;
-              </button>
-            </div>
+      {/* Persistent Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          {/* Quantity Selector */}
+          <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">
+            <button
+              type="button"
+              disabled={quantity <= 1}
+              onClick={() => setQuantity((q) => q - 1)}
+              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black disabled:opacity-30 transition-colors"
+            >
+              &minus;
+            </button>
+            <span className="w-6 sm:w-8 text-center font-bold text-black text-sm sm:text-base">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => q + 1)}
+              className="w-8 sm:w-10 h-full flex items-center justify-center text-xl text-gray-400 hover:text-black transition-colors"
+            >
+              &#43;
+            </button>
+          </div>
 
-            {/* Buttons Container */}
-            <div className="flex flex-1 items-center gap-2 min-w-0">
-              {!isOutOfStock ? (
-                <>
-                  <AddToCartButton
-                    lines={[{merchandiseId: selectedVariant.id!, quantity}]}
-                    className="flex-1 bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-3 px-2 rounded-xl text-xs sm:text-sm whitespace-nowrap shadow-md shadow-[#D33E13]/10 h-[48px] flex items-center justify-center"
-                  >
-                    Add to Cart
-                  </AddToCartButton>
-                  <button
-                    onClick={() => {
-                      const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
-                        'gid://shopify/ProductVariant/',
-                        '',
-                      )}:${quantity}`;
-                      window.location.href = checkoutUrl;
-                    }}
-                    className="flex-1 bg-[#E04A1D] hover:bg-[#c53a12] text-white font-extrabold py-3 px-2 rounded-xl text-xs sm:text-sm whitespace-nowrap shadow-md h-[48px] flex items-center justify-center uppercase"
-                  >
-                    Buy it now
-                  </button>
-                </>
-              ) : (
-                <div className="flex-1 bg-gray-100 text-gray-400 font-bold py-3 px-4 rounded-xl text-sm whitespace-nowrap h-[48px] flex items-center justify-center">
-                  Sold Out
-                </div>
-              )}
-            </div>
+          {/* Action Buttons */}
+          <div className="flex flex-1 items-center gap-2 sm:gap-3 min-w-0">
+            {!isOutOfStock ? (
+              <>
+                <AddToCartButton
+                  lines={[{merchandiseId: selectedVariant.id!, quantity}]}
+                  className="flex-1 bg-black hover:bg-neutral-800 text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
+                >
+                  Add to Cart
+                </AddToCartButton>
+                <button
+                  onClick={() => {
+                    const checkoutUrl = `${storeDomain}/cart/${selectedVariant.id.replace(
+                      'gid://shopify/ProductVariant/',
+                      '',
+                    )}:${quantity}`;
+                    window.location.href = checkoutUrl;
+                  }}
+                  className="flex-1 bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold py-2 px-2 sm:px-6 rounded-full text-[11px] sm:text-sm whitespace-nowrap shadow-md shadow-[#D33E13]/20 h-10 sm:h-12 flex items-center justify-center transition-transform active:scale-95 uppercase tracking-wider"
+                >
+                  Buy it now
+                </button>
+              </>
+            ) : (
+              <div className="flex-1 bg-gray-100 text-gray-400 font-bold py-2 px-4 rounded-full text-sm sm:text-base whitespace-nowrap h-10 sm:h-12 flex items-center justify-center uppercase tracking-widest">
+                Sold Out
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
