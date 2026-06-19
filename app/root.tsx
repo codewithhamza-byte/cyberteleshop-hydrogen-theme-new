@@ -117,7 +117,7 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
     },
     selectedLocale: storefront.i18n,
     env: {
-      PUBLIC_META_PIXEL_ID: env.PUBLIC_META_PIXEL_ID,
+      PUBLIC_META_PIXEL_ID: (layout.shop as any).metaPixelId?.value || env.PUBLIC_META_PIXEL_ID,
       JUDGEME_SHOP_DOMAIN: env.JUDGEME_SHOP_DOMAIN,
       JUDGEME_PUBLIC_TOKEN: env.JUDGEME_PUBLIC_TOKEN,
       JUDGEME_CDN_HOST: env.JUDGEME_CDN_HOST,
@@ -278,6 +278,9 @@ const LAYOUT_QUERY = `#graphql
           url
         }
       }
+    }
+    metaPixelId: metafield(namespace: "analytics", key: "meta_pixel_id") {
+      value
     }
   }
   fragment MenuItem on MenuItem {
