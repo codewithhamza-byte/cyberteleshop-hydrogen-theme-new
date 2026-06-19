@@ -62,7 +62,7 @@ export function Drawer({
                 leaveFrom="translate-x-0"
                 leaveTo={offScreen[openFrom]}
               >
-                <Dialog.Panel className="w-screen max-w-[420px] h-screen-dynamic flex flex-col bg-white shadow-2xl">
+                <Dialog.Panel className="w-screen max-w-[420px] h-screen-dynamic flex flex-col bg-white shadow-2xl overflow-hidden">
                   {/* Header */}
                   <header
                     className="flex-shrink-0 flex items-center px-5 py-4 border-b border-neutral-100 bg-white"
@@ -106,7 +106,10 @@ export function Drawer({
                       <IconClose aria-label="Close panel" />
                     </button>
                   </header>
-                  {children}
+                  {/* Children fill remaining flex space */}
+                  <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                    {children}
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
