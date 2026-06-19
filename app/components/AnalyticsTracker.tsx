@@ -157,7 +157,7 @@ export function AnalyticsTracker({
       if (!snapInstance) {
         (function (e: any, t: any, n: string) {
           if (e.snaptr) return;
-          var a = (e.snaptr = function () {
+          var a: any = (e.snaptr = function () {
             a.handleRequest
               ? a.handleRequest.apply(a, arguments)
               : a.queue.push(arguments);
@@ -167,7 +167,7 @@ export function AnalyticsTracker({
           s.async = !0;
           s.src = 'https://sc-static.net/scevent.min.js';
           var r = t.getElementsByTagName(n)[0];
-          r.parentNode.insertBefore(s, r);
+          r?.parentNode?.insertBefore(s, r);
         })(window, document, 'script');
       }
       (window as any).snaptr('init', snapchatPixelId);
@@ -179,23 +179,24 @@ export function AnalyticsTracker({
       console.log(`[Analytics] Initializing Pinterest Pixel with ID: ${pinterestPixelId}`);
       const pintrkInstance = (window as any).pintrk;
       if (!pintrkInstance) {
-        !(function (e: string) {
-          if (!window.pintrk) {
-            window.pintrk = function () {
-              window.pintrk.queue.push(
+        const initPintrk = function (e: string) {
+          if (!(window as any).pintrk) {
+            (window as any).pintrk = function () {
+              (window as any).pintrk.queue.push(
                 Array.prototype.slice.call(arguments),
               );
             };
-            var n = window.pintrk;
+            var n = (window as any).pintrk;
             n.queue = [];
             n.version = '3.0';
             var t = document.createElement('script');
             t.async = !0;
             t.src = e;
             var r = document.getElementsByTagName('script')[0];
-            r.parentNode.insertBefore(t, r);
+            r?.parentNode?.insertBefore(t, r);
           }
-        })('https://s.pinimg.com/ct/core.js');
+        };
+        initPintrk('https://s.pinimg.com/ct/core.js');
       }
       (window as any).pintrk('load', pinterestPixelId);
       (window as any).pintrk('page');
