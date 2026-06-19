@@ -31,7 +31,7 @@ function root({
 }): SeoConfig {
   return {
     title: shop?.name,
-    titleTemplate: '%s | Hydrogen Demo Store',
+    titleTemplate: '%s | Cyberteleshop',
     description: truncate(shop?.description ?? ''),
     handle: '@shopify',
     url,
@@ -67,9 +67,9 @@ function root({
 
 function home({url}: {url: Request['url']}): SeoConfig {
   return {
-    title: 'Home',
-    titleTemplate: '%s | Hydrogen Demo Store',
-    description: 'The best place to buy snowboarding products',
+    title: 'Cyberteleshop – Online Shopping Store in Pakistan',
+    titleTemplate: '%s',
+    description: 'Shop the latest electronics, gadgets, and more at Cyberteleshop. Fast delivery across Pakistan. Best prices guaranteed. Order online today!',
     url,
     robots: {
       noIndex: false,

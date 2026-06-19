@@ -456,7 +456,7 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl: string}) {
       <a 
         href={checkoutUrl} 
         target="_self" 
-        className="w-full py-3.5 px-6 bg-[#D33E13] hover:bg-[#b83310] text-white font-extrabold text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-[#D33E13]/25 hover:shadow-[#D33E13]/30 hover:-translate-y-0.5 active:translate-y-0 block text-center"
+        className="w-full py-3.5 px-6 bg-[#D33E13] hover:bg-[#b83310] text-white font-extrabold text-sm uppercase tracking-widest rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-[#D33E13]/25 hover:shadow-[#D33E13]/30 hover:-translate-y-0.5 active:translate-y-0 text-center"
       >
         <svg className="w-4 h-4 inline-block -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

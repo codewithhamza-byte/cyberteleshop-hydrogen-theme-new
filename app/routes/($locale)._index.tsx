@@ -821,7 +821,7 @@ function FeatureBlocks() {
 function ComparisonCard({title, description}: {title: string; description: string}) {
   return (
     <div className="rounded-[1.5rem] md:rounded-[2rem] border border-primary/10 bg-contrast/95 p-4 sm:p-6 md:p-8 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-      <Heading size="lead" className="text-copy text-sm sm:text-base md:text-lg">
+      <Heading size="lead" className="text-copy sm:text-base md:text-lg">
         {title}
       </Heading>
       <Text as="p" className="mt-2 text-primary/80 text-[10px] sm:text-xs md:text-sm">{description}</Text>
