@@ -160,8 +160,11 @@ function UtilityBar() {
 export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
 
+  const logoField = (layout?.shop as any)?.logoUrl;
   const logoSrc =
-    (layout?.shop as any)?.logoUrl?.value ||
+    logoField?.reference?.image?.url ||
+    logoField?.reference?.url ||
+    logoField?.value ||
     layout?.shop?.brand?.logo?.image?.url ||
     'https://www.cyberteleshop.com/cdn/shop/files/nexteaze_logo_2.svg?v=1747654489&width=165';
 
