@@ -691,8 +691,8 @@ export default function Product() {
         </div>
       )}
 
-      {/* Spacing for persistent bottom bar */}
-      <div className="pb-20 sm:pb-24" />
+      {/* Spacing for persistent bottom bar only on mobile */}
+      <div className="pb-20 sm:pb-24 md:pb-0" />
     </>
   );
 }
@@ -1059,8 +1059,8 @@ export function ProductForm({
         )}
       </div>
 
-      {/* Persistent Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full">
+      {/* Persistent Sticky Bottom Bar - Mobile Only */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 w-full md:hidden">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
           {/* Quantity Selector */}
           <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">
