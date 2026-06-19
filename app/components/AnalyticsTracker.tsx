@@ -9,7 +9,8 @@ interface AnalyticsTrackerProps {
 export function AnalyticsTracker({
   metaPixelId,
 }: AnalyticsTrackerProps) {
-  const {subscribe} = useAnalytics();
+  const {subscribe, register} = useAnalytics();
+  const {ready} = register('Meta Pixel');
   const location = useLocation();
   const initialized = useRef(false);
 
@@ -61,7 +62,10 @@ export function AnalyticsTracker({
     } else {
       console.log('[Analytics] Meta Pixel ID not configured. In developer mode.');
     }
-  }, [metaPixelId]);
+
+    // Signal that the integration is ready to receive events
+    ready();
+  }, [metaPixelId, ready]);
 
   // Subscribe to Shopify standard events and forward to FB Pixel
   useEffect(() => {
