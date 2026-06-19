@@ -141,7 +141,7 @@ export function ProductCard({
             </Link>
             {/* Judge.me Star Rating Badge */}
             <div>
-              <JudgemePreviewBadge id={product.id} template="product" />
+              {isMounted && <JudgemePreviewBadge id={product.id} template="product" />}
             </div>
             <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
               <span className={clsx("font-extrabold text-xs sm:text-sm md:text-base", cardColor.text)}>

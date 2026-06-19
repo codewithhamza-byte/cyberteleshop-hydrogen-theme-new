@@ -130,9 +130,9 @@ function UtilityBar() {
             <span className="text-[#25D366]">💬</span> <span className="font-semibold">03004252400</span>
           </a>
           <span className="text-neutral-300">|</span>
-          <a href="mailto:cyberteleshop@gmail.com" className="flex items-center gap-1.5 hover:text-[#D33E13] transition-colors duration-200">
+          <SafeEmailLink email="cyberteleshop@gmail.com" className="flex items-center gap-1.5 hover:text-[#D33E13] transition-colors duration-200">
             <span>✉️</span> <span>cyberteleshop@gmail.com</span>
-          </a>
+          </SafeEmailLink>
         </div>
 
         {/* Right Side: Quick Links */}
@@ -397,9 +397,9 @@ function MenuMobileNav({
             <a href="https://wa.me/923004252400" className="hover:text-[#D33E13] flex items-center gap-1.5 font-semibold">
               <span className="text-[#25D366]">💬</span> 03004252400
             </a>
-            <a href="mailto:cyberteleshop@gmail.com" className="hover:text-[#D33E13] flex items-center gap-1.5">
+            <SafeEmailLink email="cyberteleshop@gmail.com" className="hover:text-[#D33E13] flex items-center gap-1.5">
               <span>✉️</span> cyberteleshop@gmail.com
-            </a>
+            </SafeEmailLink>
           </div>
         </div>
 
@@ -1127,9 +1127,9 @@ function Footer() {
               </div>
               <div className="flex gap-2.5 items-center">
                 <span className="text-base leading-none">✉️</span>
-                <a href="mailto:cyberteleshop@gmail.com" className="hover:text-white transition-colors duration-200 truncate">
+                <SafeEmailLink email="cyberteleshop@gmail.com" className="hover:text-white transition-colors duration-200 truncate">
                   cyberteleshop@gmail.com
-                </a>
+                </SafeEmailLink>
               </div>
             </div>
           </div>
@@ -1170,5 +1170,34 @@ function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function SafeEmailLink({
+  email,
+  className,
+  children,
+}: {
+  email: string;
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  const isHydrated = useIsHydrated();
+
+  if (!isHydrated) {
+    return (
+      <span
+        className={className}
+        dangerouslySetInnerHTML={{
+          __html: `<!--email_off-->${email}<!--/email_off-->`,
+        }}
+      />
+    );
+  }
+
+  return (
+    <a href={`mailto:${email}`} className={className}>
+      {children || email}
+    </a>
   );
 }

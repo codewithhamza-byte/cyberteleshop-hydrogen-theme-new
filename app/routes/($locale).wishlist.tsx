@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {json, type MetaArgs, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {useFetcher, Link} from '@remix-run/react';
-import {getSeoMeta, Image} from '@shopify/hydrogen';
+import {getSeoMeta, Image, Analytics} from '@shopify/hydrogen';
 
 import {Grid} from '~/components/Grid';
 import {ProductCard} from '~/components/ProductCard';
@@ -151,6 +151,13 @@ export default function Wishlist() {
           </div>
         )}
       </main>
+      <Analytics.CustomView
+        type="custom_wishlist_viewed"
+        data={{
+          wishlistLength: wishlistIds.length,
+          wishlistIds,
+        }}
+      />
     </>
   );
 }

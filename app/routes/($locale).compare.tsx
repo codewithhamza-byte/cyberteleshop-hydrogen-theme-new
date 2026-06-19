@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {json, type MetaArgs, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {useFetcher, Link} from '@remix-run/react';
-import {getSeoMeta, Money, Image} from '@shopify/hydrogen';
+import {getSeoMeta, Money, Image, Analytics} from '@shopify/hydrogen';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {routeHeaders} from '~/data/cache';
 import {JudgemePreviewBadge} from '@judgeme/shopify-hydrogen';
@@ -312,6 +312,13 @@ export default function Compare() {
           </div>
         )}
       </main>
+      <Analytics.CustomView
+        type="custom_compare_viewed"
+        data={{
+          compareLength: compareIds.length,
+          compareIds,
+        }}
+      />
     </>
   );
 }

@@ -268,9 +268,11 @@ export default function Product() {
   const [salesCount, setSalesCount] = useState(10);
   const [deliveryDate, setDeliveryDate] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Dynamic viewer count + delivery date
   useEffect(() => {
+    setIsMounted(true);
     setViewersCount(Math.floor(Math.random() * 15) + 8);
     setSalesCount(Math.floor(Math.random() * 12) + 6);
 
@@ -384,7 +386,7 @@ export default function Product() {
                     }}
                     className="flex items-center gap-1.5 text-xs font-bold transition-colors focus:outline-none"
                   >
-                    <JudgemePreviewBadge id={product.id} template="product" />
+                    {isMounted && <JudgemePreviewBadge id={product.id} template="product" />}
                   </button>
                 </div>
               </div>
@@ -416,7 +418,7 @@ export default function Product() {
               </div>
 
               {/* Countdown Timer */}
-              <ProductCountdown targetDate={product.countdownTimer?.value} />
+              {isMounted && <ProductCountdown targetDate={product.countdownTimer?.value} />}
 
               {/* Dynamic Product options & add/buy CTA buttons — sticky so it follows you while scrolling */}
               <div className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4">
@@ -589,7 +591,7 @@ export default function Product() {
               Customer Reviews
             </h2>
             <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
-              <JudgemeReviewWidget id={product.id} />
+              {isMounted && <JudgemeReviewWidget id={product.id} />}
             </div>
           </div>
         </div>
