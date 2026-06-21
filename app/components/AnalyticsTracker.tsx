@@ -69,9 +69,12 @@ export function AnalyticsTracker({
             'script',
             'https://connect.facebook.net/en_US/fbevents.js',
           );
+          (window as any).fbq('init', metaPixelId);
+          (window as any).fbq('track', 'PageView');
+        } else if (metaPixelId !== '1242797070895097') {
+          (window as any).fbq('init', metaPixelId);
+          (window as any).fbq('track', 'PageView');
         }
-        (window as any).fbq('init', metaPixelId);
-        (window as any).fbq('track', 'PageView');
       }
     } else if (metaPixelId === 'YOUR_META_PIXEL_ID') {
       console.warn('[Analytics] Meta Pixel ID is set to placeholder "YOUR_META_PIXEL_ID". Skipping initialization.');

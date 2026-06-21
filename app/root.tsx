@@ -225,6 +225,26 @@ function Layout({children}: {children?: React.ReactNode}) {
         {data?.faviconUrl && (
           <link rel="icon" type="image/x-icon" href={data.faviconUrl} />
         )}
+        {/* Meta Pixel Code */}
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '1242797070895097');
+              fbq('track', 'PageView');
+            `,
+          }}
+        />
+        
+        {/* End Meta Pixel Code */}
       </head>
       <body>
         {data ? (
@@ -240,6 +260,29 @@ function Layout({children}: {children?: React.ReactNode}) {
               snapchatPixelId={data.env?.PUBLIC_SNAPCHAT_PIXEL_ID}
               pinterestPixelId={data.env?.PUBLIC_PINTEREST_PIXEL_ID}
             />
+            {/* Meta Pixel noscript fallback */}
+            <noscript>
+              <img
+                height="1"
+                width="1"
+                style={{display: 'none'}}
+                src="https://www.facebook.com/tr?id=1242797070895097&ev=PageView&noscript=1"
+                alt=""
+              />
+            </noscript>
+            {data.env?.PUBLIC_META_PIXEL_ID &&
+              data.env.PUBLIC_META_PIXEL_ID !== 'YOUR_META_PIXEL_ID' &&
+              data.env.PUBLIC_META_PIXEL_ID !== '1242797070895097' && (
+                <noscript>
+                  <img
+                    height="1"
+                    width="1"
+                    style={{display: 'none'}}
+                    src={`https://www.facebook.com/tr?id=${data.env.PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1`}
+                    alt=""
+                  />
+                </noscript>
+              )}
             <PageLayout
               key={`${locale.language}-${locale.country}`}
               layout={data.layout}
