@@ -72,6 +72,8 @@ export default async function handleRequest(
       'https://shopify.com',
       'https://judge.me',
       'https://*.judge.me',
+      'https://www.facebook.com',
+      'https://facebook.com',
     ],
     childSrc: [
       'self',
@@ -80,6 +82,8 @@ export default async function handleRequest(
       'https://youtu.be',
       'https://judge.me',
       'https://*.judge.me',
+      'https://www.facebook.com',
+      'https://facebook.com',
     ],
     mediaSrc: [
       'self',

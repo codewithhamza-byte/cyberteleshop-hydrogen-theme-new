@@ -261,27 +261,21 @@ function Layout({children}: {children?: React.ReactNode}) {
               pinterestPixelId={data.env?.PUBLIC_PINTEREST_PIXEL_ID}
             />
             {/* Meta Pixel noscript fallback */}
-            <noscript>
-              <img
-                height="1"
-                width="1"
-                style={{display: 'none'}}
-                src="https://www.facebook.com/tr?id=1242797070895097&ev=PageView&noscript=1"
-                alt=""
-              />
-            </noscript>
+            <noscript
+              suppressHydrationWarning
+              dangerouslySetInnerHTML={{
+                __html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1242797070895097&ev=PageView&noscript=1" alt="" />`,
+              }}
+            />
             {data.env?.PUBLIC_META_PIXEL_ID &&
               data.env.PUBLIC_META_PIXEL_ID !== 'YOUR_META_PIXEL_ID' &&
               data.env.PUBLIC_META_PIXEL_ID !== '1242797070895097' && (
-                <noscript>
-                  <img
-                    height="1"
-                    width="1"
-                    style={{display: 'none'}}
-                    src={`https://www.facebook.com/tr?id=${data.env.PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1`}
-                    alt=""
-                  />
-                </noscript>
+                <noscript
+                  suppressHydrationWarning
+                  dangerouslySetInnerHTML={{
+                    __html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${data.env.PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1" alt="" />`,
+                  }}
+                />
               )}
             <PageLayout
               key={`${locale.language}-${locale.country}`}
