@@ -191,7 +191,7 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
     for (let i = 1; i <= 5; i++) {
       if (i <= ratingVal) {
         stars.push(
-          <svg key={i} className={`${size} text-[#C5A880] fill-current`} viewBox="0 0 20 20">
+          <svg key={i} className={`${size} text-[#D33E13] fill-current`} viewBox="0 0 20 20">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
         );
@@ -202,7 +202,7 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
             <div className="absolute top-0 left-0 w-[50%] overflow-hidden">
-              <svg className={`${size} text-[#C5A880] fill-current`} viewBox="0 0 20 20">
+              <svg className={`${size} text-[#D33E13] fill-current`} viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             </div>
@@ -243,10 +243,10 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
 
   if (loading && reviews.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-8 h-8 border-2 border-[#C5A880] border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest animate-pulse">
-          Loading reviews...
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="w-10 h-10 border-4 border-[#D33E13] border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest animate-pulse">
+          Loading product reviews...
         </p>
       </div>
     );
@@ -287,52 +287,52 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       // Brief glowing/highlight effect
-      element.classList.add('bg-stone-50/80', 'transition-all', 'duration-500');
+      element.classList.add('ring-4', 'ring-[#D33E13]', 'ring-offset-2', 'z-10');
       setTimeout(() => {
-        element.classList.remove('bg-stone-50/80');
+        element.classList.remove('ring-4', 'ring-[#D33E13]', 'ring-offset-2', 'z-10');
       }, 2000);
     }
   };
 
   return (
-    <div className="flex flex-col gap-10 font-sans text-stone-800">
+    <div className="flex flex-col gap-8">
       {/* 1. Review Summary Section */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-[#FAF9F6] p-6 md:p-10 border border-stone-200/60 rounded-none shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-neutral-50/50 dark:bg-neutral-900/10 p-6 md:p-8 rounded-3xl border border-neutral-100 dark:border-neutral-800">
         
         {/* Large Score Card */}
-        <div className="md:col-span-5 flex flex-col items-center justify-center text-center gap-3 border-b md:border-b-0 md:border-r border-stone-200/60 pb-8 md:pb-0 md:pr-10">
-          <h3 className="text-6xl font-light text-stone-900 tracking-tight leading-none">
+        <div className="md:col-span-4 flex flex-col items-center justify-center text-center gap-2 border-b md:border-b-0 md:border-r border-neutral-200/60 pb-6 md:pb-0 md:pr-8">
+          <h3 className="text-5xl md:text-6xl font-black text-neutral-900 tracking-tight leading-none">
             {avgRating}
           </h3>
           <div className="flex gap-1">{renderStarsSvg(avgRating, "w-5 h-5")}</div>
-          <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">
-            {totalCount} reviews
+          <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
+            Based on {totalCount} reviews
           </p>
           <button
             onClick={() => setModalOpen(true)}
-            className="mt-3 px-8 py-3.5 bg-stone-900 hover:bg-stone-800 text-white font-semibold text-[10px] uppercase tracking-widest rounded-none transition duration-300"
+            className="mt-4 px-5 py-3 bg-[#D33E13] hover:bg-[#b0300d] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-200 shadow-md shadow-[#D33E13]/10 hover:-translate-y-0.5"
           >
             Write a Review
           </button>
         </div>
 
         {/* Rating Breakdown Bars */}
-        <div className="md:col-span-7 flex flex-col gap-3.5">
+        <div className="md:col-span-8 flex flex-col gap-2.5">
           {([5, 4, 3, 2, 1] as const).map((stars) => {
             const count = breakdown[stars];
             const pct = totalCount > 0 ? (count / totalCount) * 100 : 0;
             return (
-              <div key={stars} className="flex items-center gap-4 text-[10px] tracking-wider uppercase">
-                <span className="w-12 font-medium text-stone-500 text-right whitespace-nowrap">
+              <div key={stars} className="flex items-center gap-3.5 text-xs">
+                <span className="w-10 font-bold text-neutral-600 dark:text-neutral-400 whitespace-nowrap text-right">
                   {stars} Star
                 </span>
-                <div className="flex-1 h-[2px] bg-stone-200/60 overflow-hidden relative">
+                <div className="flex-1 h-3.5 bg-neutral-200/50 dark:bg-neutral-800/50 rounded-full overflow-hidden relative border border-neutral-200/20">
                   <div
                     style={{width: `${pct}%`}}
-                    className="h-full bg-[#C5A880] transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-[#D33E13] to-orange-500 rounded-full transition-all duration-500 ease-out"
                   ></div>
                 </div>
-                <span className="w-16 text-left font-semibold text-stone-400">
+                <span className="w-12 text-left font-bold text-neutral-500">
                   {count} ({Math.round(pct)}%)
                 </span>
               </div>
@@ -343,23 +343,23 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
 
       {/* 2. Aggregated Customer Photo Gallery */}
       {allPictures.length > 0 && (
-        <div className="flex flex-col gap-4 border-b border-stone-150 pb-8">
-          <h4 className="text-[10px] font-semibold uppercase text-stone-400 tracking-widest">
-            Customer Photos ({allPictures.length})
+        <div className="bg-neutral-50/50 dark:bg-neutral-900/10 p-6 rounded-3xl border border-neutral-100 dark:border-neutral-800 flex flex-col gap-4">
+          <h4 className="text-xs font-black uppercase text-neutral-500 tracking-wider">
+            Review Gallery ({allPictures.length} Photos)
           </h4>
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-200">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-200">
             {allPictures.map((pic, idx) => (
               <button
                 key={idx}
                 onClick={() => handleGalleryClick(pic.reviewId)}
-                className="relative w-14 h-14 rounded-full overflow-hidden border border-stone-200 hover:border-[#C5A880] transition duration-300 shrink-0 group"
+                className="relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 hover:border-[#D33E13] hover:scale-105 transition duration-200 shrink-0 shadow-sm group"
               >
                 <img
                   src={pic.thumbnail}
                   alt={`Uploaded by ${pic.reviewer}`}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition duration-300"></div>
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-200"></div>
               </button>
             ))}
           </div>
@@ -368,7 +368,7 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
 
       {/* 3. Review Filter Pills */}
       {reviews.length > 0 && (
-        <div className="flex flex-wrap gap-2 pb-2 border-b border-stone-150">
+        <div className="flex flex-wrap gap-2 pt-2">
           {filterOptions.map((opt) => (
             <button
               key={opt.value ?? 'all'}
@@ -376,10 +376,10 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                 setSelectedRating(opt.value);
                 setVisibleCount(5);
               }}
-              className={`px-5 py-1.5 text-[10px] font-semibold uppercase tracking-widest rounded-full transition duration-300 border ${
+              className={`px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-xl transition duration-200 border ${
                 selectedRating === opt.value
-                  ? 'bg-stone-900 border-stone-900 text-white shadow-sm'
-                  : 'bg-white hover:bg-stone-50 border-stone-200 text-stone-500 hover:text-stone-850 hover:border-stone-450'
+                  ? 'bg-[#D33E13] border-[#D33E13] text-white shadow-md shadow-[#D33E13]/10'
+                  : 'bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-600 hover:border-neutral-300'
               }`}
             >
               {opt.label} ({opt.count})
@@ -388,21 +388,21 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
         </div>
       )}
 
-      {/* 4. Review List Section (Minimalist Vertical Feed) */}
-      <div className="flex flex-col gap-8 divide-y divide-stone-100">
+      {/* 4. Review List Section (Masonry Grid Layout) */}
+      <div className="flex flex-col gap-6">
         {filteredReviews.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-stone-200 rounded-none p-8 bg-stone-50/50">
-            <span className="text-2xl mb-3 text-stone-300">💬</span>
-            <h4 className="font-semibold text-stone-850 uppercase tracking-widest text-[11px] mb-2">
-              No matching reviews
+          <div className="flex flex-col items-center justify-center py-12 text-center bg-neutral-50 border border-dashed border-neutral-200/60 rounded-3xl p-6">
+            <span className="text-4xl mb-4">💬</span>
+            <h4 className="font-extrabold text-neutral-900 uppercase tracking-tight mb-1 text-sm">
+              No Reviews Match Filter
             </h4>
-            <p className="text-xs text-stone-400 max-w-xs mb-4 leading-relaxed font-light">
-              Try selecting a different rating filter or be the first to write a review.
+            <p className="text-xs text-neutral-500 max-w-xs mb-4">
+              Try selecting a different rating filter or add a new review.
             </p>
             {selectedRating !== null && (
               <button
                 onClick={() => setSelectedRating(null)}
-                className="px-6 py-2.5 bg-stone-900 text-white hover:bg-stone-800 font-semibold text-[10px] uppercase tracking-widest rounded-none transition duration-150"
+                className="px-4 py-2.5 bg-neutral-950 text-white hover:bg-neutral-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-150"
               >
                 Clear Filters
               </button>
@@ -410,62 +410,64 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
           </div>
         ) : (
           <>
-            <div className="flex flex-col divide-y divide-stone-150">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 [column-fill:_balance] space-y-0">
               {filteredReviews.slice(0, visibleCount).map((review) => (
                 <div
                   key={review.id}
                   id={`review-${review.id}`}
-                  className="py-8 first:pt-0 last:pb-0 flex flex-col md:flex-row gap-6 md:gap-8 items-start transition-colors duration-300"
+                  className="break-inside-avoid-column inline-block w-full mb-6 p-5 md:p-6 bg-white border border-neutral-200/60 rounded-3xl shadow-sm hover:shadow-md transition duration-200"
                 >
-                  {/* Left Column: Author Metadata */}
-                  <div className="w-full md:w-1/4 shrink-0 flex flex-row md:flex-col gap-4 justify-between md:justify-start">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center font-semibold text-[11px] text-stone-600 border border-stone-200/50 shadow-inner">
-                        {getInitials(review.reviewer?.name || 'User')}
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-semibold text-stone-850 text-xs sm:text-sm">
-                            {review.reviewer?.name || 'Anonymous'}
+                  {/* Review Header (Author, stars, date) */}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex justify-between items-start gap-3">
+                      {/* User info */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center font-black text-xs text-neutral-700 border border-neutral-200/60 shadow-sm shrink-0">
+                          {getInitials(review.reviewer?.name || 'User')}
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-extrabold text-sm text-neutral-900 leading-tight">
+                              {review.reviewer?.name || 'Anonymous'}
+                            </span>
+                            {review.verified !== 'nothing' && (
+                              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-green-50 text-green-700 border border-green-200/40 tracking-wider whitespace-nowrap">
+                                ✓ Verified
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-neutral-400 font-bold">
+                            {formatDate(review.created_at)}
                           </span>
                         </div>
-                        {review.verified !== 'nothing' && (
-                          <span className="text-[9px] font-semibold uppercase tracking-widest text-stone-400 mt-0.5">
-                            • Verified Buyer
-                          </span>
-                        )}
                       </div>
-                    </div>
-                    
-                    <div className="flex flex-col md:items-start items-end justify-center">
-                      <div className="flex gap-0.5 mb-1">{renderStarsSvg(review.rating, "w-3 h-3")}</div>
-                      <span className="text-[9px] text-stone-400 font-semibold uppercase tracking-widest">
-                        {formatDate(review.created_at)}
-                      </span>
+
+                      {/* Star rating */}
+                      <div className="flex gap-0.5 shrink-0">{renderStarsSvg(review.rating, "w-3.5 h-3.5")}</div>
                     </div>
                   </div>
 
-                  {/* Right Column: Review Text & Images */}
-                  <div className="flex-1 flex flex-col gap-3 min-w-0">
+                  {/* Review Content */}
+                  <div className="flex flex-col gap-1.5 mt-4">
                     {review.title && (
-                      <h4 className="font-semibold text-stone-900 text-sm tracking-tight leading-snug">
+                      <h4 className="font-extrabold text-neutral-900 text-sm leading-snug">
                         {review.title}
                       </h4>
                     )}
-                    <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-light whitespace-pre-line">
+                    <p className="text-xs md:text-sm text-neutral-600 leading-relaxed font-medium whitespace-pre-line">
                       {review.body}
                     </p>
 
                     {/* Review Images */}
                     {review.pictures && review.pictures.length > 0 && (
-                      <div className="flex flex-wrap gap-3 mt-2">
+                      <div className="flex flex-wrap gap-2.5 mt-3">
                         {review.pictures.map((pic, idx) => (
                           <a
                             key={idx}
                             href={pic.urls.original}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block w-14 h-14 rounded-none overflow-hidden border border-stone-200/80 hover:border-[#C5A880] transition duration-300"
+                            className="block w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 hover:scale-105 transition duration-150"
                           >
                             <img
                               src={pic.urls.small || pic.urls.compact}
@@ -483,10 +485,10 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
 
             {/* Load More Trigger */}
             {filteredReviews.length > visibleCount && (
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-4">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 6)}
-                  className="px-8 py-3.5 border border-stone-200 hover:bg-stone-50 hover:border-stone-400 text-stone-700 font-semibold text-[10px] uppercase tracking-widest rounded-none transition duration-300"
+                  className="px-6 py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-150"
                 >
                   Load More Reviews
                 </button>
@@ -498,8 +500,8 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
 
       {/* 5. Review Submission Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-[2px] px-4">
-          <div className="bg-[#FAF9F6] rounded-none max-w-xl w-full p-8 md:p-10 shadow-2xl relative border border-stone-200/80 max-h-[90vh] overflow-y-auto animate-fadeIn">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-neutral-100 max-h-[90vh] overflow-y-auto animate-fadeIn">
             
             {/* Close Button */}
             <button
@@ -508,41 +510,41 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                 setFormImages([]);
                 setUploadError(null);
               }}
-              className="absolute top-6 right-6 text-stone-400 hover:text-stone-700 transition-colors focus:outline-none"
+              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
             {submitSuccess ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center gap-5 animate-scaleUp">
-                <span className="text-4xl text-[#C5A880] animate-bounce">✓</span>
-                <h3 className="text-md font-semibold text-stone-900 uppercase tracking-widest">
-                  Review Submitted
+              <div className="flex flex-col items-center justify-center py-10 text-center gap-4 animate-scaleUp">
+                <span className="text-6xl animate-bounce">🎉</span>
+                <h3 className="text-xl font-black text-neutral-900 uppercase tracking-tight">
+                  Review Submitted!
                 </h3>
-                <p className="text-xs text-stone-400 max-w-sm font-light leading-relaxed">
-                  Thank you. Your feedback has been sent to Judge.me and will be processed shortly.
+                <p className="text-sm text-neutral-500 max-w-sm">
+                  Thank you! Your feedback has been sent to Judge.me and will be processed shortly.
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-6">
                 <div>
-                  <h3 className="text-lg font-light text-stone-900 uppercase tracking-widest">
+                  <h3 className="text-xl md:text-2xl font-black text-neutral-900 uppercase tracking-tight">
                     Write a review
                   </h3>
-                  <p className="text-[10px] text-stone-400 uppercase tracking-wider font-semibold mt-1">
+                  <p className="text-xs text-neutral-500 font-medium">
                     Share your experience about {productTitle}
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   {/* Rating Selector */}
                   <div>
-                    <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-3">
+                    <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-2">
                       Review Rating *
                     </label>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-1.5 items-center">
                       {[1, 2, 3, 4, 5].map((star) => {
                         const isHighlighted = hoverRating !== null ? star <= hoverRating : star <= formRating;
                         return (
@@ -555,8 +557,8 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                             className="p-0.5 focus:outline-none transition-transform hover:scale-110"
                           >
                             <svg
-                              className={`w-7 h-7 ${
-                                isHighlighted ? 'text-[#C5A880]' : 'text-stone-200'
+                              className={`w-8 h-8 ${
+                                isHighlighted ? 'text-[#D33E13]' : 'text-neutral-200'
                               } fill-current`}
                               viewBox="0 0 20 20"
                             >
@@ -565,16 +567,16 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                           </button>
                         );
                       })}
-                      <span className="text-[10px] font-semibold text-stone-500 tracking-widest ml-3">
+                      <span className="text-xs font-extrabold text-neutral-600 ml-2">
                         {formRating} / 5
                       </span>
                     </div>
                   </div>
 
                   {/* Name & Email Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-1.5">
+                      <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-1">
                         Your Name *
                       </label>
                       <input
@@ -583,11 +585,11 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                         placeholder="e.g. John Doe"
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
-                        className="w-full border-b border-t-0 border-r-0 border-l-0 border-stone-200 bg-transparent rounded-none px-0 py-2.5 text-stone-850 placeholder-stone-400 focus:border-stone-900 focus:ring-0 text-sm transition-all duration-300"
+                        className="w-full border border-neutral-200 focus:border-[#D33E13] rounded-xl px-4 py-3 text-sm focus:outline-none transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-1.5">
+                      <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-1">
                         Email Address *
                       </label>
                       <input
@@ -596,14 +598,14 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                         placeholder="john@example.com"
                         value={formEmail}
                         onChange={(e) => setFormEmail(e.target.value)}
-                        className="w-full border-b border-t-0 border-r-0 border-l-0 border-stone-200 bg-transparent rounded-none px-0 py-2.5 text-stone-850 placeholder-stone-400 focus:border-stone-900 focus:ring-0 text-sm transition-all duration-300"
+                        className="w-full border border-neutral-200 focus:border-[#D33E13] rounded-xl px-4 py-3 text-sm focus:outline-none transition"
                       />
                     </div>
                   </div>
 
                   {/* Title */}
                   <div>
-                    <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-1.5">
+                    <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-1">
                       Review Title
                     </label>
                     <input
@@ -611,13 +613,13 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                       placeholder="Summarize your experience"
                       value={formTitle}
                       onChange={(e) => setFormTitle(e.target.value)}
-                      className="w-full border-b border-t-0 border-r-0 border-l-0 border-stone-200 bg-transparent rounded-none px-0 py-2.5 text-stone-850 placeholder-stone-400 focus:border-stone-900 focus:ring-0 text-sm transition-all duration-300"
+                      className="w-full border border-neutral-200 focus:border-[#D33E13] rounded-xl px-4 py-3 text-sm focus:outline-none transition"
                     />
                   </div>
 
                   {/* Body */}
                   <div>
-                    <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-1.5">
+                    <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-1">
                       Review Body *
                     </label>
                     <textarea
@@ -626,36 +628,36 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                       placeholder="Write your comments here..."
                       value={formBody}
                       onChange={(e) => setFormBody(e.target.value)}
-                      className="w-full border border-stone-200 bg-transparent rounded-none px-4 py-3 text-stone-850 placeholder-stone-400 focus:border-stone-900 focus:ring-0 text-sm transition-all duration-300"
+                      className="w-full border border-neutral-200 focus:border-[#D33E13] rounded-xl px-4 py-3 text-sm focus:outline-none transition"
                     ></textarea>
                   </div>
 
                   {/* File Upload Section */}
                   <div>
-                    <label className="block text-[9px] font-semibold uppercase text-stone-400 tracking-widest mb-3">
+                    <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-2">
                       Upload Images (Max 3, up to 5MB each)
                     </label>
-                    <div className="flex flex-wrap gap-4 items-center">
+                    <div className="flex flex-wrap gap-3 items-center">
                       {formImages.map((base64, idx) => (
-                        <div key={idx} className="relative w-14 h-14 rounded-full overflow-hidden border border-stone-200 shadow-sm shrink-0 group">
+                        <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 shadow-sm shrink-0 group">
                           <img src={base64} alt="Preview" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => handleRemoveImage(idx)}
                             className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           >
-                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </button>
                         </div>
                       ))}
                       {formImages.length < 3 && (
-                        <label className="w-14 h-14 rounded-full border border-dashed border-stone-300 hover:border-stone-900 flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-stone-50">
-                          <svg className="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                        <label className="w-16 h-16 rounded-xl border-2 border-dashed border-neutral-300 hover:border-[#D33E13] flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-neutral-50">
+                          <svg className="w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                           </svg>
-                          <span className="text-[7px] text-stone-400 font-semibold uppercase tracking-widest mt-1">Add</span>
+                          <span className="text-[9px] text-neutral-400 font-bold mt-1">Add Image</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -667,12 +669,12 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                       )}
                     </div>
                     {uploadError && (
-                      <p className="text-[9px] text-red-500 font-semibold tracking-wider mt-2">⚠️ {uploadError}</p>
+                      <p className="text-[10px] text-red-500 font-bold mt-1">⚠️ {uploadError}</p>
                     )}
                   </div>
 
                   {submitError && (
-                    <div className="p-3 bg-red-50 border border-red-100 text-red-700 text-xs font-semibold rounded-none">
+                    <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl">
                       ⚠️ {submitError}
                     </div>
                   )}
@@ -680,10 +682,10 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-stone-900 hover:bg-stone-800 disabled:bg-stone-200 text-white font-semibold py-4 rounded-none transition duration-300 mt-2 text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
+                    className="w-full bg-[#D33E13] hover:bg-[#b0300d] disabled:bg-neutral-300 text-white font-extrabold py-3.5 rounded-xl transition duration-200 mt-2 text-xs uppercase tracking-wider shadow-lg shadow-[#D33E13]/10 flex items-center justify-center gap-2"
                   >
                     {submitting && (
-                      <div className="w-3.5 h-3.5 border border-white border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     )}
                     {submitting ? 'Submitting...' : 'Submit Review'}
                   </button>

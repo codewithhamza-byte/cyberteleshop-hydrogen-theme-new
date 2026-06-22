@@ -312,32 +312,3 @@ export function isLocalPath(url: string) {
 
   return false;
 }
-
-export function productHasReviews(product: any): boolean {
-  if (!product) return false;
-
-  // Check reviewsCount metafield first
-  if (product.reviewsCount?.value) {
-    const count = parseInt(product.reviewsCount.value, 10);
-    if (!isNaN(count) && count > 0) return true;
-  }
-
-  // Check reviewsRating metafield
-  if (product.reviewsRating?.value) {
-    try {
-      const val = product.reviewsRating.value;
-      if (val.startsWith('{')) {
-        const parsed = JSON.parse(val);
-        const rating = parseFloat(parsed.value || parsed.rating || '0');
-        if (!isNaN(rating) && rating > 0) return true;
-      } else {
-        const rating = parseFloat(val);
-        if (!isNaN(rating) && rating > 0) return true;
-      }
-    } catch (e) {
-      // ignore parsing errors
-    }
-  }
-
-  return false;
-}
