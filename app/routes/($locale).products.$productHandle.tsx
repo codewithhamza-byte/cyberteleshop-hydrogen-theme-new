@@ -19,6 +19,7 @@ import {
 import {Money} from '~/components/Money';
 import invariant from 'tiny-invariant';
 import clsx from 'clsx';
+import {useInView} from 'react-intersection-observer';
 import type {
   Maybe,
   ProductOptionValueSwatch,
@@ -250,6 +251,10 @@ export default function Product() {
   const {media, title, vendor, descriptionHtml} = product;
   const {shippingPolicy, refundPolicy} = shop;
 
+  const {ref: mainFormRef, inView: mainFormInView} = useInView({
+    threshold: 0,
+  });
+
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     variants,
@@ -426,7 +431,7 @@ export default function Product() {
               {isMounted && <ProductCountdown targetDate={product.countdownTimer?.value} />}
 
               {/* Dynamic Product options & add/buy CTA buttons — sticky so it follows you while scrolling */}
-              <div className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4">
+              <div ref={mainFormRef} className="sticky top-[calc(var(--header-height,80px)+8px)] z-30 bg-white/95 backdrop-blur-sm rounded-2xl shadow-sm border border-neutral-100 p-3 sm:p-4">
                 <ProductForm
                   product={product}
                   productOptions={productOptions}
@@ -460,9 +465,8 @@ export default function Product() {
                 </div>
               </div>
 
-              {/* Product Meta details checklist */}
-              {/*
-              <div className="bg-gray-50/60 border border-gray-100 rounded-2xl p-3 sm:p-5 text-xs md:text-sm flex flex-col gap-2 sm:gap-3">
+              {/* Product Meta details checklist - visually hidden for SEO/crawlers */}
+              <div className="hidden">
                 <div className="flex justify-between items-center pb-2 border-b border-gray-100">
                   <span className="text-gray-500 font-semibold">Sku:</span>
                   <span className="text-gray-800 font-bold">{selectedVariant.sku || 'N/A'}</span>
@@ -504,7 +508,6 @@ export default function Product() {
                   </div>
                 </div>
               </div>
-              */}
             </div>
           </div>
         </div>
@@ -707,7 +710,10 @@ export default function Product() {
       <div className="pb-20 sm:pb-24 md:pb-0" />
 
       {/* Persistent Sticky Bottom Bar - Mobile Only */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 md:hidden">
+      <div className={clsx(
+        "fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-2 px-3 sm:py-3 sm:px-6 md:hidden transition-transform duration-300 ease-in-out",
+        (!isMounted || mainFormInView) ? "translate-y-full" : "translate-y-0"
+      )}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
           {/* Quantity Selector */}
           <div className="flex items-center border-2 border-gray-100 rounded-full bg-gray-50 h-10 sm:h-12 px-1 flex-shrink-0">
