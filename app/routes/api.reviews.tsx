@@ -34,7 +34,7 @@ export async function loader({request}: LoaderFunctionArgs) {
       return json({reviews: [], averageRating: 0, ratingCount: 0});
     }
 
-    const productData = await productRes.json();
+    const productData = (await productRes.json()) as any;
     const internalId = productData?.product?.id;
 
     if (!internalId) {
@@ -51,7 +51,7 @@ export async function loader({request}: LoaderFunctionArgs) {
       return json({reviews: [], averageRating: 0, ratingCount: 0});
     }
 
-    const reviewsData = await reviewsRes.json();
+    const reviewsData = (await reviewsRes.json()) as any;
     const reviews = reviewsData?.reviews || [];
 
     // Calculate aggregate ratings
@@ -78,6 +78,61 @@ export async function loader({request}: LoaderFunctionArgs) {
 }
 
 /**
+ * Upload a Base64 string to Catbox.moe and return the public URL
+ */
+async function uploadBase64ToCatbox(base64Data: string): Promise<string | null> {
+  try {
+    const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      console.error('Invalid base64 string format');
+      return null;
+    }
+    const contentType = matches[2] ? matches[1] : 'image/png';
+    const base64Str = matches[2];
+
+    const binaryStr = atob(base64Str);
+    const len = binaryStr.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    const blob = new Blob([bytes], {type: contentType});
+
+    let ext = 'png';
+    if (contentType === 'image/jpeg' || contentType === 'image/jpg') {
+      ext = 'jpg';
+    } else if (contentType === 'image/gif') {
+      ext = 'gif';
+    } else if (contentType === 'image/webp') {
+      ext = 'webp';
+    }
+
+    const filename = `review_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+
+    const formData = new FormData();
+    formData.append('reqtype', 'fileupload');
+    formData.append('fileToUpload', blob, filename);
+
+    const res = await fetch('https://catbox.moe/user/api.php', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      console.error(`Catbox upload failed with status: ${res.status}`);
+      return null;
+    }
+
+    const url = await res.text();
+    return url.trim();
+  } catch (error) {
+    console.error('Error uploading to Catbox:', error);
+    return null;
+  }
+}
+
+/**
  * POST handler: Submit a review to Judge.me
  */
 export async function action({request}: ActionFunctionArgs) {
@@ -86,14 +141,41 @@ export async function action({request}: ActionFunctionArgs) {
   }
 
   try {
-    const body = await request.json();
-    const {productId: rawProductId, name, email, rating, title, body: reviewBody} = body;
+    const body = (await request.json()) as {
+      productId?: string;
+      name?: string;
+      email?: string;
+      rating?: string | number;
+      title?: string;
+      body?: string;
+      images?: string[];
+    };
+    const {
+      productId: rawProductId,
+      name,
+      email,
+      rating,
+      title,
+      body: reviewBody,
+      images, // Optional array of base64 data URLs
+    } = body;
 
     if (!rawProductId || !name || !email || !rating || !reviewBody) {
       return json({error: 'Missing required fields'}, {status: 400});
     }
 
     const productId = cleanProductId(rawProductId);
+
+    // Upload base64 images to Catbox and get public URLs
+    const pictureUrls: string[] = [];
+    if (images && Array.isArray(images)) {
+      for (const base64Img of images) {
+        const uploadedUrl = await uploadBase64ToCatbox(base64Img);
+        if (uploadedUrl) {
+          pictureUrls.push(uploadedUrl);
+        }
+      }
+    }
 
     const submitUrl = 'https://judge.me/api/v1/reviews';
     const submitRes = await fetch(submitUrl, {
@@ -111,6 +193,7 @@ export async function action({request}: ActionFunctionArgs) {
         rating: Number(rating),
         title: title || '',
         body: reviewBody,
+        picture_urls: pictureUrls, // Include public picture URLs
       }),
     });
 
@@ -120,10 +203,11 @@ export async function action({request}: ActionFunctionArgs) {
       return json({error: 'Failed to submit review to Judge.me'}, {status: submitRes.status});
     }
 
-    const data = await submitRes.json();
+    const data = (await submitRes.json()) as any;
     return json({success: true, message: data.message || 'Review submitted successfully.'});
   } catch (error) {
     console.error('Error submitting review:', error);
     return json({error: 'Internal Server Error'}, {status: 500});
   }
 }
+

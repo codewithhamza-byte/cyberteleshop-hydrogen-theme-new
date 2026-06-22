@@ -48,6 +48,11 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
   const [formEmail, setFormEmail] = useState('');
   const [formTitle, setFormTitle] = useState('');
   const [formBody, setFormBody] = useState('');
+  const [formImages, setFormImages] = useState<string[]>([]); // array of base64 data strings
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Filters State
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   // Fetch reviews from our secure proxy route
   const fetchReviews = () => {
@@ -60,7 +65,7 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
         if (!res.ok) throw new Error('Failed to load reviews');
         return res.json();
       })
-      .then((data) => {
+      .then((data: any) => {
         setReviews(data.reviews || []);
         setAvgRating(data.averageRating || 0);
         setTotalCount(data.ratingCount || 0);
@@ -107,10 +112,11 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
           rating: formRating,
           title: formTitle,
           body: formBody,
+          images: formImages, // Include uploaded review images
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as any;
       if (!res.ok) {
         throw new Error(data.error || 'Failed to submit review');
       }
@@ -122,6 +128,8 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
       setFormEmail('');
       setFormTitle('');
       setFormBody('');
+      setFormImages([]);
+      setUploadError(null);
 
       // Auto close after 3 seconds and refresh reviews
       setTimeout(() => {
@@ -135,6 +143,46 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Handle selected image file changes (validation + base64 encoding)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+
+    if (formImages.length + files.length > 3) {
+      setUploadError('You can upload a maximum of 3 images.');
+      return;
+    }
+
+    const promises = files.map((file) => {
+      if (!file.type.startsWith('image/')) {
+        return Promise.reject(new Error(`${file.name} is not an image.`));
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return Promise.reject(new Error(`${file.name} exceeds 5MB size limit.`));
+      }
+
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(promises)
+      .then((newBase64s) => {
+        setFormImages((prev) => [...prev, ...newBase64s]);
+      })
+      .catch((err: any) => {
+        setUploadError(err.message || 'Error processing files.');
+      });
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   const renderStarsSvg = (score: number, size = "w-4 h-4") => {
@@ -204,8 +252,50 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
     );
   }
 
+  // Extract all review pictures for the top gallery
+  const allPictures = reviews.reduce((acc, review) => {
+    if (review.pictures && review.pictures.length > 0) {
+      review.pictures.forEach((pic) => {
+        acc.push({
+          reviewId: review.id,
+          thumbnail: pic.urls.small || pic.urls.compact || pic.urls.original,
+          original: pic.urls.original,
+          reviewer: review.reviewer?.name || 'Customer',
+        });
+      });
+    }
+    return acc;
+  }, [] as Array<{reviewId: number; thumbnail: string; original: string; reviewer: string}>);
+
+  // Filter options
+  const filterOptions = [
+    { value: null, label: 'All Reviews', count: totalCount },
+    { value: 5, label: '5 ★', count: breakdown[5] },
+    { value: 4, label: '4 ★', count: breakdown[4] },
+    { value: 3, label: '3 ★', count: breakdown[3] },
+    { value: 2, label: '2 ★', count: breakdown[2] },
+    { value: 1, label: '1 ★', count: breakdown[1] },
+  ];
+
+  const filteredReviews = selectedRating
+    ? reviews.filter((r) => Math.round(r.rating) === selectedRating)
+    : reviews;
+
+  const handleGalleryClick = (reviewId: number) => {
+    // Scroll to the specific review card
+    const element = document.getElementById(`review-${reviewId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Brief glowing/highlight effect
+      element.classList.add('ring-4', 'ring-[#D33E13]', 'ring-offset-2', 'z-10');
+      setTimeout(() => {
+        element.classList.remove('ring-4', 'ring-[#D33E13]', 'ring-offset-2', 'z-10');
+      }, 2000);
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
       {/* 1. Review Summary Section */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-neutral-50/50 dark:bg-neutral-900/10 p-6 md:p-8 rounded-3xl border border-neutral-100 dark:border-neutral-800">
         
@@ -251,69 +341,120 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
         </div>
       </div>
 
-      {/* 2. Review List Section */}
+      {/* 2. Aggregated Customer Photo Gallery */}
+      {allPictures.length > 0 && (
+        <div className="bg-neutral-50/50 dark:bg-neutral-900/10 p-6 rounded-3xl border border-neutral-100 dark:border-neutral-800 flex flex-col gap-4">
+          <h4 className="text-xs font-black uppercase text-neutral-500 tracking-wider">
+            Review Gallery ({allPictures.length} Photos)
+          </h4>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-200">
+            {allPictures.map((pic, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleGalleryClick(pic.reviewId)}
+                className="relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 hover:border-[#D33E13] hover:scale-105 transition duration-200 shrink-0 shadow-sm group"
+              >
+                <img
+                  src={pic.thumbnail}
+                  alt={`Uploaded by ${pic.reviewer}`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-200"></div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3. Review Filter Pills */}
+      {reviews.length > 0 && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          {filterOptions.map((opt) => (
+            <button
+              key={opt.value ?? 'all'}
+              onClick={() => {
+                setSelectedRating(opt.value);
+                setVisibleCount(5);
+              }}
+              className={`px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-xl transition duration-200 border ${
+                selectedRating === opt.value
+                  ? 'bg-[#D33E13] border-[#D33E13] text-white shadow-md shadow-[#D33E13]/10'
+                  : 'bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-600 hover:border-neutral-300'
+              }`}
+            >
+              {opt.label} ({opt.count})
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 4. Review List Section (Masonry Grid Layout) */}
       <div className="flex flex-col gap-6">
-        {reviews.length === 0 ? (
+        {filteredReviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center bg-neutral-50 border border-dashed border-neutral-200/60 rounded-3xl p-6">
             <span className="text-4xl mb-4">💬</span>
             <h4 className="font-extrabold text-neutral-900 uppercase tracking-tight mb-1 text-sm">
-              No Reviews Yet
+              No Reviews Match Filter
             </h4>
             <p className="text-xs text-neutral-500 max-w-xs mb-4">
-              Be the first to share your thoughts and experience with other shoppers!
+              Try selecting a different rating filter or add a new review.
             </p>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="px-4 py-2.5 bg-neutral-950 text-white hover:bg-neutral-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-150"
-            >
-              Write First Review
-            </button>
+            {selectedRating !== null && (
+              <button
+                onClick={() => setSelectedRating(null)}
+                className="px-4 py-2.5 bg-neutral-950 text-white hover:bg-neutral-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-150"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-6">
-              {reviews.slice(0, visibleCount).map((review) => (
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 [column-fill:_balance] space-y-0">
+              {filteredReviews.slice(0, visibleCount).map((review) => (
                 <div
                   key={review.id}
-                  className="flex flex-col gap-4 p-5 md:p-6 bg-white border border-neutral-200/60 rounded-3xl shadow-sm hover:shadow-md transition duration-200"
+                  id={`review-${review.id}`}
+                  className="break-inside-avoid-column inline-block w-full mb-6 p-5 md:p-6 bg-white border border-neutral-200/60 rounded-3xl shadow-sm hover:shadow-md transition duration-200"
                 >
                   {/* Review Header (Author, stars, date) */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    
-                    {/* User info */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center font-black text-xs text-neutral-700 border border-neutral-200/60 shadow-sm shrink-0">
-                        {getInitials(review.reviewer?.name || 'User')}
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-extrabold text-sm text-neutral-900">
-                            {review.reviewer?.name || 'Anonymous'}
-                          </span>
-                          {review.verified !== 'nothing' && (
-                            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-green-50 text-green-700 border border-green-200/40 tracking-wider">
-                              ✓ Verified
-                            </span>
-                          )}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex justify-between items-start gap-3">
+                      {/* User info */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center font-black text-xs text-neutral-700 border border-neutral-200/60 shadow-sm shrink-0">
+                          {getInitials(review.reviewer?.name || 'User')}
                         </div>
-                        <span className="text-[10px] text-neutral-400 font-bold">
-                          {formatDate(review.created_at)}
-                        </span>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-extrabold text-sm text-neutral-900 leading-tight">
+                              {review.reviewer?.name || 'Anonymous'}
+                            </span>
+                            {review.verified !== 'nothing' && (
+                              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-green-50 text-green-700 border border-green-200/40 tracking-wider whitespace-nowrap">
+                                ✓ Verified
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-neutral-400 font-bold">
+                            {formatDate(review.created_at)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Star rating */}
-                    <div className="flex gap-0.5">{renderStarsSvg(review.rating, "w-3.5 h-3.5")}</div>
+                      {/* Star rating */}
+                      <div className="flex gap-0.5 shrink-0">{renderStarsSvg(review.rating, "w-3.5 h-3.5")}</div>
+                    </div>
                   </div>
 
                   {/* Review Content */}
-                  <div className="flex flex-col gap-1.5 pl-0 sm:pl-13">
+                  <div className="flex flex-col gap-1.5 mt-4">
                     {review.title && (
-                      <h4 className="font-extrabold text-neutral-900 text-sm md:text-base leading-snug">
+                      <h4 className="font-extrabold text-neutral-900 text-sm leading-snug">
                         {review.title}
                       </h4>
                     )}
-                    <p className="text-xs md:text-sm text-neutral-600 leading-relaxed font-medium">
+                    <p className="text-xs md:text-sm text-neutral-600 leading-relaxed font-medium whitespace-pre-line">
                       {review.body}
                     </p>
 
@@ -343,10 +484,10 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
             </div>
 
             {/* Load More Trigger */}
-            {reviews.length > visibleCount && (
+            {filteredReviews.length > visibleCount && (
               <div className="flex justify-center mt-4">
                 <button
-                  onClick={() => setVisibleCount((prev) => prev + 5)}
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
                   className="px-6 py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition duration-150"
                 >
                   Load More Reviews
@@ -357,14 +498,18 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
         )}
       </div>
 
-      {/* 3. Review Submission Modal */}
+      {/* 5. Review Submission Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-neutral-100 max-h-[90vh] overflow-y-auto animate-fadeIn">
             
             {/* Close Button */}
             <button
-              onClick={() => setModalOpen(false)}
+              onClick={() => {
+                setModalOpen(false);
+                setFormImages([]);
+                setUploadError(null);
+              }}
               className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-600 transition-colors focus:outline-none"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -479,12 +624,53 @@ export function ReviewsWidget({productId, productTitle}: ReviewsWidgetProps) {
                     </label>
                     <textarea
                       required
-                      rows={5}
+                      rows={4}
                       placeholder="Write your comments here..."
                       value={formBody}
                       onChange={(e) => setFormBody(e.target.value)}
                       className="w-full border border-neutral-200 focus:border-[#D33E13] rounded-xl px-4 py-3 text-sm focus:outline-none transition"
                     ></textarea>
+                  </div>
+
+                  {/* File Upload Section */}
+                  <div>
+                    <label className="block text-[11px] font-black uppercase text-neutral-500 tracking-wider mb-2">
+                      Upload Images (Max 3, up to 5MB each)
+                    </label>
+                    <div className="flex flex-wrap gap-3 items-center">
+                      {formImages.map((base64, idx) => (
+                        <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 shadow-sm shrink-0 group">
+                          <img src={base64} alt="Preview" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                      {formImages.length < 3 && (
+                        <label className="w-16 h-16 rounded-xl border-2 border-dashed border-neutral-300 hover:border-[#D33E13] flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-neutral-50">
+                          <svg className="w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                          <span className="text-[9px] text-neutral-400 font-bold mt-1">Add Image</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+                    {uploadError && (
+                      <p className="text-[10px] text-red-500 font-bold mt-1">⚠️ {uploadError}</p>
+                    )}
                   </div>
 
                   {submitError && (
