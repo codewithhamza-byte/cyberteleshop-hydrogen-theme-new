@@ -461,6 +461,7 @@ export default function Product() {
               </div>
 
               {/* Product Meta details checklist */}
+              {/*
               <div className="bg-gray-50/60 border border-gray-100 rounded-2xl p-3 sm:p-5 text-xs md:text-sm flex flex-col gap-2 sm:gap-3">
                 <div className="flex justify-between items-center pb-2 border-b border-gray-100">
                   <span className="text-gray-500 font-semibold">Sku:</span>
@@ -503,6 +504,7 @@ export default function Product() {
                   </div>
                 </div>
               </div>
+              */}
             </div>
           </div>
         </div>
