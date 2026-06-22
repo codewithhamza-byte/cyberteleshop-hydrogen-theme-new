@@ -4,7 +4,7 @@ import {useFetcher, Link} from '@remix-run/react';
 import {getSeoMeta, Money, Image, Analytics} from '@shopify/hydrogen';
 import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {routeHeaders} from '~/data/cache';
-import {JudgemePreviewBadge} from '@judgeme/shopify-hydrogen';
+import {ReviewStars} from '~/components/ReviewStars';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {isDiscounted} from '~/lib/utils';
 import type {Product, MoneyV2} from '@shopify/hydrogen/storefront-api-types';
@@ -232,7 +232,11 @@ export default function Compare() {
                     <td className="p-5 text-xs font-black uppercase text-neutral-500">Reviews</td>
                     {products.map((product) => (
                       <td key={product.id} className="p-5 border-l border-neutral-100">
-                        <JudgemePreviewBadge id={product.id} template="product" />
+                        <ReviewStars
+                          productId={product.id}
+                          rating={product.reviewsRating?.value}
+                          ratingCount={product.reviewsCount?.value}
+                        />
                       </td>
                     ))}
                     {Array.from({length: Math.max(0, 3 - products.length)}).map((_, i) => (

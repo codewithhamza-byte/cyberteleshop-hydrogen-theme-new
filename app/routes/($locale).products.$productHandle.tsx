@@ -38,7 +38,8 @@ import {seoPayload} from '~/lib/seo.server';
 import type {Storefront} from '~/lib/type';
 import {routeHeaders, CACHE_AD_LANDING} from '~/data/cache';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {JudgemePreviewBadge, JudgemeReviewWidget} from '@judgeme/shopify-hydrogen';
+import {ReviewStars} from '~/components/ReviewStars';
+import {ReviewsWidget} from '~/components/ReviewsWidget';
 
 export const headers = routeHeaders;
 
@@ -386,7 +387,11 @@ export default function Product() {
                     }}
                     className="flex items-center gap-1.5 text-xs font-bold transition-colors focus:outline-none"
                   >
-                    {isMounted && <JudgemePreviewBadge id={product.id} template="product" />}
+                    <ReviewStars
+                      productId={product.id}
+                      rating={product.reviewsRating?.value}
+                      ratingCount={product.reviewsCount?.value}
+                    />
                   </button>
                 </div>
               </div>
@@ -591,7 +596,7 @@ export default function Product() {
               Customer Reviews
             </h2>
             <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
-              {isMounted && <JudgemeReviewWidget id={product.id} />}
+              <ReviewsWidget productId={product.id} productTitle={product.title} />
             </div>
           </div>
         </div>
@@ -1405,6 +1410,12 @@ const PRODUCT_FRAGMENT = `#graphql
       ...ProductVariant
     }
     countdownTimer: metafield(namespace: "custom", key: "countdown_timer") {
+      value
+    }
+    reviewsRating: metafield(namespace: "reviews", key: "rating") {
+      value
+    }
+    reviewsCount: metafield(namespace: "reviews", key: "rating_count") {
       value
     }
     seo {

@@ -47,6 +47,12 @@ export const PRODUCT_CARD_FRAGMENT = `#graphql
     productType
     description
     tags
+    reviewsRating: metafield(namespace: "reviews", key: "rating") {
+      value
+    }
+    reviewsCount: metafield(namespace: "reviews", key: "rating_count") {
+      value
+    }
     variants(first: 1) {
       nodes {
         id
