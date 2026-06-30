@@ -46,9 +46,30 @@ export async function loader(args: LoaderFunctionArgs) {
 }
 
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
-  const {shop, brandMetaobject} = await context.storefront.query(HOMEPAGE_SEO_QUERY, {
-    cache: context.storefront.CacheShort(),
-  });
+  const {language, country} = context.storefront.i18n;
+
+  // Run SEO and showcase/category queries in parallel to minimize response time
+  const [seoData, showcaseCollections, categoryCollections] = await Promise.all([
+    context.storefront.query(HOMEPAGE_SEO_QUERY, {
+      cache: context.storefront.CacheShort(),
+    }),
+    context.storefront.query(COLLECTIONS_SHOWCASE_QUERY, {
+      variables: {country, language},
+      cache: context.storefront.CacheShort(),
+    }).catch((error) => {
+      console.error('[Homepage Error] Failed to load showcase collections:', error);
+      return null;
+    }),
+    context.storefront.query(CATEGORY_COLLECTIONS_QUERY, {
+      variables: {country, language},
+      cache: context.storefront.CacheShort(),
+    }).catch((error) => {
+      console.error('[Homepage Error] Failed to load category collections:', error);
+      return null;
+    }),
+  ]);
+
+  const {shop, brandMetaobject} = seoData;
 
   console.log('[Homepage Metaobject Debug] brandMetaobject nodes:', brandMetaobject?.nodes);
   const brandNode = brandMetaobject?.nodes?.[0];
@@ -62,6 +83,8 @@ async function loadCriticalData({context, request}: LoaderFunctionArgs) {
   return {
     shop,
     brandFields,
+    showcaseCollections,
+    categoryCollections,
     seo: seoPayload.home({url: request.url}),
   };
 }
@@ -82,36 +105,8 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
-  const categoryCollections = context.storefront
-    .query(CATEGORY_COLLECTIONS_QUERY, {
-      variables: {
-        country,
-        language,
-      },
-      cache: context.storefront.CacheShort(),
-    })
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-
-  const showcaseCollections = context.storefront
-    .query(COLLECTIONS_SHOWCASE_QUERY, {
-      variables: {
-        country,
-        language,
-      },
-      cache: context.storefront.CacheShort(),
-    })
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-
   return {
     featuredProducts,
-    categoryCollections,
-    showcaseCollections,
   };
 }
 
@@ -132,52 +127,40 @@ export default function Homepage() {
     <>
       <LandingHero brandFields={brandFields} />
       {showcaseCollections && (
-        <Suspense>
-          <Await resolve={showcaseCollections}>
-            {(response) => (
-              <>
-                <CollectionShowcase data={response} />
-                
-                {/* 1st Section: New Products */}
-                <ProductSection
-                  title="New Products"
-                  subtitle="Discover our latest arrivals and newest additions to the store."
-                  products={response?.newArrivals?.products?.nodes || []}
-                />
+        <>
+          <CollectionShowcase data={showcaseCollections} />
+          
+          {/* 1st Section: New Products */}
+          <ProductSection
+            title="New Products"
+            subtitle="Discover our latest arrivals and newest additions to the store."
+            products={showcaseCollections?.newArrivals?.products?.nodes || []}
+          />
 
-                {/* 2nd Section: Fitness */}
-                <ProductSection
-                  title="Fitness"
-                  subtitle="Stay Active. Stay Strong. Discover the Best in Fitness Gear."
-                  products={response?.fitness?.products?.nodes || []}
-                />
+          {/* 2nd Section: Fitness */}
+          <ProductSection
+            title="Fitness"
+            subtitle="Stay Active. Stay Strong. Discover the Best in Fitness Gear."
+            products={showcaseCollections?.fitness?.products?.nodes || []}
+          />
 
-                {/* 3rd Section: Health & Beauty */}
-                <ProductSection
-                  title="Health & Beauty"
-                  subtitle="Feel Good. Look Great. Explore Premium Health & Beauty Products."
-                  products={response?.healthBeauty?.products?.nodes || []}
-                />
+          {/* 3rd Section: Health & Beauty */}
+          <ProductSection
+            title="Health & Beauty"
+            subtitle="Feel Good. Look Great. Explore Premium Health & Beauty Products."
+            products={showcaseCollections?.healthBeauty?.products?.nodes || []}
+          />
 
-                {/* Customer Testimonials Section */}
-                <TestimonialsSection />
-              </>
-            )}
-          </Await>
-        </Suspense>
+          {/* Customer Testimonials Section */}
+          <TestimonialsSection />
+        </>
       )}
       {categoryCollections && (
-        <Suspense>
-          <Await resolve={categoryCollections}>
-            {(response) => (
-              <>
-                <CategorySlider collections={response} />
-                {/* Flash Sale Countdown right after Category Slider */}
-                <FlashSaleCountdown />
-              </>
-            )}
-          </Await>
-        </Suspense>
+        <>
+          <CategorySlider collections={categoryCollections} />
+          {/* Flash Sale Countdown right after Category Slider */}
+          <FlashSaleCountdown />
+        </>
       )}
       <FeatureBlocks />
 
@@ -297,6 +280,19 @@ function SmartTechPromo() {
   );
 }
 
+export function bannerImageLoader({src, width, height}: any) {
+  try {
+    const url = new URL(src);
+    // Limit maximum width to 1600px for the banner, which is plenty for desktop and saves huge bytes
+    const targetWidth = width ? Math.min(width, 1600) : 1600;
+    url.searchParams.set('width', String(targetWidth));
+    url.searchParams.set('quality', '80');
+    return url.toString();
+  } catch (e) {
+    return src;
+  }
+}
+
 function LandingHero({brandFields}: {brandFields: any}) {
   const heroBannerImage = brandFields?.hero_banner_image;
   
@@ -338,11 +334,12 @@ function LandingHero({brandFields}: {brandFields: any}) {
             height: height,
           }}
           className="w-full h-[160px] sm:h-auto object-cover object-[65%] sm:object-center block select-none"
-          sizes="100vw"
+          sizes="(max-width: 48em) 100vw, (max-width: 74em) 1200px, 1600px"
           width={width}
           height={height}
           loading="eager"
           fetchPriority="high"
+          loader={bannerImageLoader}
         />
         {/* Subtle hover overlay to invite action */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition duration-300" />
@@ -433,10 +430,12 @@ function CollectionShowcase({data}: {data: any}) {
 
         {/* Products: 2-col grid on mobile, 4-col on desktop */}
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5 w-full">
-          {currentProducts.slice(0, 8).map((product: any) => (
+          {currentProducts.slice(0, 8).map((product: any, index: number) => (
             <ProductCard
               key={product.id}
               product={product}
+              loading={index < 4 ? 'eager' : 'lazy'}
+              fetchPriority={index < 4 ? 'high' : 'low'}
             />
           ))}
         </div>
@@ -696,6 +695,7 @@ export function shopifyCategorySliderImageLoader({src, width, height, crop}: any
     const targetHeight = height ? Math.min(height, 200) : 200;
     url.searchParams.set('height', String(targetHeight));
     url.searchParams.set('crop', crop || 'center');
+    url.searchParams.set('quality', '75');
     return url.toString();
   } catch (e) {
     return src;

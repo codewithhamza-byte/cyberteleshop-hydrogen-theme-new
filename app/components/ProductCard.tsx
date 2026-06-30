@@ -21,6 +21,7 @@ export function shopifyImageLoader({src, width, height, crop}: any) {
     const targetHeight = height ? Math.min(height, 320) : 320;
     url.searchParams.set('height', String(targetHeight));
     url.searchParams.set('crop', crop || 'center');
+    url.searchParams.set('quality', '75');
     return url.toString();
   } catch (e) {
     return src;
@@ -31,7 +32,8 @@ export function ProductCard({
   product,
   label,
   className,
-  loading,
+  loading = 'lazy',
+  fetchPriority = 'low',
   onClick,
   quickAdd,
 }: {
@@ -39,6 +41,7 @@ export function ProductCard({
   label?: string;
   className?: string;
   loading?: HTMLImageElement['loading'];
+  fetchPriority?: 'high' | 'low' | 'auto';
   onClick?: () => void;
   quickAdd?: boolean;
 }) {
@@ -114,6 +117,7 @@ export function ProductCard({
               data={image}
               alt={image.altText || `Picture of ${product.title}`}
               loading={loading}
+              fetchPriority={fetchPriority}
               loader={shopifyImageLoader}
             />
           )}

@@ -16,6 +16,7 @@ export function shopifyCollectionImageLoader({src, width, height, crop}: any) {
     const targetWidth = width ? Math.min(width, 400) : 400;
     url.searchParams.set('width', String(targetWidth));
     url.searchParams.set('crop', crop || 'center');
+    url.searchParams.set('quality', '75');
     return url.toString();
   } catch (e) {
     return src;
