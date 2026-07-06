@@ -1175,7 +1175,15 @@ function Footer() {
       {/* Footer Bottom */}
       <div className="mx-auto max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-xs text-neutral-500 text-center md:text-left">
-          &copy; {new Date().getFullYear()} Cyber Tele Shop. All Rights Reserved. Designed By Hamza Tahir
+          &copy; {new Date().getFullYear()} Cyber Tele Shop. All Rights Reserved. Designed By{' '}
+          <a
+            href="https://www.hamzatahir.info/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#D33E13] underline transition-colors"
+          >
+            Hamza Tahir
+          </a>
         </div>
 
         {/* Payment Methods */}
