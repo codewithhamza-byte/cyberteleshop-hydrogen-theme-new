@@ -1179,8 +1179,9 @@ function Footer() {
           <a
             href="https://www.hamzatahir.info/"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
             className="hover:text-[#D33E13] underline transition-colors"
+            title="Hamza Tahir - Professional Web Developer"
           >
             Hamza Tahir
           </a>
