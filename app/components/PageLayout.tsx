@@ -213,6 +213,7 @@ function Header({
   logoSrc: string;
 }) {
   const isHome = useIsHomePath();
+  const isHydrated = useIsHydrated();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -238,8 +239,8 @@ function Header({
 
   return (
     <>
-      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
-      {menu && (
+      {isHydrated && <CartDrawer isOpen={isCartOpen} onClose={closeCart} />}
+      {isHydrated && menu && (
         <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu} />
       )}
       <DesktopHeader
@@ -259,7 +260,9 @@ function Header({
         isOpenMenu={isMenuOpen}
         openSearch={() => setIsSearchOpen(true)}
       />
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {isHydrated && (
+        <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      )}
     </>
   );
 }
@@ -1014,16 +1017,15 @@ function Badge({
     [count, subtotal],
   );
 
-  return isHydrated ? (
-    <button
-      onClick={openCart}
-      className="relative flex items-center justify-center focus:ring-0 focus:outline-none"
-    >
-      {BadgeCounter}
-    </button>
-  ) : (
+  return (
     <Link
       to="/cart"
+      onClick={(e) => {
+        if (isHydrated) {
+          e.preventDefault();
+          openCart();
+        }
+      }}
       className="relative flex items-center justify-center focus:ring-0 focus:outline-none"
     >
       {BadgeCounter}
@@ -1199,20 +1201,17 @@ function SafeEmailLink({
 }) {
   const isHydrated = useIsHydrated();
 
-  if (!isHydrated) {
-    return (
-      <span
-        className={className}
-        dangerouslySetInnerHTML={{
-          __html: `<!--email_off-->${email}<!--/email_off-->`,
-        }}
-      />
-    );
-  }
-
   return (
     <a href={`mailto:${email}`} className={className}>
-      {children || email}
+      {isHydrated ? (
+        children || email
+      ) : (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: `<!--email_off-->${email}<!--/email_off-->`,
+          }}
+        />
+      )}
     </a>
   );
 }
