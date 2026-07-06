@@ -36,7 +36,7 @@ export const headers = routeHeaders;
 
 export async function loader({params, request, context}: LoaderFunctionArgs) {
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 24,
   });
   const {collectionHandle} = params;
   const locale = context.storefront.i18n;
@@ -227,24 +227,11 @@ export default function Collection() {
             {({
               nodes,
               isLoading,
-              PreviousLink,
-              NextLink,
               nextPageUrl,
               hasNextPage,
               state,
             }) => (
               <>
-                <div className="flex items-center justify-center mb-8">
-                  <PreviousLink className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-xs font-extrabold text-gray-700 hover:text-[#D33E13] hover:border-[#D33E13] hover:bg-[#D33E13]/5 transition-all duration-200 shadow-sm cursor-pointer">
-                    {isLoading ? (
-                      <span className="w-4 h-4 border-2 border-[#D33E13] border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <span>←</span> Load Previous
-                      </>
-                    )}
-                  </PreviousLink>
-                </div>
                 <ProductsLoadedOnScroll
                   nodes={nodes}
                   inView={inView}
@@ -252,19 +239,17 @@ export default function Collection() {
                   hasNextPage={hasNextPage}
                   state={state}
                 />
-                <div className="flex items-center justify-center mt-8">
-                  <NextLink
-                    ref={ref}
-                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#D33E13] hover:bg-[#b0300d] text-xs font-extrabold text-white transition-all duration-200 shadow-md shadow-[#D33E13]/10 hover:shadow-lg cursor-pointer"
-                  >
-                    {isLoading ? (
-                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        Load More Products <span>→</span>
-                      </>
-                    )}
-                  </NextLink>
+                <div
+                  ref={ref}
+                  className="flex flex-col items-center justify-center mt-12 mb-8 h-12"
+                >
+                  {isLoading ? (
+                    <span className="w-8 h-8 border-2 border-[#D33E13] border-t-transparent rounded-full animate-spin" />
+                  ) : !hasNextPage && nodes.length > 0 ? (
+                    <Text className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                      Showing all {nodes.length} products
+                    </Text>
+                  ) : null}
                 </div>
               </>
             )}
